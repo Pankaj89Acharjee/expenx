@@ -70,7 +70,7 @@ const Dashboard = ({ allusers }) => {
                     <Route path="category/expenditure" element={<Expendituresheet allusers={allusers && allusers} />} />
                     <Route path="category/income" element={<Incomesheet allusers={allusers && allusers} />} />
                     <Route path="/expensesuccess" element={<Expsuccessscreen />} />
-                    <Route path="/api/getexpense" element={<AllExpenditure allusers={allusers && allusers}/>} />
+                    <Route path="/category/allexpense" element={<AllExpenditure allusers={allusers && allusers}/>} />
                     
                 </Routes>
             </div>

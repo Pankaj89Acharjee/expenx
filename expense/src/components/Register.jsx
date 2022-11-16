@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import Spinner from './Spinner'
 
 const Register = () => {
     const [name, setName] = useState('')
@@ -9,11 +9,13 @@ const Register = () => {
     const [designation, setDesignation] = useState('')
     const [city, setCity] = useState('')
     const [mobile, setMobile] = useState('')
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
 
     const registerUser = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const response = await fetch("http://localhost:5050/api/register", {
             method: 'POST',
             headers: {
@@ -28,7 +30,9 @@ const Register = () => {
                 city,
                 mobile
             }),
-        })
+        },
+        setLoading(false)
+        )
 
         const data = await response.json();
         console.log(data);
@@ -40,6 +44,7 @@ const Register = () => {
 
     return (
         <div>
+            {loading && <Spinner  />}
             <h1 className='text-center text-2xl bg-blue-500 font-bold'>New User Registration Page</h1>
             <div>
 

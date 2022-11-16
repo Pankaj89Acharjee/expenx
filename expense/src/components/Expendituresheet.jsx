@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 
+
 const Expendituresheet = ({ allusers }) => {
 
     var defaultDate = new Date().toISOString().slice(0, 10);
@@ -19,9 +20,7 @@ const Expendituresheet = ({ allusers }) => {
 
 
     useEffect(() => {
-        if (savesuccess) {
-            formRef.current.value = '';
-            expenseRef.current.focus();
+        if (savesuccess) {           
             window.location.href = '/expensesuccess';
             setSavesuccess(false);
             <div>
@@ -29,10 +28,7 @@ const Expendituresheet = ({ allusers }) => {
             </div>
         }
     }, [savesuccess])
-
-    const onOpen = async () => {
-        window.location.href = '/api/getuserexpenditure'           
-    }    
+      
 
     const registerExpenditure = async (e) => {
         e.preventDefault();
@@ -114,7 +110,7 @@ const Expendituresheet = ({ allusers }) => {
           m-0
           required
           focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" id="purpose"
-                                aria-describedby="emailHelp124" placeholder="Purpose for spending"
+                                placeholder="Purpose for spending"
                                 value={exppurpose}
                                 ref={expenseRef}
                                 onChange={(e) => setExppurpose(e.target.value)}
@@ -204,30 +200,6 @@ const Expendituresheet = ({ allusers }) => {
                         </div>
                     }
                 </form>
-
-                <div className='flex flex-inline box position-relative w-full items-center justify-center'>
-                            <button onClick={onOpen} className="
-      w-2/5
-      justify-center
-      text-center
-      align-center
-      px-6
-      py-2.5
-      bg-blue-600
-      text-white
-      font-medium
-      text-xs
-      leading-tight
-      uppercase
-      rounded
-      shadow-md
-      hover:bg-blue-700 hover:shadow-lg
-      focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-      active:bg-blue-800 active:shadow-lg
-      transition
-      duration-150
-      ease-in-out">View Expenses</button>
-                        </div>
             </div>
         </div>
     )

@@ -1,13 +1,18 @@
 import React, { useState } from 'react'
 import logo from '../assets/logoexp.jpeg'
+import Spinner from './Spinner'
+
 
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoggedin, setIsLoggedin] = useState(false);
+    const [loading, setLoading] = useState(false);
+
 
     const loginUser = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const response = await fetch("http://localhost:5050/api/login", {
             method: 'POST',
             headers: {
@@ -25,10 +30,12 @@ const Login = () => {
         if (data.user) {
             localStorage.setItem('token', data.user);
             setIsLoggedin(true);
-            alert("Login Successful");
+            setLoading(false);
+            alert("Login Successful");            
             window.location.href = '/home';
         } else {
             alert("Email and/or password is wrong!");
+            
         }
         console.log(data);
     };
@@ -41,8 +48,8 @@ const Login = () => {
     }
 
     return (
-        <>
-            <div>
+        <>        
+            <div>        
                 <section className="bg-gray-50 dark:bg-gray-600">
                     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                         <a href="/" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
@@ -58,6 +65,7 @@ const Login = () => {
                                         </h1>
                                         <form onSubmit={loginUser} className="space-y-4 md:space-y-6" action="#">
                                             <div>
+                                            {loading && <Spinner />}
                                                 <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
                                                 <input
                                                     type="email"

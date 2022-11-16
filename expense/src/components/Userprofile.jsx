@@ -19,8 +19,7 @@ const Userprofile = ({ allusers }) => {
     useEffect(() => {
         setLoading(true)
         const loadingTimer = setTimeout(() => {
-            clearTimeout(loadingTimer);
-            //const id = allusers.match.params.id;
+            clearTimeout(loadingTimer);            
             const url = `http://localhost:5050/api/singleuser/${id}`;
 
             axios.get(url)
@@ -53,19 +52,18 @@ const Userprofile = ({ allusers }) => {
                                     alt="userpic"
                                 />
 
-                                <div class="flex justify-center items-center">
-                                    <div class="flex flex-col md:flex-row md:max-w-xl rounded-lg bg-white shadow-lg">
-                                        <img class=" w-full h-96 md:h-auto object-cover md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg" src="https://mdbootstrap.com/wp-content/uploads/2020/06/vertical.jpg" alt="userdetails" />
-                                        <div class="p-6 flex flex-col justify-start">
-                                            <h4 class="text-green-400 text-2xl font-medium mb-2">{singleuser.name}</h4>
-                                            <h5 class="text-gray-700 text-sm font-medium mb-2">E-mail: {singleuser.email}</h5>
-                                            <h5 class="text-gray-700 text-sm font-medium mb-2">Designation: {singleuser.designation}</h5>
-                                            <h5 class="text-gray-700 text-sm font-medium mb-2">City: {singleuser.city}</h5>
-                                            <h5 class="text-gray-700 text-sm font-medium mb-2">Mobile: {singleuser.mobile}</h5>
-
+                                <div className="flex justify-center items-center">
+                                    <div className="flex flex-col md:flex-row md:max-w-xl rounded-lg bg-white shadow-lg">
+                                        <img className=" w-full h-96 md:h-auto object-cover md:w-48 rounded-t-lg md:rounded-none md:rounded-l-lg" src="https://mdbootstrap.com/wp-content/uploads/2020/06/vertical.jpg" alt="userdetails" />
+                                        <div className="p-6 flex flex-col justify-start">
+                                            <h4 className="text-green-400 text-2xl font-medium mb-2">{singleuser.name}</h4>
+                                            <h5 className="text-gray-700 text-sm font-medium mb-2">E-mail: {singleuser.email}</h5>
+                                            <h5 className="text-gray-700 text-sm font-medium mb-2">Designation: {singleuser.designation}</h5>
+                                            <h5 className="text-gray-700 text-sm font-medium mb-2">City: {singleuser.city}</h5>
+                                            <h5 className="text-gray-700 text-sm font-medium mb-2">Mobile: {singleuser.mobile}</h5>
                                             <br />
                                             <br />
-                                            <p class="text-gray-600 text-xs">Web Designed by Acharya Labs</p>
+                                            <p className="text-gray-600 text-xs">Web Designed by Acharya Labs</p>
                                         </div>
                                     </div>
                                 </div>                                
