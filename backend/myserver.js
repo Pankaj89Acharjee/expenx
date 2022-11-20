@@ -56,12 +56,12 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/newexpense", async (req, res) => {
     try {
         const expense = new Expense({
-            income: req.body.income,
+            userid: req.body.userid,
             exppurpose: req.body.exppurpose,
             amount: req.body.amount,
+            categories: req.body.categories,
             dateofexp: req.body.dateofexp,
-            totalAmount: req.body.totalAmount,
-            user: req.body.email,
+            
         })
         const createdExpense = await expense.save()
         console.log("Created Expense!", createdExpense);
@@ -134,9 +134,10 @@ app.get("/api/getuser", async (req, res) => {
     }
 })
 
-app.get("/api/getexpense", async (req, res) => {
+app.post("/api/getexpense", async (req, res) => {
     try{
-        const singleExpense = await Expense.find({            
+        const singleExpense = await Expense.find({
+            userid: req.body.userid            
         })
         const result = singleExpense;
         res.status(200).json(result);

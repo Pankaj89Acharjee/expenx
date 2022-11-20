@@ -1,35 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Spinner from './Spinner'
+import jwtDecode from 'jwt-decode';
+import { Link } from "react-router-dom"
+
 
 const AllExpenditure = () => {
 
     const [userexp, setUserexp] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [oneusername, setOneusername] = useState(null);
 
     const gotoExpScreen = () => {
         window.location.href = '/dashboard'
     }
-
+   
 
     useEffect(() => {
         setLoading(true)
-
-        const loadingTimer = setTimeout(() => {
+        const loadingTimer = setTimeout(async () => {
             clearTimeout(loadingTimer);
-
-            const url = "http://localhost:5050/api/getexpense";
-            axios.get(url)
-                .then((response) => {
-                    setUserexp(response.data);
-                    console.log("expense data", response.data)
-                    setLoading(false);
-                });
-
-
+            const token = localStorage.getItem('token');
+            const decodetoken = jwtDecode(token);
+            const userId = decodetoken.id;
+            const userName = decodetoken.name
+            setOneusername(userName);
+            //console.log("Value of user in All Expenditure", userId);
+            const response = await axios.post("http://localhost:5050/api/getexpense", { userid: userId });
+            setUserexp(response.data);
+            console.log("expense data", response.data)
+            setLoading(false);
         }, 1000);
     }, [])
-    
+
     //array.reduce is used to calculate sum or total shorten collective result
     console.log((userexp.reduce((a, v) => a = a + v.amount, 0)))
     var totalExpenseAmount = userexp.reduce((a, v) => a = a + v.amount, 0);
@@ -40,10 +43,21 @@ const AllExpenditure = () => {
 
     return (
         <div>
-            <h2 className='items-center uppercase text-green-400 text-center text-4xl font-bold'>Details of all expense</h2>
+            <div className="lg:w-full flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
+                <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
+                    <h1 className='text-xl'>Total Amount Spent: {totalExpenseAmount}</h1>
+                    <h4 className="text-2xl text-center font-normal font-bold mb-6">Hi! {oneusername}</h4>
+                    <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your expenses</h2>
+                    <p className="text-sm mt-5">
+                    Knowledge opens the door to Opportunity, Success and Achievements. A little water in the Sun will evaporate, but the ocean never
+                    dries up. Limited responsibility tires you, but unlimited responsibility empowers you.
+                    </p>
+                </div>
+            </div>
+            
             <>
                 <div className='items-center text-2xl text-center font-bold text-red-700'>
-                    <h1>Total Amount Spent: {totalExpenseAmount}</h1>
+
                 </div>
                 <div className="flex flex-col">
                     <div className="overflow-x-auto">
@@ -71,7 +85,7 @@ const AllExpenditure = () => {
                                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                                     </svg>
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
 
                         <div className="p-1.5 w-full inline-block align-middle">
@@ -147,7 +161,7 @@ const AllExpenditure = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                                                        {x.dateofexp}
+                                                        {x.dateofexp.substring(0, 10)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                                                         {x.exppurpose}
@@ -156,20 +170,20 @@ const AllExpenditure = () => {
                                                         {x.amount}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <a
+                                                        <Link to=""
                                                             className="text-green-500 hover:text-green-700"
-                                                            href="#"
+
                                                         >
                                                             Edit
-                                                        </a>
+                                                        </Link>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <a
+                                                        <Link to=""
                                                             className="text-red-500 hover:text-red-700"
-                                                            href="#"
+
                                                         >
                                                             Delete
-                                                        </a>
+                                                        </Link>
                                                     </td>
                                                 </tr>
                                             </tbody>

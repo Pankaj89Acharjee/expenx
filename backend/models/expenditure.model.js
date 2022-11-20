@@ -1,21 +1,13 @@
 const mongoose = require("mongoose");
 
 const Expenditure = new mongoose.Schema({
-    // income: { 
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Incomeall'
-    // },
-    income: { type: Number }, //Later on change to the above by un-commenting out
-    exppurpose: { type: String },
-    amount: { type: Number },
-    month: {type: String},
-    dateofexp: { type:  Date },
+    userid: {},
+    exppurpose: { type: String, required:[true, "Purpose is required"]},
+    amount: { type: Number, required:[true, "Amount is required"]},
+    categories: { type: String, required:[true, "Category is required"] },
+    dateofexp: { type:  Date, required:[true, "Date is required"]},
     totalAmount: { type: Number },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'model',
-        
-    },
+    
 
 },
 

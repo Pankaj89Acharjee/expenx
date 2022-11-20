@@ -1,13 +1,13 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import { HiMenu } from 'react-icons/hi'
 import { AiFillCloseCircle } from 'react-icons/ai'
 import logo from '../assets/logoexp.jpeg'
-import { Link, Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, Route, Routes } from 'react-router-dom'
 import { useRef } from 'react'
 import Dashboard from './Dashboard'
-import jwtDecode from 'jwt-decode'
+
 import Userprofile from '../components/Userprofile'
 
 
@@ -15,7 +15,7 @@ const Home = ({alluser}) => {
 
     const [sidebarToggler, setsidebarToggler] = useState(false)    
     const scrollRef = useRef(null);
-    const navigate = useNavigate();
+    
     const allusers = alluser;
     console.log("Users all data in Home component is", allusers)
     
