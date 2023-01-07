@@ -1,16 +1,10 @@
 const mongoose = require("mongoose");
 
-const Income = new mongoose.Schema({    
+const Income = new mongoose.Schema({   
+    userid:{} ,
     amount: { type: Number },
-    month: {type: String},
+    dateselect: {type: Date},
     incomefrom: { type: String },
-    totalIncome: { type: Number },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'model',
-        
-    },
-
 },
 
     { collection: 'income-data' },

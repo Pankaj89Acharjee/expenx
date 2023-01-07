@@ -11,6 +11,7 @@ const isActiveStyle = 'flex items-center px-5 gap-3 font-extrabold border-r-2 bo
 const categories = [
     { name: 'income' },
     { name: 'expenditure' },
+    { name: 'allincome' },
     { name: 'allexpense' },
     { name: 'charts' },
     { name: 'allusers' },

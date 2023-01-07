@@ -8,6 +8,7 @@ const User = require("./models/user.model");
 const Expense = require("./models/expenditure.model");
 const Income = require("./models/income.model");
 const bcrypt = require("bcryptjs");
+const moment = require("moment");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const app = express();
 app.use(express.json());
@@ -42,8 +43,8 @@ app.post("/api/register", async (req, res) => {
             email: req.body.email,
             password: newpassword,
             designation: req.body.designation,
-            city : req.body.city,
-            mobile : req.body.mobile
+            city: req.body.city,
+            mobile: req.body.mobile
         })
         res.send({ status: "ok" });
         console.log(user);
@@ -61,34 +62,33 @@ app.post("/api/newexpense", async (req, res) => {
             amount: req.body.amount,
             categories: req.body.categories,
             dateofexp: req.body.dateofexp,
-            
+
         })
         const createdExpense = await expense.save()
         console.log("Created Expense!", createdExpense);
-        res.send({status: 'ok', message: 'New Expenditure Created', expense: createdExpense });
+        res.send({ status: 'ok', message: 'New Expenditure Created', expense: createdExpense });
 
     } catch (error) {
         console.log("Error in inserting new expense", error.message);
-        res.send({  status: "Error", error: error.message });
+        res.send({ status: "Error", error: error.message });
     }
 })
 
 app.post("/api/newincome", async (req, res) => {
     try {
-        const income = new Income({            
+        const income = new Income({
+            userid: req.body.userid,
             amount: req.body.amount,
-            month: req.body.month,
+            dateselect: req.body.dateselect,
             incomefrom: req.body.incomefrom,
-            totalIncome: req.body.totalIncome,
-            user: req.body._id,
         })
         const createdIncome = await income.save()
         console.log("Created Income!", createdIncome);
-        res.send({ status:'ok'});
+        res.status(200).json({ StatusCode: '1', Message: 'New Income Created', Income: createdIncome });
 
     } catch (error) {
         console.log("Error in inserting new income", error.message);
-        res.send({ status: "Error", error: error.message });
+        res.status(404).json({ StatusCode: "0", Message: 'Error in Saving', Error: error.message });
     }
 })
 
@@ -105,12 +105,12 @@ app.post("/api/login", async (req, res) => {
     const isValidPassword = await bcrypt.compare(req.body.password, user.password)
 
     if (isValidPassword) { //Using JWT Token
-        const token = jwt.sign({   
-            id: user._id,                    
-            email: user.email,     
-            name:user.name,
+        const token = jwt.sign({
+            id: user._id,
+            email: user.email,
+            name: user.name,
             designation: user.designation,
-                                     
+
         },
             'myjwtsecret123'
         )
@@ -118,7 +118,7 @@ app.post("/api/login", async (req, res) => {
         return res.json({ status: "Ok, user found!", user: token }); //passed token here
     } else {
         return res.send({ status: "User not found!", user: false });
-    }    
+    }
 })
 
 app.get("/api/getuser", async (req, res) => {
@@ -134,11 +134,48 @@ app.get("/api/getuser", async (req, res) => {
     }
 })
 
-app.post("/api/getexpense", async (req, res) => {
-    try{
-        const singleExpense = await Expense.find({
-            userid: req.body.userid            
+app.post("/api/getincome", async (req, res) => {
+    try {
+        const { frequency, selectedDate } = req.body;
+        const allIncome = await Income.find({
+            ...(frequency !== "custom" ? {
+                dateselect: {
+                    $gt: moment().subtract(Number(frequency), 'd').toDate()
+                },
+            } : {
+                dateselect: {
+                    $gte: selectedDate[0],
+                    $lte: selectedDate[1]
+                }
+            }),
+            userid: req.body.userid,
         })
+        const result = allIncome;
+        res.status(200).json(result)
+        console.log(result);
+    } catch (error) {
+        console.log("Error in finding income");
+        return res.status(404).json(error.message)
+    }
+})
+
+app.post("/api/getexpense", async (req, res) => {
+    try {
+        const { frequency, selectedDate } = req.body;
+        // console.log("Frequency from req body", frequency);
+        const singleExpense = await Expense.find({
+            ...(frequency !== "custom" ? {
+                dateofexp: {
+                    $gt: moment().subtract(Number(frequency), 'd').toDate()
+                },
+            } : {
+                dateofexp: {
+                    $gte: selectedDate[0],
+                    $lte: selectedDate[1]
+                }
+            }),
+            userid: req.body.userid,
+        });
         const result = singleExpense;
         res.status(200).json(result);
         console.log(result);
@@ -148,18 +185,32 @@ app.post("/api/getexpense", async (req, res) => {
     }
 })
 
-app.get("/api/getallincome", async (req, res) => {
+app.post("/api/viewchart", async (req, res) => {
+    const { frequency, customdate } = req.body;
     try {
-        const allIncome = await Income.find({
+        const userChart = await Expense.find({
+            ...(frequency !== "custom" ? {
+                dateofexp: {
+                    $gt: moment().subtract(Number(frequency), 'd').toDate()
+                }
+            } : {
+                dateofexp: {
+                    $gte: customdate[0],
+                    $lte: customdate[1]
+                },
+            }),
+            userid: req.body.userid,
         })
-        const result = allIncome;
-        res.status(200).json(result)
-        console.log(result);
+        const result = userChart;
+        res.status(200).json(result);
+        console.log("View Chart Details are", result);
     } catch (error) {
-        console.log("Error in finding income");
-        return res.status(500).json(error.message)
+        console.log("Error in finding expenditure");
+        return res.status(500).json(error.message);
     }
 })
+
+
 
 app.get("/api/singleuser/:id", async (req, res) => {
     try {
@@ -173,3 +224,14 @@ app.get("/api/singleuser/:id", async (req, res) => {
     }
 })
 
+app.get("/api/editexpenditure/:id", async (req, res) => {
+    try {
+        const editExp = await Expense.findById(req.params.id);
+        const result = editExp;
+        res.status(200).json(result);
+        console.log("Expenditure Found", result);
+    } catch (error) {
+        console.log("Error in finding expenditure");
+        return res.status(500).json(error.message);
+    }
+})

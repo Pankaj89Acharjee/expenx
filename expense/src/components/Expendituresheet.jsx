@@ -1,4 +1,4 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
 import DatePicker from 'react-datepicker'
 import Spinner from './Spinner'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -18,10 +18,7 @@ const Expendituresheet = () => {
     const [dateDefault, setDateDefault] = useState(defaultDate);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState(null);
-   
-   
-    // const oneusername = allusers.name;
-    // const design = allusers.designation;
+
 
     const registerExpenditure = async (e) => {
         e.preventDefault();
@@ -29,7 +26,7 @@ const Expendituresheet = () => {
         try {
             const token = localStorage.getItem('token');
             const decodetoken = jwtDecode(token);
-            const userId = decodetoken.id;                      
+            const userId = decodetoken.id;
             await axios.post("http://localhost:5050/api/newexpense", {
                 userid: userId,
                 exppurpose,
@@ -37,8 +34,10 @@ const Expendituresheet = () => {
                 categories,
                 dateofexp
             })
-            setLoading(false);
+            
             alert("Saving Successful")
+            window.location.reload();
+            setLoading(false);
         } catch (err) {
             console.log("Data saving error", err.message);
             setLoading(false);
@@ -54,37 +53,19 @@ const Expendituresheet = () => {
 
     return (
         <div>
-            {/* <img
-                src={randomImage}
-                className='w-full rounded-md h-370 2xl:h-510 shadow-2xl object-cover'
-                alt="banner"
-            /> */}
-
-{/* 
-            {oneusername &&
-                <div className="text-center">
-                    <img
-                        src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
-                        className="rounded-full w-20 h-20 mb-4 mx-auto -mt-10 shadow-lg object-cover"
-                        alt="pankaj"
-                    />
-                    <h5 className="text-xl text-red-600 font-medium leading-tight mb-2">{oneusername}</h5>
-                    <p className="text-gray-500">{design}</p>
-                </div>
-            } */}
-
+           
             {/* This is the new section. Now implement this one*/}
-            <section className="h-full gradient-form bg-gradient-to-br from-blue-400 via-green-500 to-blue-500 md:h-screen">
-                <div className="container py-12 px-6 h-full">
+            <section className="h-full rounded gradient-form bg-gradient-to-br from-blue-400 via-green-500 to-blue-500 md:h-full md:w-auto">
+                <div className="container py-12 px-6 h-full md:h-auto">
                     <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
-                        <div className="xl:w-10/12">
-                            <div className="block bg-white shadow-lg rounded-lg">
+                        <div className="xl:w-11/12 md:w-8/12">
+                            <div className="block bg-gray-400 shadow-lg rounded-lg">
                                 <div className="lg:flex lg:flex-wrap g-0">
-                                    <div className="lg:w-6/12 px-4 md:px-0">
+                                    <div className="lg:w-6/12 px-4 md:px-0 sm:w-auto">
                                         <div className="md:p-12 md:mx-6">
                                             <div className="text-center">
                                                 <img
-                                                    className="mx-auto w-25 h-40 rounded-full"
+                                                    className="mx-auto w-20 h-20 rounded-full md:w-15 md:h-10"
                                                     src={logo}
                                                     alt="logo"
                                                 />

@@ -9,7 +9,8 @@ import { DatePicker, Space } from 'antd';
 const { RangePicker } = DatePicker;
 
 
-const AllExpenditure = () => {
+const AllIncome = () => {
+
 
     const [userexp, setUserexp] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -17,10 +18,9 @@ const AllExpenditure = () => {
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
 
-    const gotoExpScreen = () => {      
+    const gotoExpScreen = () => {
         window.location.href = '/category/charts'
     }
-
 
     useEffect(() => {
         setLoading(true)
@@ -32,9 +32,10 @@ const AllExpenditure = () => {
             const userName = decodetoken.name
             setOneusername(userName);
             //console.log("Value of user in All Expenditure", userId);
-            const response = await axios.post("http://localhost:5050/api/getexpense", { userid: userId, frequency: frequency, selectedDate: selectedDate });
+            const response = await axios.post("http://localhost:5050/api/getincome", { userid: userId, frequency: frequency, selectedDate: selectedDate });
             setUserexp(response.data);
-            console.log("expense data", response.data)
+            const dataInc = response.data;
+            //console.log("expense data", response.data)           
             setLoading(false);
         }, 1000);
     }, [frequency, selectedDate])
@@ -53,7 +54,7 @@ const AllExpenditure = () => {
                 <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
                     <h1 className='text-xl'>Total Amount Spent: {totalExpenseAmount}</h1>
                     <h4 className="text-2xl text-center font-normal font-bold mb-6">Hi! {oneusername}</h4>
-                    <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your expenses</h2>
+                    <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your income</h2>
                     <p className="text-sm mt-5">
                         Knowledge opens the door to Opportunity, Success and Achievements. A little water in the Sun will evaporate, but the ocean never
                         dries up. Limited responsibility tires you, but unlimited responsibility empowers you.
@@ -89,14 +90,15 @@ const AllExpenditure = () => {
                                         <option>Click to select...</option>
                                         <option value={7}>Last One Week</option>
                                         <option value={30}>Last One Month</option>
+                                        <option value={180}>Last Six Months</option>
                                         <option value="365">Last One Year</option>
                                         <option value="custom">Custom</option>
                                     </select>
-                                    {frequency === 'custom' && 
-                                    
-                                    <Space direction='vertical' size={12}>
-                                        <RangePicker allowClear={false} bordered={true} placement={'topRight'}  value={selectedDate} onChange={(e) => setSelectedDate(e)} />
-                                    </Space>}
+                                    {frequency === 'custom' &&
+
+                                        <Space direction='vertical' size={12}>
+                                            <RangePicker allowClear={false} bordered={true} placement={'topRight'} value={selectedDate} onChange={(e) => setSelectedDate(e)} />
+                                        </Space>}
                                 </div>
                             </div>
                         </div>
@@ -104,7 +106,7 @@ const AllExpenditure = () => {
                         <div className="p-1.5 w-full inline-block align-middle">
                             <div className="overflow-hidden border rounded-lg">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-amber-500">
+                                    <thead className="bg-gray-50">
                                         <tr>
                                             <th scope="col" className="py-3 pl-4">
                                                 <div className="flex items-center h-5">
@@ -123,31 +125,31 @@ const AllExpenditure = () => {
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                                             >
-                                                Expenditure Date
+                                                Income Date
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                                             >
-                                                Purpose
+                                                Income Source
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                                             >
-                                                Amount
+                                                Income Amount
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
                                             >
                                                 Edit
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
                                             >
                                                 Delete
                                             </th>
@@ -174,16 +176,16 @@ const AllExpenditure = () => {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                                                        {x.dateofexp.substring(0, 10)}
+                                                        {x.dateselect.substring(0, 10)}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                                                        {x.exppurpose}
+                                                        {x.incomefrom}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                                                         {x.amount}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <Link to={`/api/editexpenditure/${x._id}`}
+                                                        <Link to="/api/editincome"
                                                             className="text-green-500 hover:text-green-700"
 
                                                         >
@@ -230,8 +232,10 @@ const AllExpenditure = () => {
       duration-150
       ease-in-out">View Charts</button>
             </div>
+
         </div>
     )
+
 }
 
-export default AllExpenditure
+export default AllIncome

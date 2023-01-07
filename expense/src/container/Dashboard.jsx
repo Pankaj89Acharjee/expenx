@@ -7,6 +7,9 @@ import Expendituresheet from '../components/Expendituresheet'
 import Incomesheet from '../components/Incomesheet'
 import Expsuccessscreen from '../components/Expsuccessscreen'
 import AllExpenditure from '../components/AllExpenditure'
+import AllIncome from '../components/AllIncome'
+import EditIncome from '../components/EditIncome'
+import EditExpenditure from '../components/EditExpenditure'
 
 
 const Dashboard = ({ allusers }) => {
@@ -24,7 +27,7 @@ const Dashboard = ({ allusers }) => {
     }
 
     return (
-        <div>
+        <div className='m-3'>
             {allusers ? (
 
                 <div className="flex flex-row-reverse my-3 mb-0.5 gap-6 p-2 text-bold text-center items-center bg-blue-500 rounded-lg shadow-lg " >
@@ -63,12 +66,14 @@ const Dashboard = ({ allusers }) => {
                 <Routes>
                     <Route path="/api/singleuser/:id" element={<Userprofile allusers={allusers && allusers} />} />
                     <Route path="category/allusers" element={<Allusers allusers={allusers && allusers} />} />
-                    <Route path="category/charts" element={<Chartexp allusers={allusers && allusers} />} />
+                    <Route path="/category/charts" element={<Chartexp allusers={allusers && allusers} />} />
                     <Route path="category/expenditure" element={<Expendituresheet allusers={allusers && allusers} />} />
                     <Route path="category/income" element={<Incomesheet allusers={allusers && allusers} />} />
                     <Route path="/expensesuccess" element={<Expsuccessscreen />} />
+                    <Route path="/api/editexpenditure/:id" element={<EditExpenditure />} />
+                    <Route path="/api/editincome" element={<EditIncome />} />
                     <Route path="/category/allexpense" element={<AllExpenditure allusers={allusers && allusers}/>} />
-                    
+                    <Route path="/category/allincome" element={<AllIncome allusers={allusers && allusers}/>} />
                 </Routes>
             </div>
         </div>
