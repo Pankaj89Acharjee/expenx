@@ -30,7 +30,7 @@ const Dashboard = ({ allusers }) => {
         <div className='m-3'>
             {allusers ? (
 
-                <div className="flex flex-row-reverse my-3 mb-0.5 gap-6 p-2 text-bold text-center items-center bg-blue-500 rounded-lg shadow-lg " >
+                <div className="flex flex-row-reverse my-3 mb-0.5 gap-6 p-2 text-bold text-center items-center bgcustomcolor rounded-lg shadow-lg " >
                     <div className="flex flex-right my-5 mb-3 gap-10 p-2 text-bold text-center items-center bg-red-400 rounded-lg shadow-lg mx-3" >
                         <button className='text-white hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800' onClickCapture={logoutUser}>Logout</button>
                     </div>

@@ -224,6 +224,7 @@ app.get("/api/singleuser/:id", async (req, res) => {
     }
 })
 
+//For Fetching Specific data
 app.get("/api/editexpenditure/:id", async (req, res) => {
     try {
         const editExp = await Expense.findById(req.params.id);
@@ -233,5 +234,17 @@ app.get("/api/editexpenditure/:id", async (req, res) => {
     } catch (error) {
         console.log("Error in finding expenditure");
         return res.status(500).json(error.message);
+    }
+})
+
+app.patch("/api/updateexpenditure/:id", async (req, res) => {
+    try {
+        const updateExp = await Expense.findByIdAndUpdate(req.params.id, req.body, {new:true});
+        const result = updateExp;
+        res.status(200).json(result);
+        console.log("Updated with new values", result);
+    } catch (error) {
+        console.log("Error in updating expenditure");
+        return res.status(422).json(error.message);
     }
 })

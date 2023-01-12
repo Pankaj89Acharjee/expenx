@@ -139,4 +139,8 @@ export const category = [
         id: 34,
         cat: "Water Bill"
     },
+    {
+        id: 35,
+        cat: "Furniture"
+    },
 ]

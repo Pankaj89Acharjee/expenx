@@ -46,7 +46,7 @@ const Incomesheet = () => {
         <div className='mt-10 justify-center flex flex-col'>
             <h1 className='lg:w-full md:w-auto text-white text-normal text-center justify-center text-xl bg-gradient-to-br from-purple-600 via-gray-900 to-blue-900 font-bold  rounded'>Income Registration Page</h1>
             <div>
-                <section className="h-full rounded gradient-form bg-gradient-to-br from-purple-600 via-blue-500 to-purple-900 md:h-full md:w-auto">
+                <section className="h-full rounded gradient-form bgcustomcolor1 md:h-full md:w-auto">
                     <div className="px-6 h-full text-blue-300">
                         <div className="flex xl:justify-center lg:justify-center justify-center items-center flex-wrap h-full g-6">
                             <div className="xl:ml-20 xl:w-5/12 lg:w-5/12 md:w-8/12 mb-12 md:mb-0">
@@ -80,28 +80,28 @@ const Incomesheet = () => {
                                         />
                                     </div>
 
-                                    <div className="mb-6">                                       
-                                            <label for="frequency" className="block mt-4 mb-2 text-md font-medium text-gray-900 dark:text-white">Income Source</label>
-                                            <select className="form-control block lg:w-full md:w-full sm:w-3/5 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-900 focus:text-sans-serif focus:bg-purple-200 focus:border-red-600 focus:outline-none"
-                                                value={incomefrom}
-                                                onChange={(e) => setIncomefrom(e.target.value)}
-                                                required
-                                            >
-                                                <option>Click to select...</option>
-                                                <option value={"Salary"}>Salary</option>
-                                                <option value={"Honararium"}>Honararium</option>
-                                                <option value={"FD"}>Fixed Deposit</option>
-                                                <option value={"Incentive"}>Incentive</option>
-                                                <option value={"LIC Maturity"}>LIC Maturity</option>
-                                                <option value={"Tuition fees"}>Tuition Fees</option>
-                                                <option value={"Car Lend"}>Car Lending</option>
-                                                <option value={"Bike Lending"}>Bike Lending</option>
-                                                <option value={"Social Work"}>Social Work</option>
-                                                <option value={"Gift"}>Gift</option>
-                                                <option value={"Voucher"}>Voucher</option>
-                                                <option value={"Land Rent"}>Land Rent</option>
-                                                <option value={"Others"}>Others</option>
-                                            </select>                               
+                                    <div className="mb-6">
+                                        <label for="frequency" className="block mt-4 mb-2 text-md font-medium text-gray-900 dark:text-white">Income Source</label>
+                                        <select className="form-control block lg:w-full md:w-full sm:w-3/5 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-900 focus:text-sans-serif focus:bg-purple-200 focus:border-red-600 focus:outline-none"
+                                            value={incomefrom}
+                                            onChange={(e) => setIncomefrom(e.target.value)}
+                                            required
+                                        >
+                                            <option>Click to select...</option>
+                                            <option value={"Salary"}>Salary</option>
+                                            <option value={"Honararium"}>Honararium</option>
+                                            <option value={"FD"}>Fixed Deposit</option>
+                                            <option value={"Incentive"}>Incentive</option>
+                                            <option value={"LIC Maturity"}>LIC Maturity</option>
+                                            <option value={"Tuition fees"}>Tuition Fees</option>
+                                            <option value={"Car Lend"}>Car Lending</option>
+                                            <option value={"Bike Lending"}>Bike Lending</option>
+                                            <option value={"Social Work"}>Social Work</option>
+                                            <option value={"Gift"}>Gift</option>
+                                            <option value={"Voucher"}>Voucher</option>
+                                            <option value={"Land Rent"}>Land Rent</option>
+                                            <option value={"Others"}>Others</option>
+                                        </select>
                                     </div>
 
                                     <div className=" flex flex-row inline-block text-center lg:text-left mb-4">

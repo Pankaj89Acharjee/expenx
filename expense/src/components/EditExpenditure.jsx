@@ -12,22 +12,34 @@ const EditExpenditure = () => {
   const { id } = useParams();
   const [expdata, setExpdata] = useState({ //This line makes input box editable for any data in it
     exppurpose: " ",
-    amount: " "
+    amount: " ",
+    categories: " ",
+    dateofexp: " "
+
   });
-  const [categories, setCategories] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [showinput, setShowinput] = useState(false);
-  const [editable, setEditable] = useState()
+  const [success, setSuccess] = useState()
 
   const editHandler = (e) => {
-    setExpdata({ ...expdata, [e.target.name]: e.target.value }) //This line makes input box editable for any data in it
+    setExpdata({ ...expdata, [e.target.name]: e.target.value}, {[e.target.id]: e.target.value}) //This line makes input box editable for any data in it
   }
 
   const makeEditable = () => {
     setShowinput(true);
   }
 
-  const updateDetailsHandler = () => {
+  const updateDetailsHandler = async (e) => {
+    e.preventDefault();
     setShowinput(false);
+    const updateExp = await axios.patch(`http://localhost:5050/api/updateexpenditure/${id}`, expdata);
+    setSuccess(updateExp.data.success);
+    const result = updateExp;
+    if (result.status === 422) {
+      console.log("Not Updated");
+    } else {
+      console.log("Data Updated");
+    }
   }
 
   useEffect(() => {
@@ -52,6 +64,7 @@ const EditExpenditure = () => {
           <div className="absolute sm:-translate-y-2/5 -translate-x-1/5 -translate-y-1/2 flex items-center h-screen w-full bg-teal-lighter sm:h-8 md:h-16 lg:h-24 xl:h-48">
             <div className="w-full bg-gradient-to-br from-green-500 via-amber-400 to-red-200 rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
               <h1 className="block w-full text-center text-grey-darkest mb-6">Expense Details</h1>
+              <p className='text-red-500 font-bold text-xl'>{success}</p>
               <form className="opacity-60 hover:opacity-100 mb-4 md:flex md:flex-wrap md:justify-between md:max-w-sm md:mx-auto" onSubmit={updateDetailsHandler}>
                 <div className="flex flex-col mb-4 md:w-1/2">
                   <label className="mb-2 uppercase tracking-wide font-semibold text-md text-amber-700" for="first_name">Expense For</label>
@@ -82,7 +95,8 @@ const EditExpenditure = () => {
                   <div className="flex flex-col mb-4 md:w-full">
                     <label className="mb-2 uppercase font-semibold text-md text-amber-700" for="email">Choose Category</label>
                     <select className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                      onChange={(e) => setCategories(e.target.value)}
+                      onChange={(e) => editHandler(e)}
+                      name="categories"
                       required
                     >
                       <option>Select...</option>
@@ -101,7 +115,9 @@ const EditExpenditure = () => {
                   {showinput &&
                     <Space direction='vertical' size={12}>
                       <DatePicker
-                        name='datepick'
+                        id='dateofexp'
+                        
+                        onChange={(e) => editHandler(e)}
                       />
                     </Space>
                   }
@@ -110,8 +126,9 @@ const EditExpenditure = () => {
                   type="button"
                   onClick={makeEditable}
                 >Click to edit</button>
-
-                <button className="font-semibold bg-green-700 block bg-teal hover:bg-teal-dark text-white uppercase text-lg mx-auto p-4 rounded" type="submit">Update</button>
+                {showinput &&
+                  <button className="font-semibold bg-green-700 block bg-teal hover:bg-teal-dark text-white uppercase text-lg mx-auto p-4 rounded" type="submit">Update</button>
+                }
               </form>
             </div>
           </div>
