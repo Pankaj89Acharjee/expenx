@@ -8,13 +8,40 @@ const User = require("./models/user.model");
 const Expense = require("./models/expenditure.model");
 const Income = require("./models/income.model");
 const bcrypt = require("bcryptjs");
+const { Configuration, OpenAIApi } = require("openai");
 const moment = require("moment");
+const chatGPT = require("openai");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 //const DB_CONNECTION = process.env.MONGODBCONNECTION;
+
+
+//For ChatGPT
+const configuration = new Configuration({
+    apiKey: "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",
+});
+const openai = new OpenAIApi(configuration);
+
+app.post("/askqs", async (req, res) => {
+   var messageBody = []
+   var {msg} = req.body   
+    try {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: msg,
+            temperature: 0.5,
+            max_tokens: 100,
+        });
+        messageBody = response
+        //console.log("response in chatgpt", messageBody.data.choices[0].text);
+        res.status(200).json({message: messageBody.data.choices[0].text})
+    } catch (err) {
+        console.log("Error in Chat GPT");
+    }
+})
 
 
 const connectionStr = "mongodb+srv://pankaj:pankaj@cluster0.b79bjsq.mongodb.net/?retryWrites=true&w=majority";
@@ -239,7 +266,7 @@ app.get("/api/editexpenditure/:id", async (req, res) => {
 
 app.patch("/api/updateexpenditure/:id", async (req, res) => {
     try {
-        const updateExp = await Expense.findByIdAndUpdate(req.params.id, req.body, {new:true});
+        const updateExp = await Expense.findByIdAndUpdate(req.params.id, req.body, { new: true });
         const result = updateExp;
         res.status(200).json(result);
         console.log("Updated with new values", result);
@@ -248,3 +275,16 @@ app.patch("/api/updateexpenditure/:id", async (req, res) => {
         return res.status(422).json(error.message);
     }
 })
+
+app.delete("/api/deleteexp/:id", async (req, res) => {
+    try {
+        const deleteExp = await Expense.findByIdAndDelete(req.params.id);
+        const result = deleteExp;
+        res.status(200).json(result);
+        console.log("Expense deleted!", result);
+    } catch (error) {
+        console.log("Error in deleting expenditure");
+        return res.status(422).json(error.message);
+    }
+})
+

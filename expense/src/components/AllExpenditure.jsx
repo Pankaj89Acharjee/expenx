@@ -3,13 +3,14 @@ import axios from 'axios';
 import Spinner from './Spinner'
 import Chartexp from './Chartexp';
 import jwtDecode from 'jwt-decode';
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 //import 'antd/dist/antd.dark.css';
 import { DatePicker, Space } from 'antd';
 const { RangePicker } = DatePicker;
 
 
 const AllExpenditure = () => {
+    const { id } = useParams();
 
     const [userexp, setUserexp] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ const AllExpenditure = () => {
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
 
-    const gotoExpScreen = () => {      
+    const gotoExpScreen = () => {
         window.location.href = '/category/charts'
     }
 
@@ -45,6 +46,14 @@ const AllExpenditure = () => {
 
     if (loading) {
         return <Spinner message="Loading!" />
+    }
+
+    const triggerDelete = () => {
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const id = decodetoken.id;
+        const res = axios.delete(`http://localhost:5050/api/deleteexp${id}`);
+        
     }
 
     return (
@@ -92,11 +101,11 @@ const AllExpenditure = () => {
                                         <option value="365">Last One Year</option>
                                         <option value="custom">Custom</option>
                                     </select>
-                                    {frequency === 'custom' && 
-                                    
-                                    <Space direction='vertical' size={12}>
-                                        <RangePicker allowClear={false} bordered={true} placement={'topRight'}  value={selectedDate} onChange={(e) => setSelectedDate(e)} />
-                                    </Space>}
+                                    {frequency === 'custom' &&
+
+                                        <Space direction='vertical' size={12}>
+                                            <RangePicker allowClear={false} bordered={true} placement={'topRight'} value={selectedDate} onChange={(e) => setSelectedDate(e)} />
+                                        </Space>}
                                 </div>
                             </div>
                         </div>
@@ -123,31 +132,31 @@ const AllExpenditure = () => {
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Expenditure Date
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Purpose
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Amount
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Edit
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-900 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Delete
                                             </th>
@@ -173,30 +182,60 @@ const AllExpenditure = () => {
                                                             </label>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm font-medium  text-center text-gray-800 whitespace-nowrap">
                                                         {x.dateofexp.substring(0, 10)}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm text-gray-800 text-center whitespace-nowrap">
                                                         {x.exppurpose}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm text-gray-800 text-center whitespace-nowrap">
                                                         {x.amount}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <Link to={`/api/editexpenditure/${x._id}`}
-                                                            className="text-green-500 hover:text-green-700"
-
-                                                        >
-                                                            Edit
+                                                    <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
+                                                        <Link to={`/api/editexpenditure/${x._id}`}>
+                                                            <button
+                                                                className="w-3/5  text-center align-center px-6
+                                                                py-2.5
+                                                                bg-green-600
+                                                                text-white
+                                                                font-medium
+                                                                text-xs
+                                                                leading-tight
+                                                                uppercase
+                                                                rounded
+                                                                shadow-md
+                                                                hover:bg-green-900 hover:shadow-lg
+                                                                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+                                                                active:bg-green-800 active:shadow-lg
+                                                                transition
+                                                                delay-150
+                                                                duration-300
+                                                                ease-in-out"
+                                                            >Edit</button>
                                                         </Link>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <Link to=""
-                                                            className="text-red-500 hover:text-red-700"
-
+                                                    <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
+                                                        <button onClick={triggerDelete}
+                                                            className="w-3/5  text-center align-center px-6
+                                                            py-2.5
+                                                            bg-red-600
+                                                            text-white
+                                                            font-medium
+                                                            text-xs
+                                                            leading-tight
+                                                            uppercase
+                                                            rounded
+                                                            shadow-md
+                                                            hover:bg-amber-900 hover:shadow-lg
+                                                            focus:bg-amber-700 focus:shadow-lg focus:outline-none focus:ring-0
+                                                            active:bg-amber-800 active:shadow-lg
+                                                            transition
+                                                            delay-150
+                                                            duration-300
+                                                            ease-in-out"
                                                         >
                                                             Delete
-                                                        </Link>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             </tbody>

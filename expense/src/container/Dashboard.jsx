@@ -10,6 +10,7 @@ import AllExpenditure from '../components/AllExpenditure'
 import AllIncome from '../components/AllIncome'
 import EditIncome from '../components/EditIncome'
 import EditExpenditure from '../components/EditExpenditure'
+import ChatGPT from '../components/ChatGPT'
 
 
 const Dashboard = ({ allusers }) => {
@@ -74,6 +75,7 @@ const Dashboard = ({ allusers }) => {
                     <Route path="/api/editincome" element={<EditIncome />} />
                     <Route path="/category/allexpense" element={<AllExpenditure allusers={allusers && allusers}/>} />
                     <Route path="/category/allincome" element={<AllIncome allusers={allusers && allusers}/>} />
+                    <Route path="/askqs" element={<ChatGPT allusers={allusers && allusers}/>} />
                 </Routes>
             </div>
         </div>
