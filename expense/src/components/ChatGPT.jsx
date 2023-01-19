@@ -13,12 +13,6 @@ const ChatGPT = () => {
         setResmsg(responseChat.data.message);       
     }
 
-
-
-
-
-
-
     return (
         <div>
             <div className="mb-4">

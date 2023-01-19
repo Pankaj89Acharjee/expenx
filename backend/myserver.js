@@ -16,12 +16,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-//const DB_CONNECTION = process.env.MONGODBCONNECTION;
-
-
+const DB_CONNECTION = process.env.MONGODBCONNECTION;
+const CHATGPTKEY = process.env.CHATGPTKEY
+console.log("CHATGPT API", CHATGPTKEY);
 //For ChatGPT
 const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: CHATGPTKEY,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -44,7 +44,7 @@ app.post("/askqs", async (req, res) => {
 })
 
 
-const connectionStr = "mongodb+srv://pankaj:pankaj@cluster0.b79bjsq.mongodb.net/?retryWrites=true&w=majority";
+const connectionStr = DB_CONNECTION;
 mongoose.connect(connectionStr, {
     useNewUrlParser: true
 })
