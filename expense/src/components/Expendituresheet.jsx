@@ -6,6 +6,8 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode';
 import { category } from '../data/categorydata'
 import logo from '../assets/logoexp.jpeg'
+import { Modal} from 'antd';
+
 
 
 
@@ -19,6 +21,7 @@ const Expendituresheet = () => {
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState(null);
 
+    var responseMessage;
 
     const registerExpenditure = async (e) => {
         e.preventDefault();
@@ -27,22 +30,48 @@ const Expendituresheet = () => {
             const token = localStorage.getItem('token');
             const decodetoken = jwtDecode(token);
             const userId = decodetoken.id;
-            await axios.post("http://localhost:5050/api/newexpense", {
+            const result = await axios.post("http://localhost:5050/api/newexpense", {
                 userid: userId,
                 exppurpose,
                 amount,
                 categories,
                 dateofexp
             })
-            
-            alert("Saving Successful")
-            window.location.reload();
-            setLoading(false);
+
+            if (result.status === 200) {
+                responseMessage = result.data.message;
+                success();
+                setLoading(false);
+            }
         } catch (err) {
+            error();
             console.log("Data saving error", err.message);
             setLoading(false);
         }
     }
+
+    //For Showing Successfull message after saving
+    const success = () => {
+        Modal.success({
+            content: responseMessage,
+            onOk() {
+                window.location.reload();
+            },
+        });
+    };
+
+    //For Showing Error notification
+    const error = () => {
+        Modal.error({
+            title: 'ERROR!',
+            content: 'Error in saving data',
+            onOk() {
+            },
+        });
+    };
+
+
+
 
 
     //const randomImage = 'https://source.unsplash.com/850x250/?nature,photography,technology,cars,personality'
@@ -53,7 +82,7 @@ const Expendituresheet = () => {
 
     return (
         <div>
-           
+
             {/* This is the new section. Now implement this one*/}
             <section className="h-full rounded gradient-form bg-gradient-to-br from-blue-400 via-green-500 to-blue-500 md:h-full md:w-auto">
                 <div className="container py-12 px-6 h-full md:h-auto">
@@ -76,6 +105,7 @@ const Expendituresheet = () => {
                                                 <div className="mb-4">
                                                     <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Purpose of expenditure</label>
                                                     <input
+                                                        name="exppurpose"
                                                         type="text"
                                                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                         placeholder="Expense made for"
@@ -88,6 +118,7 @@ const Expendituresheet = () => {
                                                 <div className="mb-4">
                                                     <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Amount</label>
                                                     <input
+                                                        name="amount"
                                                         type="text"
                                                         className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                         placeholder="Amount in Rs"
@@ -99,6 +130,7 @@ const Expendituresheet = () => {
                                                 <div className="mb-4">
                                                     <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Category of expenditure</label>
                                                     <select className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                                        name="categories"
                                                         onChange={(e) => setCategories(e.target.value)}
                                                         required
                                                     >
@@ -115,7 +147,7 @@ const Expendituresheet = () => {
                                                 <div className="mb-4">
                                                     <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
                                                     <DatePicker
-                                                        id="datepicker"
+                                                        id='dateofexp'
                                                         type="text"
                                                         selected={dateofexp}
                                                         onChange={date => setDateofexp(date)}
@@ -135,6 +167,7 @@ const Expendituresheet = () => {
 
                                                 <div className="text-center pt-1 mb-12 pb-1">
                                                     <button
+
                                                         className="bg-gradient-to-br from-orange-600 via-yellow-700 to-blue-600 inline-block bg-gray-400 px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-900 hover:shadow-xl focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
                                                         type="submit"
                                                         data-mdb-ripple="true"

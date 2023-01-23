@@ -143,4 +143,9 @@ export const category = [
         id: 35,
         cat: "Furniture"
     },
+    {
+        id: 36,
+        cat: "Treatment"
+    },
 ]
+

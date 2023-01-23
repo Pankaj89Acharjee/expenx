@@ -9,7 +9,7 @@ const ChatGPT = () => {
 
 
     const useChatGPT = async () => {       
-        const responseChat = await axios.post("http://localhost:5050/askqs", {msg});
+        const responseChat = await axios.post("http://localhost:5050/category/chatgpt", {msg});
         setResmsg(responseChat.data.message);       
     }
 

@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom';
 import logo from '../assets/logoexp.jpeg';
 import bgsticker from '../assets/bgedit.jpg';
 import bgsticker2 from '../assets/bgexp.jpg';
-import { DatePicker, Space } from 'antd';
+import { DatePicker, Space, message } from 'antd';
 import { category } from '../data/categorydata'
+
+
 
 const EditExpenditure = () => {
 
@@ -37,8 +39,10 @@ const EditExpenditure = () => {
     const result = updateExp;
     if (result.status === 422) {
       console.log("Not Updated");
+      message.error('There was some issue to update your data!');
     } else {
       console.log("Data Updated");
+      message.success('Data Updated Successfully!');
     }
   }
 
@@ -47,6 +51,7 @@ const EditExpenditure = () => {
       const expUrl = await axios.get(`http://localhost:5050/api/editexpenditure/${id}`);
       setExpdata(await expUrl.data);
       console.log("Expense data received", expUrl.data);
+      message.success('Data Fetched Successfully!');
     }
     editFunc();
     setShowinput(false);
@@ -115,8 +120,7 @@ const EditExpenditure = () => {
                   {showinput &&
                     <Space direction='vertical' size={12}>
                       <DatePicker
-                        id='dateofexp'
-                        
+                        id='dateofexp'                        
                         onChange={(e) => editHandler(e)}
                       />
                     </Space>

@@ -4,8 +4,7 @@ import Spinner from './Spinner'
 import Chartexp from './Chartexp';
 import jwtDecode from 'jwt-decode';
 import { Link, useParams } from "react-router-dom"
-//import 'antd/dist/antd.dark.css';
-import { DatePicker, Space } from 'antd';
+import { DatePicker, Space, Popconfirm, message } from 'antd';
 const { RangePicker } = DatePicker;
 
 
@@ -18,10 +17,30 @@ const AllExpenditure = () => {
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
 
+
+
+    //For Opting Cancellation
+    function cancel(e) {
+        console.log(e);
+        message.error('Oh O! You were accidentally deleting data');
+    }
+
+
     const gotoExpScreen = () => {
         window.location.href = '/category/charts'
     }
 
+    //For reloading refrehed data after deletion of an expenditure
+    const reloadData = async () => {
+        setLoading(true)
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        //console.log("Value of user in All Expenditure", userId);
+        const response = await axios.post("http://localhost:5050/api/getexpense", { userid: userId, frequency: frequency, selectedDate: selectedDate });
+        setUserexp(response.data);
+        setLoading(false);
+    }
 
     useEffect(() => {
         setLoading(true)
@@ -48,19 +67,25 @@ const AllExpenditure = () => {
         return <Spinner message="Loading!" />
     }
 
-    const triggerDelete = () => {
-        const token = localStorage.getItem('token');
-        const decodetoken = jwtDecode(token);
-        const id = decodetoken.id;
-        const res = axios.delete(`http://localhost:5050/api/deleteexp${id}`);
-        
+
+    const triggerDelete = async (id) => {
+        const res = await axios.delete(`http://localhost:5050/api/deleteexp/${id}`);
+        if (res.status === 422) {
+            console.log("Not deleted");
+            message.error('There was some issue to delete your data!');
+        } else {
+            reloadData();
+            console.log("Expenditure Deleted")
+            message.success('Selected Expense Successfully Deleted!');
+
+        }
     }
 
     return (
         <div>
             <div className="lg:w-full flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
                 <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                    <h1 className='text-xl'>Total Amount Spent: {totalExpenseAmount}</h1>
+                    <h1 className='text-xl'>Total Amount Spent: <strong>{totalExpenseAmount}</strong></h1>
                     <h4 className="text-2xl text-center font-normal font-bold mb-6">Hi! {oneusername}</h4>
                     <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your expenses</h2>
                     <p className="text-sm mt-5">
@@ -215,8 +240,7 @@ const AllExpenditure = () => {
                                                         </Link>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
-                                                        <button onClick={triggerDelete}
-                                                            className="w-3/5  text-center align-center px-6
+                                                        <button className="w-3/5  text-center align-center px-6
                                                             py-2.5
                                                             bg-red-600
                                                             text-white
@@ -232,9 +256,10 @@ const AllExpenditure = () => {
                                                             transition
                                                             delay-150
                                                             duration-300
-                                                            ease-in-out"
-                                                        >
-                                                            Delete
+                                                            ease-in-out">
+                                                            <Popconfirm title="Are you sure to delete this data?" onConfirm={() => triggerDelete(x._id)} onCancel={cancel} okText="Sure" cancelText="Cancel">
+                                                                <a href="#">Delete</a>
+                                                            </Popconfirm>
                                                         </button>
                                                     </td>
                                                 </tr>

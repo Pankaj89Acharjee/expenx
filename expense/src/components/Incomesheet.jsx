@@ -3,6 +3,7 @@ import { DatePicker, Space } from 'antd';
 import Spinner from './Spinner'
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import { incomeCategory } from '../data/incomecategory'
 
 const Incomesheet = () => {
 
@@ -88,19 +89,15 @@ const Incomesheet = () => {
                                             required
                                         >
                                             <option>Click to select...</option>
-                                            <option value={"Salary"}>Salary</option>
-                                            <option value={"Honararium"}>Honararium</option>
-                                            <option value={"FD"}>Fixed Deposit</option>
-                                            <option value={"Incentive"}>Incentive</option>
-                                            <option value={"LIC Maturity"}>LIC Maturity</option>
-                                            <option value={"Tuition fees"}>Tuition Fees</option>
-                                            <option value={"Car Lend"}>Car Lending</option>
-                                            <option value={"Bike Lending"}>Bike Lending</option>
-                                            <option value={"Social Work"}>Social Work</option>
-                                            <option value={"Gift"}>Gift</option>
-                                            <option value={"Voucher"}>Voucher</option>
-                                            <option value={"Land Rent"}>Land Rent</option>
-                                            <option value={"Others"}>Others</option>
+                                            {
+                                                incomeCategory.length === 0 ? "Nothing to show" : (
+                                                    incomeCategory.map((data, index) => {
+                                                        return (
+                                                            <option key={index} value={data.cat}>{data.cat}</option>
+                                                        )
+                                                    })
+                                                )
+                                            }
                                         </select>
                                     </div>
 

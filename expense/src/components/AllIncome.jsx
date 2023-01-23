@@ -5,12 +5,11 @@ import Chartexp from './Chartexp';
 import jwtDecode from 'jwt-decode';
 import { Link } from "react-router-dom"
 //import 'antd/dist/antd.dark.css';
-import { DatePicker, Space } from 'antd';
+import { DatePicker, Space, Popconfirm, message } from 'antd';
 const { RangePicker } = DatePicker;
 
 
 const AllIncome = () => {
-
 
     const [userexp, setUserexp] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,6 +20,25 @@ const AllIncome = () => {
     const gotoExpScreen = () => {
         window.location.href = '/category/charts'
     }
+
+    //For Opting Cancellation
+    function cancel(e) {
+        console.log(e);
+        message.error('Oh O! You were accidentally deleting data');
+    }
+
+    //For reloading refrehed data after deletion of an expenditure
+    const reloadData = async () => {
+        setLoading(true)
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        //console.log("Value of user in All Income", userId);
+        const response = await axios.post("http://localhost:5050/api/getincome", { userid: userId, frequency: frequency, selectedDate: selectedDate });
+        setUserexp(response.data);
+        setLoading(false);
+    }
+
 
     useEffect(() => {
         setLoading(true)
@@ -47,6 +65,21 @@ const AllIncome = () => {
     if (loading) {
         return <Spinner message="Loading!" />
     }
+
+    const triggerDelete = async (id) => {
+        const res = await axios.delete(`http://localhost:5050/api/deleteincome/${id}`);
+        if (res.status === 422) {
+            console.log("Not deleted");
+            message.error('There was some issue to delete your data!');
+        } else {
+            reloadData();
+            console.log("Income Deleted")
+            message.success('Selected Income Successfully Deleted!');
+
+        }
+    }
+
+
 
     return (
         <div>
@@ -106,7 +139,7 @@ const AllIncome = () => {
                         <div className="p-1.5 w-full inline-block align-middle">
                             <div className="overflow-hidden border rounded-lg">
                                 <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-amber-500">
                                         <tr>
                                             <th scope="col" className="py-3 pl-4">
                                                 <div className="flex items-center h-5">
@@ -125,31 +158,31 @@ const AllIncome = () => {
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Income Date
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Income Source
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-900 uppercase "
                                             >
                                                 Income Amount
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-9000 uppercase "
                                             >
                                                 Edit
                                             </th>
                                             <th
                                                 scope="col"
-                                                className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                                                className="px-6 py-3 text-xs font-bold text-center text-gray-9000 uppercase "
                                             >
                                                 Delete
                                             </th>
@@ -175,30 +208,60 @@ const AllIncome = () => {
                                                             </label>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm font-medium  text-center text-gray-800 whitespace-nowrap">
                                                         {x.dateselect.substring(0, 10)}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm text-gray-800 text-center whitespace-nowrap">
                                                         {x.incomefrom}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                                                    <td className="px-6 py-4 text-sm text-gray-800 text-center whitespace-nowrap">
                                                         {x.amount}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <Link to="/api/editincome"
-                                                            className="text-green-500 hover:text-green-700"
-
-                                                        >
-                                                            Edit
+                                                    <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
+                                                        <Link to={`/api/editincome/${x._id}`}>
+                                                            <button
+                                                                className="w-3/5  text-center align-center px-6
+                                                                py-2.5
+                                                                bg-green-600
+                                                                text-white
+                                                                font-medium
+                                                                text-xs
+                                                                leading-tight
+                                                                uppercase
+                                                                rounded
+                                                                shadow-md
+                                                                hover:bg-green-900 hover:shadow-lg
+                                                                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+                                                                active:bg-green-800 active:shadow-lg
+                                                                transition
+                                                                delay-150
+                                                                duration-300
+                                                                ease-in-out"
+                                                            >Edit</button>
                                                         </Link>
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                                                        <Link to=""
-                                                            className="text-red-500 hover:text-red-700"
-
-                                                        >
-                                                            Delete
-                                                        </Link>
+                                                    <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
+                                                        <button className="w-3/5  text-center align-center px-6
+                                                            py-2.5
+                                                            bg-red-600
+                                                            text-white
+                                                            font-medium
+                                                            text-xs
+                                                            leading-tight
+                                                            uppercase
+                                                            rounded
+                                                            shadow-md
+                                                            hover:bg-amber-900 hover:shadow-lg
+                                                            focus:bg-amber-700 focus:shadow-lg focus:outline-none focus:ring-0
+                                                            active:bg-amber-800 active:shadow-lg
+                                                            transition
+                                                            delay-150
+                                                            duration-300
+                                                            ease-in-out">
+                                                            <Popconfirm title="Are you sure to delete this data?" onConfirm={() => triggerDelete(x._id)} onCancel={cancel} okText="Sure" cancelText="Cancel">
+                                                                <a href="#">Delete</a>
+                                                            </Popconfirm>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             </tbody>

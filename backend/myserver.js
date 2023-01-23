@@ -18,34 +18,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 const DB_CONNECTION = process.env.MONGODBCONNECTION;
 const CHATGPTKEY = process.env.CHATGPTKEY
-console.log("CHATGPT API", CHATGPTKEY);
-//For ChatGPT
-const configuration = new Configuration({
-    apiKey: CHATGPTKEY,
-});
-const openai = new OpenAIApi(configuration);
 
-app.post("/askqs", async (req, res) => {
-   var messageBody = []
-   var {msg} = req.body   
-    try {
-        const response = await openai.createCompletion({
-            model: "text-davinci-003",
-            prompt: msg,
-            temperature: 0.5,
-            max_tokens: 100,
-        });
-        messageBody = response
-        //console.log("response in chatgpt", messageBody.data.choices[0].text);
-        res.status(200).json({message: messageBody.data.choices[0].text})
-    } catch (err) {
-        console.log("Error in Chat GPT");
-    }
-})
-
-
-const connectionStr = DB_CONNECTION;
-mongoose.connect(connectionStr, {
+mongoose.connect(DB_CONNECTION, {
     useNewUrlParser: true
 })
     .then(() => {
@@ -93,11 +67,11 @@ app.post("/api/newexpense", async (req, res) => {
         })
         const createdExpense = await expense.save()
         console.log("Created Expense!", createdExpense);
-        res.send({ status: 'ok', message: 'New Expenditure Created', expense: createdExpense });
+        res.status(200).json({ StatusCode: "1", message: 'New Expenditure Created', expense: createdExpense });
 
     } catch (error) {
         console.log("Error in inserting new expense", error.message);
-        res.send({ status: "Error", error: error.message });
+        res.status(422).json({ status: "Error", error: error.message });
     }
 })
 
@@ -251,6 +225,8 @@ app.get("/api/singleuser/:id", async (req, res) => {
     }
 })
 
+
+
 //For Fetching Specific data
 app.get("/api/editexpenditure/:id", async (req, res) => {
     try {
@@ -260,7 +236,7 @@ app.get("/api/editexpenditure/:id", async (req, res) => {
         console.log("Expenditure Found", result);
     } catch (error) {
         console.log("Error in finding expenditure");
-        return res.status(500).json(error.message);
+        return res.status(422).json(error.message);
     }
 })
 
@@ -288,3 +264,63 @@ app.delete("/api/deleteexp/:id", async (req, res) => {
     }
 })
 
+//For finding a particular income to edit
+app.get("/api/editincome/:id", async (req, res) => {
+    try {
+        const editInc = await Income.findById(req.params.id);
+        res.status(200).json(editInc);
+        console.log("Income Data found");
+    } catch (error) {
+        console.log("Error in finding expenditure");
+        return res.status(422).json(error.message);
+    }
+})
+
+app.patch("/api/updateincome/:id", async (req, res) => {
+    try {
+        const updateExp = await Income.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const result = updateExp;
+        res.status(200).json(result);
+        console.log("Updated with new values", result);
+    } catch (error) {
+        console.log("Error in updating income");
+        return res.status(422).json(error.message);
+    }
+})
+
+app.delete("/api/deleteincome/:id", async (req, res) => {
+    try {
+        const deleteIncome = await Income.findByIdAndDelete(req.params.id);
+        const result = deleteIncome;
+        res.status(200).json(result);
+        console.log("Income data deleted!", result);
+    } catch (error) {
+        console.log("Error in deleting income data");
+        res.status(422).json(error.message);
+    }
+})
+
+
+//For ChatGPT
+const configuration = new Configuration({
+    apiKey: CHATGPTKEY,
+});
+const openai = new OpenAIApi(configuration);
+
+app.post("/category/chatgpt", async (req, res) => {
+    var messageBody = []
+    var { msg } = req.body
+    try {
+        const response = await openai.createCompletion({
+            model: "text-davinci-003",
+            prompt: msg,
+            temperature: 0.5,
+            max_tokens: 100,
+        });
+        messageBody = response
+        //console.log("response in chatgpt", messageBody.data.choices[0].text);
+        res.status(200).json({ message: messageBody.data.choices[0].text })
+    } catch (err) {
+        console.log("Error in Chat GPT");
+    }
+})

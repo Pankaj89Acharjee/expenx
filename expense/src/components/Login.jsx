@@ -31,7 +31,7 @@ const Login = () => {
             localStorage.setItem('token', data.user);
             setIsLoggedin(true);
             setLoading(false);
-            alert("Login Successful");            
+            alert("Login Successful");                        
             window.location.href = '/home';
         } else {
             alert("Email and/or password is wrong!");

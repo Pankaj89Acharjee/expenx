@@ -14,6 +14,7 @@ const categories = [
     { name: 'allincome' },
     { name: 'allexpense' },
     { name: 'charts' },
+    { name: 'chatgpt' },
     { name: 'allusers' },
     { name: 'Others' },
 ]

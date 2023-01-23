@@ -72,10 +72,10 @@ const Dashboard = ({ allusers }) => {
                     <Route path="category/income" element={<Incomesheet allusers={allusers && allusers} />} />
                     <Route path="/expensesuccess" element={<Expsuccessscreen />} />
                     <Route path="/api/editexpenditure/:id" element={<EditExpenditure />} />
-                    <Route path="/api/editincome" element={<EditIncome />} />
+                    <Route path="/api/editincome/:id" element={<EditIncome />} />
                     <Route path="/category/allexpense" element={<AllExpenditure allusers={allusers && allusers}/>} />
                     <Route path="/category/allincome" element={<AllIncome allusers={allusers && allusers}/>} />
-                    <Route path="/askqs" element={<ChatGPT allusers={allusers && allusers}/>} />
+                    <Route path="/category/chatgpt" element={<ChatGPT allusers={allusers && allusers}/>} />
                 </Routes>
             </div>
         </div>
