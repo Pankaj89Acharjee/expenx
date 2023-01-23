@@ -4,6 +4,8 @@ import Spinner from './Spinner'
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { incomeCategory } from '../data/incomecategory'
+import { Modal } from 'antd';
+
 
 const Incomesheet = () => {
 
@@ -13,6 +15,8 @@ const Incomesheet = () => {
     const [month, setMonth] = useState('')
     const [dateselect, setDateselect] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    var responseMessage;
 
     const registerIncome = async (e) => {
         e.preventDefault();
@@ -28,19 +32,46 @@ const Incomesheet = () => {
                 incomefrom,
 
             })
-
-            alert("Saving Successful")
-            window.location.reload();
-            setLoading(false);
-            console.log("ResonseData in Income is", responseData);
+            if (responseData.status === 200) {
+                responseMessage = responseData.data.Message;
+                setLoading(false);
+                success();
+                //console.log("ResonseData in Income is", responseData);
+            }
         } catch (err) {
+            error();
             console.log("Data saving error", err.message);
             setLoading(false);
         }
     }
 
+    //For Showing Successfull message after saving
+    const success = () => {
+        Modal.success({
+            content: responseMessage,
+            onOk() {
+                window.location.reload();
+            },
+        });
+    };
+
+    //For Showing Error notification
+    const error = () => {
+        Modal.error({
+            title: 'ERROR!',
+            content: 'Error in saving data',
+            onOk() {
+            },
+        });
+    };
+
+
     const gotoCharts = () => {
         window.location.href = '/category/charts'
+    }
+
+    if (loading) {
+        return <Spinner message="Loading!" />
     }
 
     return (

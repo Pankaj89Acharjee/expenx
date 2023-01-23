@@ -89,7 +89,7 @@ app.post("/api/newincome", async (req, res) => {
 
     } catch (error) {
         console.log("Error in inserting new income", error.message);
-        res.status(404).json({ StatusCode: "0", Message: 'Error in Saving', Error: error.message });
+        res.status(422).json({ StatusCode: "0", Message: 'Error in Saving', Error: error.message });
     }
 })
 
@@ -214,8 +214,9 @@ app.post("/api/viewchart", async (req, res) => {
 
 
 app.get("/api/singleuser/:id", async (req, res) => {
+    const userid = req.params.userid;
     try {
-        const allUsers = await User.findById(req.params.id);
+        const allUsers = await User.find(userid);
         const result = allUsers;
         res.status(200).json(result);
         console.log(result);
@@ -225,6 +226,17 @@ app.get("/api/singleuser/:id", async (req, res) => {
     }
 })
 
+app.post("/category/myprofile", async (req, res) => {
+    try {
+        const allUsers = await User.findById(req.body.userid);
+        const result = allUsers;
+        res.status(200).json(result);
+        console.log(result);
+    } catch (error) {
+        console.log("Error in finding user");
+        return res.status(500).json(error.message);
+    }
+})
 
 
 //For Fetching Specific data

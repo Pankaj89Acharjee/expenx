@@ -19,7 +19,7 @@ const EditExpenditure = () => {
     dateofexp: " "
 
   });
-  const [selectedDate, setSelectedDate] = useState(null);
+ 
   const [showinput, setShowinput] = useState(false);
   const [success, setSuccess] = useState()
 

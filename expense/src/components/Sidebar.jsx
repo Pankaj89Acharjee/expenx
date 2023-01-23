@@ -16,6 +16,7 @@ const categories = [
     { name: 'charts' },
     { name: 'chatgpt' },
     { name: 'allusers' },
+    { name: 'myprofile' },
     { name: 'Others' },
 ]
 const Sidebar = ({ allusers, closeToggle }) => {
