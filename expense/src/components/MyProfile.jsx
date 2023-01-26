@@ -26,28 +26,29 @@ const MyProfile = () => {
         }, 1000);
     }, [])
 
+    var userName = userdata?.name
+    console.log("Username in My profile", userName);
     return (
         <div >
             <div className='relative'>
                 <img className='w-full rounded-lg' src={bgstickerexp} alt="bckgrnd" />
-                <div className='absolute text-white text-6xl top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2'>
+                <div className='absolute text-white font-mono text-9xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
                     <Typewriter
-                        words={[' Programmer ', ' Professional Coder ', ' Full Stack Developer ', ' Data Manager ']}
+                        words={[`Hi! ${userName}`, 'Welcome']}
                         loop
                         cursor
                         cursorStyle='|'
-                        typeSpeed={70}
+                        typeSpeed={60}
                         deleteSpeed={50}
                         delaySpeed={1000}
-
                     />
                 </div>
 
                 {/* <h1 className='absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2'>{userdata?.name}</h1> */}
             </div>
-            <div>
+            <div className='relative'>
                 <img className='w-full rounded-top-lg' src={bgTxt} alt="bckgrnd" />
-                <img className='w-full rounded-lg opacity-40' src={bgImg} alt="bckgrnd" />
+                <img className='w-full rounded-lg opacity-30' src={bgImg} alt="bckgrnd" />
             </div>
 
         </div>
