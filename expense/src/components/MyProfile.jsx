@@ -32,9 +32,9 @@ const MyProfile = () => {
         <div >
             <div className='relative'>
                 <img className='w-full rounded-lg' src={bgstickerexp} alt="bckgrnd" />
-                <div className='absolute text-white font-mono text-9xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
+                <div className='absolute text-white font-mono xl:text-6xl lg:text-6xl sm:text-md md:text-4xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
                     <Typewriter
-                        words={[`Hi! ${userName}`, 'Welcome']}
+                        words={[`Welcome!${userName}`, 'Welcome']}
                         loop
                         cursor
                         cursorStyle='|'
@@ -46,12 +46,69 @@ const MyProfile = () => {
 
                 {/* <h1 className='absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2'>{userdata?.name}</h1> */}
             </div>
-            <div className='relative'>
-                <img className='w-full rounded-top-lg' src={bgTxt} alt="bckgrnd" />
-                <img className='w-full rounded-lg opacity-30' src={bgImg} alt="bckgrnd" />
-            </div>
+            <img className='w-full rounded-top-lg' src={bgTxt} alt="bckgrnd" />
+            <div className='relative flex flex-wrap'>
+                <img className='relative w-full rounded-lg opacity-30' src={bgImg} alt="bckgrnd" />
+                <div className="xl:w-11/12 md:w-8/12">
+                    <div className="block shadow-lg rounded-lg">
+                        <div className="lg:flex lg:flex-wrap g-0">
+                            <div className='absolute top-5 left-5 items-center justify-center align-center'>
+                                <img
+                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
+                                    className="ml-5 justify-center rounded-full w-12 h-12 lg:w-48 lg:h-48 sm:w-16 sm:h-16 md:w-24 md:h-24 xl:w-48 xl:h-48  shadow-lg object-cover"
+                                    alt="userpic"
+                                />
+                                <h1 className='font-sans-serif text-center text-xl sm:text-4xl font-bold mt-5 leading-normal'>{userdata?.name}</h1>
 
+                                <div>
+                                    <h3 className='font-sans text-md text-center sm:text-3xl font-semibold mt-3 leading-normal'>{userdata?.designation}</h3>
+                                </div>
+                            </div>
+
+                            <div className='absolute top-5 right-5 items-center justify-center align-center'>
+                                <div className='px-4 py-6 md:p-12 md:mx-6'>
+                                    <h1 className='font-bold font-sans text-4xl'>CONTACT DETAILS</h1>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                </div>
+                            </div>
+
+                            <div className='absolute bottom-5 right-5 items-center justify-center align-center'>
+                                <div className='px-4 py-6 md:p-12 md:mx-6'>
+                                    <h1 className='font-bold font-sans text-4xl'>CONTACT DETAILS</h1>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                    <h2>{userdata?.city}</h2>
+                                    <h2>{userdata?.mobile}</h2>
+                                    <h2>{userdata?.email}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
     )
 }
 
