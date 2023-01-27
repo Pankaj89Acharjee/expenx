@@ -6,6 +6,8 @@ import bgstickerexp from '../assets/profilehead.png'
 import bgImg from '../assets/ProfileBackground.jpg'
 import bgTxt from '../assets/ProfileText.png'
 import { Typewriter } from 'react-simple-typewriter'
+import { IoIosListBox } from 'react-icons/io'
+
 
 const MyProfile = () => {
 
@@ -30,11 +32,11 @@ const MyProfile = () => {
     console.log("Username in My profile", userName);
     return (
         <div >
-            <div className='relative'>
+            <div className='relative scroll-smooth'>
                 <img className='w-full rounded-lg' src={bgstickerexp} alt="bckgrnd" />
-                <div className='absolute text-white font-mono xl:text-6xl lg:text-6xl sm:text-md md:text-4xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
+                <div className='absolute text-white font-mono xl:text-4xl lg:text-4xl sm:text-md md:text-2xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
                     <Typewriter
-                        words={[`Welcome!${userName}`, 'Welcome']}
+                        words={[`Hi!${userName}`, 'Welcome']}
                         loop
                         cursor
                         cursorStyle='|'
@@ -51,7 +53,7 @@ const MyProfile = () => {
                 <img className='relative w-full rounded-lg opacity-30' src={bgImg} alt="bckgrnd" />
                 <div className="xl:w-11/12 md:w-8/12">
                     <div className="block shadow-lg rounded-lg">
-                        <div className="lg:flex lg:flex-wrap g-0">
+                        <div className="lg:flex lg:flex-wrap md:flex md:flex-col">
                             <div className='absolute top-5 left-5 items-center justify-center align-center'>
                                 <img
                                     src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
@@ -66,41 +68,40 @@ const MyProfile = () => {
                             </div>
 
                             <div className='absolute top-5 right-5 items-center justify-center align-center'>
-                                <div className='px-4 py-6 md:p-12 md:mx-6'>
-                                    <h1 className='font-bold font-sans text-4xl'>CONTACT DETAILS</h1>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
+                                <div className='px-2 py-6 md:p-2'>
+                                    <div className='flex flex-inline'>
+                                        <IoIosListBox className='h-6 lg:h-10 xl:h-10 md:h-8 sm:h-6 w-6 mr-3' />
+                                        <h1 className='font-bold font-sans lg:text-2xl xl:text-3xl md:text-md sm-text-sm text-md'>CONTACT DETAILS
+                                        </h1>
+                                    </div>
+
+                                    <div className='flex flex-col '>
+                                        <h2>{userdata?.city}</h2>
+                                        <h2>{userdata?.mobile}</h2>
+                                        <h2>{userdata?.email}</h2>
+                                        <h2>{userdata?.city}</h2>
+                                        <h2>{userdata?.mobile}</h2>
+                                        <h2>{userdata?.email}</h2>
+                                        <h2>{userdata?.city}</h2>
+                                        <h2>{userdata?.mobile}</h2>
+                                        <h2>{userdata?.email}</h2>
+                                        <h2>{userdata?.city}</h2>
+                                    </div>
+
+
                                 </div>
                             </div>
 
                             <div className='absolute bottom-5 right-5 items-center justify-center align-center'>
-                                <div className='px-4 py-6 md:p-12 md:mx-6'>
-                                    <h1 className='font-bold font-sans text-4xl'>CONTACT DETAILS</h1>
+                                <div className='px-4 py-6 md:p-2 md:mx-6'>
+                                    <h1 className='font-bold font-sans lg:text-2xl xl:text-3xl md:text-md sm-text-sm text-md'>CONTACT DETAILS</h1>
                                     <h2>{userdata?.city}</h2>
                                     <h2>{userdata?.mobile}</h2>
                                     <h2>{userdata?.email}</h2>
                                     <h2>{userdata?.city}</h2>
                                     <h2>{userdata?.mobile}</h2>
                                     <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
+
                                 </div>
                             </div>
                         </div>
