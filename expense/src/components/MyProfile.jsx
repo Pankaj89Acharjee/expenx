@@ -45,70 +45,83 @@ const MyProfile = () => {
                         delaySpeed={1000}
                     />
                 </div>
-
-                {/* <h1 className='absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2'>{userdata?.name}</h1> */}
             </div>
+
             <img className='w-full rounded-top-lg' src={bgTxt} alt="bckgrnd" />
-            <div className='relative flex flex-wrap'>
-                <img className='relative w-full rounded-lg opacity-30' src={bgImg} alt="bckgrnd" />
-                <div className="xl:w-11/12 md:w-8/12">
-                    <div className="block shadow-lg rounded-lg">
-                        <div className="lg:flex lg:flex-wrap md:flex md:flex-col">
-                            <div className='absolute top-5 left-5 items-center justify-center align-center'>
-                                <img
-                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
-                                    className="ml-5 justify-center rounded-full w-12 h-12 lg:w-48 lg:h-48 sm:w-16 sm:h-16 md:w-24 md:h-24 xl:w-48 xl:h-48  shadow-lg object-cover"
-                                    alt="userpic"
-                                />
-                                <h1 className='font-sans-serif text-center text-xl sm:text-4xl font-bold mt-5 leading-normal'>{userdata?.name}</h1>
+            <div className='bg-fixed' style={{
+                backgroundImage: `url(${bgImg})`,
+                backgroundSize: "cover",
+                height: "100vh"
+            }}>
 
-                                <div>
-                                    <h3 className='font-sans text-md text-center sm:text-3xl font-semibold mt-3 leading-normal'>{userdata?.designation}</h3>
-                                </div>
-                            </div>
+            </div>
 
-                            <div className='absolute top-5 right-5 items-center justify-center align-center'>
-                                <div className='px-2 py-6 md:p-2'>
-                                    <div className='flex flex-inline'>
-                                        <IoIosListBox className='h-6 lg:h-10 xl:h-10 md:h-8 sm:h-6 w-6 mr-3' />
-                                        <h1 className='font-bold font-sans lg:text-2xl xl:text-3xl md:text-md sm-text-sm text-md'>CONTACT DETAILS
-                                        </h1>
+            <div className='h-screen justify-center items-center flex flex-col lg:flex lg:flex-row xl:flex xl:flex-row'>
+                <img
+                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
+                    className="justify-center rounded-full w-16 h-16 lg:w-48 lg:h-48 md:w-24 md:h-24 xl:w-48 xl:h-48  shadow-lg object-cover"
+                    alt="userpic"
+                />
+                <div className='justify-center items-center flex flex-col items-center flex-inline'>
+                    <h1 className='font-sans-serif text-center text-2xl md:text-3xl font-bold mt-5 leading-normal'>{userdata?.name}</h1>
+                    <h3 className='font-sans text-md text-center md:text-3xl font-semibold mt-3 leading-normal'>{userdata?.designation}</h3>
+                </div>
+            </div>
+
+            <section className="h-full rounded md:h-full md:w-auto">
+                <div className="container py-12 px-6 h-full md:h-auto">
+                    <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
+                        <div className="xl:w-11/12 md:w-8/12">
+                            <div className="block bg-gray-400 shadow-lg rounded-lg">
+                                <div className="lg:flex lg:flex-wrap g-0">
+                                    <div className="lg:w-6/12 px-4 md:px-0 sm:w-auto">
+                                        <div className="md:p-12 md:mx-6">
+                                            <div className="text-center">
+                                                <img
+                                                    className="justify-center mx-auto w-16 h-16 rounded-full lg:w-24 lg:h-24 md:w-24 md:h-24 xl:w-48 xl:h-48"
+                                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
+                                                    alt="logo"
+                                                />
+                                                <h4 className="text-xl text-yellow-700 font-semibold mt-1 mb-12 pb-1">NEW EXPENX REGISTRATION</h4>
+                                            </div>
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Amount</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Category of expenditure</label>
+                                            </div>
+
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
+                                            </div>
+
+                                            <div className="text-center pt-1 mb-12 pb-1">
+                                            </div>
+                                            <div className="flex items-center justify-between pb-6">
+                                            </div>
+                                        </div>
                                     </div>
-
-                                    <div className='flex flex-col '>
-                                        <h2>{userdata?.city}</h2>
-                                        <h2>{userdata?.mobile}</h2>
-                                        <h2>{userdata?.email}</h2>
-                                        <h2>{userdata?.city}</h2>
-                                        <h2>{userdata?.mobile}</h2>
-                                        <h2>{userdata?.email}</h2>
-                                        <h2>{userdata?.city}</h2>
-                                        <h2>{userdata?.mobile}</h2>
-                                        <h2>{userdata?.email}</h2>
-                                        <h2>{userdata?.city}</h2>
+                                    <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
+                                        <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
+                                            <h4 className="text-2xl text-center font-normal font-bold mb-6">Get best out of EXPENX</h4>
+                                            <p className="text-sm">
+                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                                consequat.
+                                            </p>
+                                        </div>
                                     </div>
-
-
-                                </div>
-                            </div>
-
-                            <div className='absolute bottom-5 right-5 items-center justify-center align-center'>
-                                <div className='px-4 py-6 md:p-2 md:mx-6'>
-                                    <h1 className='font-bold font-sans lg:text-2xl xl:text-3xl md:text-md sm-text-sm text-md'>CONTACT DETAILS</h1>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-                                    <h2>{userdata?.city}</h2>
-                                    <h2>{userdata?.mobile}</h2>
-                                    <h2>{userdata?.email}</h2>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
+
 
     )
 }

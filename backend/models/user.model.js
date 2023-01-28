@@ -22,7 +22,6 @@ const User = new mongoose.Schema({
     skilled: {type: String},
     programsknown: {type: String},
     yearofexperience: {type: Number},
-
 },
     { collection: 'user-data' },
 

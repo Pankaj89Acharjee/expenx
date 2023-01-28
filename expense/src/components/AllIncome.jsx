@@ -274,7 +274,6 @@ const AllIncome = () => {
                         </div>
                     </div>
                 </div>
-
             </>
 
             <div className='flex flex-inline box position-relative w-full items-center justify-center'>
