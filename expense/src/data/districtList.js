@@ -1,0 +1,27 @@
+export const districts = [
+    {dist: "Darjeeling"},
+    {dist: "Jalpaiguri"},
+    {dist: "CoochBihar"},
+    {dist: "AlipurDuar"},
+    {dist: "Uttar Dinajpur"},
+    {dist: "Dakshin Dinajpur"},
+    {dist: "Malda"},
+    {dist: "Murshidabad"},
+    {dist: "Nadia"},
+    {dist: "Purba Burdwan"},
+    {dist: "Pashchim Burdwan"},
+    {dist: "Purulia"},
+    {dist: "Bankura"},
+    {dist: "Birbhum"},
+    {dist: "Uttar 24 Pargana"},
+    {dist: "Dakshin 24 Pargana"},
+    {dist: "Purba Medinipur"},
+    {dist: "Paschim Medinipur"},
+    {dist: "Kolkata"},
+    {dist: "Hoogly"},
+    {dist: "Howrah"},
+    {dist: "Kalimpong"},
+    {dist: "Jhargram"},
+
+
+]

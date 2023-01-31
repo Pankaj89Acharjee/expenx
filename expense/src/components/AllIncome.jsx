@@ -6,6 +6,7 @@ import jwtDecode from 'jwt-decode';
 import { Link } from "react-router-dom"
 //import 'antd/dist/antd.dark.css';
 import { DatePicker, Space, Popconfirm, message } from 'antd';
+import { MdDelete, MdEditNote } from 'react-icons/md';
 const { RangePicker } = DatePicker;
 
 
@@ -225,7 +226,8 @@ const AllIncome = () => {
                                                                 bg-green-600
                                                                 text-white
                                                                 font-medium
-                                                                text-xs
+                                                                text-xl
+                                                                cursor-pointer
                                                                 leading-tight
                                                                 uppercase
                                                                 rounded
@@ -237,7 +239,9 @@ const AllIncome = () => {
                                                                 delay-150
                                                                 duration-300
                                                                 ease-in-out"
-                                                            >Edit</button>
+                                                            >
+                                                                <MdEditNote />
+                                                            </button>
                                                         </Link>
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-medium text-center whitespace-nowrap">
@@ -246,7 +250,8 @@ const AllIncome = () => {
                                                             bg-red-600
                                                             text-white
                                                             font-medium
-                                                            text-xs
+                                                            text-xl
+                                                            cursor-pointer
                                                             leading-tight
                                                             uppercase
                                                             rounded
@@ -259,7 +264,10 @@ const AllIncome = () => {
                                                             duration-300
                                                             ease-in-out">
                                                             <Popconfirm title="Are you sure to delete this data?" onConfirm={() => triggerDelete(x._id)} onCancel={cancel} okText="Sure" cancelText="Cancel">
-                                                                <a href="#">Delete</a>
+                                                                <a href="#">
+
+                                                                    <MdDelete />
+                                                                </a>
                                                             </Popconfirm>
                                                         </button>
                                                     </td>

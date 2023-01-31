@@ -9,6 +9,7 @@ const User = new mongoose.Schema({
     mobile: { type: Number},
     //Below for showing in profile
     village: {type: String},
+    postoffice: {type: String},
     pin: {type: Number},
     ps: {type: String},
     district: {type: String},

@@ -8,9 +8,6 @@ import { category } from '../data/categorydata'
 import logo from '../assets/logoexp.jpeg'
 import { Modal} from 'antd';
 
-
-
-
 const Expendituresheet = () => {
 
     var defaultDate = new Date().toISOString().slice(0, 10);
@@ -70,10 +67,6 @@ const Expendituresheet = () => {
         });
     };
 
-
-
-
-
     //const randomImage = 'https://source.unsplash.com/850x250/?nature,photography,technology,cars,personality'
 
     if (loading) {
@@ -82,7 +75,6 @@ const Expendituresheet = () => {
 
     return (
         <div>
-
             {/* This is the new section. Now implement this one*/}
             <section className="h-full rounded gradient-form bg-gradient-to-br from-blue-400 via-green-500 to-blue-500 md:h-full md:w-auto">
                 <div className="container py-12 px-6 h-full md:h-auto">
@@ -143,7 +135,6 @@ const Expendituresheet = () => {
                                                     </select>
                                                 </div>
 
-
                                                 <div className="mb-4">
                                                     <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
                                                     <DatePicker
@@ -162,12 +153,10 @@ const Expendituresheet = () => {
                                                         onChangeRaw={setDateDefault}
                                                         className="border border-solid border-gray-300 form-control px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                     />
-
                                                 </div>
 
                                                 <div className="text-center pt-1 mb-12 pb-1">
                                                     <button
-
                                                         className="bg-gradient-to-br from-orange-600 via-yellow-700 to-blue-600 inline-block bg-gray-400 px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-900 hover:shadow-xl focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
                                                         type="submit"
                                                         data-mdb-ripple="true"

@@ -213,10 +213,11 @@ app.post("/api/viewchart", async (req, res) => {
 
 
 
-app.get("/api/singleuser/:id", async (req, res) => {
-    const userid = req.params.userid;
+app.post("/api/singleuser/:id", async (req, res) => {
+    const userid = req.params.id;  
+    console.log("Id from Frontend", userid);
     try {
-        const allUsers = await User.find(userid);
+        const allUsers = await User.findById(userid);
         const result = allUsers;
         res.status(200).json(result);
         console.log(result);
@@ -225,6 +226,14 @@ app.get("/api/singleuser/:id", async (req, res) => {
         return res.status(500).json(error.message);
     }
 })
+
+// app.post("/api/getuserprofiledata/:id", async(req, res) => {
+//     const userid = req.params.id;
+//     try{
+
+//     }
+// })
+
 
 app.post("/category/myprofile", async (req, res) => {
     try {

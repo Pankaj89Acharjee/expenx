@@ -2,12 +2,12 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import jwtDecode from 'jwt-decode'
-import bgstickerexp from '../assets/profilehead.png'
+import bgstickerexp from '../assets/TopHead.png'
 import bgImg from '../assets/ProfileBackground.jpg'
 import bgTxt from '../assets/ProfileText.png'
 import { Typewriter } from 'react-simple-typewriter'
 import { IoIosListBox } from 'react-icons/io'
-
+import svgIcon from '../assets/svg/profilesvg.png'
 
 const MyProfile = () => {
 
@@ -23,56 +23,46 @@ const MyProfile = () => {
             const userId = decodetoken.id;
             const response = await axios.post("http://localhost:5050/category/myprofile", { userid: userId });
             setUserdata(response.data);
-            console.log("User Profile data", response.data)
+            //console.log("User Profile data", response.data)
             setLoading(false);
         }, 1000);
     }, [])
 
     var userName = userdata?.name
-    console.log("Username in My profile", userName);
+    //console.log("Username in My profile", userName);
     return (
-        <div >
+        <div>
+
             <div className='relative scroll-smooth'>
-                <img className='w-full rounded-lg' src={bgstickerexp} alt="bckgrnd" />
-                <div className='absolute text-white font-mono xl:text-4xl lg:text-4xl sm:text-md md:text-2xl bottom-4 left-1/2 -translate-y-2/3 -translate-x-1/2'>
-                    <Typewriter
-                        words={[`Hi!${userName}`, 'Welcome']}
-                        loop
-                        cursor
-                        cursorStyle='|'
-                        typeSpeed={60}
-                        deleteSpeed={50}
-                        delaySpeed={1000}
-                    />
+                <div className='w-full mt-4 rounded-t-lg  '>
+                    <img className='w-full rounded-lg' src={bgstickerexp} alt="bckgrnd" />
                 </div>
+
             </div>
 
-            <img className='w-full rounded-top-lg' src={bgTxt} alt="bckgrnd" />
-            <div className='bg-fixed' style={{
+            {/* <div className='bg-fixed' style={{
                 backgroundImage: `url(${bgImg})`,
                 backgroundSize: "cover",
                 height: "100vh"
             }}>
+            </div> */}
 
-            </div>
-
-            <div className='h-screen justify-center items-center flex flex-col lg:flex lg:flex-row xl:flex xl:flex-row'>
-                <img
-                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
-                    className="justify-center rounded-full w-16 h-16 lg:w-48 lg:h-48 md:w-24 md:h-24 xl:w-48 xl:h-48  shadow-lg object-cover"
-                    alt="userpic"
+            <div className='text-center justify-center items-center text-gray-400 mt-5 font-mono xl:text-4xl lg:text-4xl sm:text-md md:text-2xl'>
+                <Typewriter
+                    words={[`Hi!${userName}`, 'Welcome']}
+                    loop
+                    cursor
+                    cursorStyle='|'
+                    typeSpeed={60}
+                    deleteSpeed={50}
+                    delaySpeed={1000}
                 />
-                <div className='justify-center items-center flex flex-col items-center flex-inline'>
-                    <h1 className='font-sans-serif text-center text-2xl md:text-3xl font-bold mt-5 leading-normal'>{userdata?.name}</h1>
-                    <h3 className='font-sans text-md text-center md:text-3xl font-semibold mt-3 leading-normal'>{userdata?.designation}</h3>
-                </div>
             </div>
-
-            <section className="h-full rounded md:h-full md:w-auto">
+            <section className="h-full rounded-2xl md:h-full md:w-auto">
                 <div className="container py-12 px-6 h-full md:h-auto">
                     <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
                         <div className="xl:w-11/12 md:w-8/12">
-                            <div className="block bg-gray-400 shadow-lg rounded-lg">
+                            <div className="block shadow-gray-600 hover:shadow-cyan-500/40 bgcustomcolor3 shadow-lg rounded-lg">
                                 <div className="lg:flex lg:flex-wrap g-0">
                                     <div className="lg:w-6/12 px-4 md:px-0 sm:w-auto">
                                         <div className="md:p-12 md:mx-6">
@@ -82,37 +72,86 @@ const MyProfile = () => {
                                                     src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
                                                     alt="logo"
                                                 />
-                                                <h4 className="text-xl text-yellow-700 font-semibold mt-1 mb-12 pb-1">NEW EXPENX REGISTRATION</h4>
+                                                <h4 className="text-2xl underline text-white uppercase font-semibold mt-1 mb-3 pb-1">{userdata?.name}</h4>
+                                                <h4 className="text-xl text-white uppercase font-semibold  mb-5 pb-1">{userdata?.designation}</h4>
                                             </div>
-                                            <div className="mb-4">
-                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Amount</label>
+                                            <div className="mb-4 flex">
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 underline uppercase mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">Basic Details</h2></span>
                                             </div>
-
-                                            <div className="mb-4">
-                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Category of expenditure</label>
-                                            </div>
-
 
                                             <div className="mb-4">
-                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Village: {userdata?.city}</label>
                                             </div>
 
-                                            <div className="text-center pt-1 mb-12 pb-1">
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Post Office: {userdata?.city}</label>
                                             </div>
-                                            <div className="flex items-center justify-between pb-6">
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Police Station: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">City: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">District: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">E-mail: {userdata?.email}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Mobile: {userdata?.mobile}</label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
-                                        <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                                            <h4 className="text-2xl text-center font-normal font-bold mb-6">Get best out of EXPENX</h4>
-                                            <p className="text-sm">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                                consequat.
-                                            </p>
+
+                                    <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bgcustomcolor3">
+                                        <div className="text-gray-900 px-4 py-6 md:p-6 md:mx-6">
+                                            <div className="mb-4 flex">
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">educational details</h2></span>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Graduation: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">College: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">University: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Passing Year: {userdata?.city}</label>
+                                            </div>
+
+
+                                            <div className="mb-4 flex mt-10">
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">professional skills</h2></span>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Major Skill: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Computer Skill: {userdata?.city}</label>
+                                            </div>
+
+                                            <div className="mb-4">
+                                                <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Experience: {userdata?.city}</label>
+                                            </div>
+
+
                                         </div>
+
+
                                     </div>
                                 </div>
                             </div>
