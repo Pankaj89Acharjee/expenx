@@ -7,8 +7,8 @@ import bgstickerexp from '../assets/LogoMain.png'
 
 import logo from '../assets/logoexp.jpeg'
 
-const isNotActiveStyle = 'flex items-center px-5 text-gray-500 hover:text-white transition-all duration-200 ease-in-out capitalize';
-const isActiveStyle = 'flex items-center px-5 gap-3 font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize';
+const isNotActiveStyle = 'flex items-center font-normal px-5 text-gray-900 hover:text-white transition-all duration-200 ease-in-out capitalize';
+const isActiveStyle = 'flex items-center underline px-5 gap-3 text-black font-extrabold border-r-2 border-black transition-all duration-200 ease-in-out capitalize';
 
 const Sidebar = ({ allusers, closeToggle }) => {
 //console.log(allusers);
@@ -17,13 +17,13 @@ const Sidebar = ({ allusers, closeToggle }) => {
     }
 
     return (
-        <div className='flex flex-col text-white font-semibold font-normal font-subpixel-antialiased bg-black justify-between h-full overflow-y-scroll min-w-210 hide-scrollbar'>
+        <div className='flex flex-col tracking-tight text-black font-bold md:overflow-hidden overflow-auto md:hover:overflow-auto h-screen font-subpixel-antialiased bgcustomcolor4 justify-between overflow-y-auto'>
             <div className='flex flex-col'>
                 <Link to="/home"
                     className='flex px-5 gap-2 my-6 pt-1 w-190 items-center'
                     onClick={handleCloseSidebar}
                 >
-                    <img src={bgstickerexp} alt="logo" className='w-40 h-40 rounded-full items-center justify-center text-center' />
+                    <img src={bgstickerexp} alt="logo" className='w-12 h-12 rounded-full items-center justify-center text-center' /> <span className='text-xl'>Expenx</span>
                 </Link>
 
                 <div className='flex flex-col gap-5'>
@@ -46,7 +46,7 @@ const Sidebar = ({ allusers, closeToggle }) => {
                                 onClick={handleCloseSidebar}
                                 key={category.name}
                             >
-                                <img src={category.image} alt="ctgry" className='w-14 h-14 p-2 rounded-full shadow-xl'/>
+                                <img src={category.image} alt="ctgry" className='w-14 h-14 p-0.5 mr-2 rounded-full bg-black shadow-xl'/>
                                 {category.name}
                             </NavLink>
                         )

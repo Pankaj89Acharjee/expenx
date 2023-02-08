@@ -13,7 +13,7 @@ const User = new mongoose.Schema({
     pin: {type: Number},
     ps: {type: String},
     district: {type: String},
-    image: {type: String},
+    profileimage: {type: String},
     //For educational background
     graduation: {type: String},
     collegename: {type: String},

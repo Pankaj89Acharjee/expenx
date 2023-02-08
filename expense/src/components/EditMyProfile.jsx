@@ -14,12 +14,16 @@ import { expertiseList } from '../data/expertiseList';
 import { highestQualification } from '../data/highestQualification';
 import { passingYears } from '../data/passingYearList';
 import { universities } from '../data/universityList';
+import { DatePicker, Space, message } from 'antd';
 import 'animate.css';
 
 const EditMyProfile = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const [geteditdata, setGeteditdata] = useState({
+
+  }) //Hook for saving new data
   const [loading, setLoading] = useState(false)
   const [getdata, setGetdata] = useState()
   const [title, setTitle] = useState('');
@@ -36,27 +40,28 @@ const EditMyProfile = () => {
   const [skill, setSkill] = useState();
   const [computer, setComputer] = useState();
   const [experience, setExperience] = useState();
-  const [highestqualification, setHighestqualification] = useState();
+  const [graduation, setGraduation] = useState();
   const [college, setCollege] = useState();
   const [university, setUniversity] = useState();
   const [passingyear, setPassingyear] = useState();
   const [mobile, setMobile] = useState();
   const [city, setCity] = useState();
   const [designation, setDesignation] = useState();
+  const [profileimage, setProfileimage] = useState();
+  const [showinput, setShowinput] = useState(false);
+  const [success, setSuccess] = useState()
 
 
   useEffect(() => {
-    setLoading(true)
-    const loadingTimer = setTimeout(() => {
-      clearTimeout(loadingTimer);
-      const url = `http://localhost:5050/api/singleuser/${id}`;
-
-      axios.post(url)
-        .then((response) => {
-          setGetdata(response.data);
-          setLoading(false);
-        });
-    }, 1500)
+    setLoading(true)  //later implement try-catch block
+    const fetchDataToEdit = async () => {
+      const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`);
+      setGetdata(await response.data);
+      console.log("User Profile Data", response.data);
+      message.success('Profile Data Fetched Successfully!');
+    }
+    fetchDataToEdit();
+    setLoading(false);
   }, [])
 
   console.log("Data from backend", getdata);
@@ -110,7 +115,7 @@ const EditMyProfile = () => {
                 </div>
                 <input
                   type="file"
-                  name="upload-image"
+                  name="profileimage"
                   onChange={uploadImage}
                   className="w-0 h-0"
                 />
@@ -125,7 +130,6 @@ const EditMyProfile = () => {
                 <button
                   type="button"
                   className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-
                 >
                   <MdDelete />
                 </button>
@@ -137,51 +141,66 @@ const EditMyProfile = () => {
         <div /*form*/ className="flex flex-1 flex-col gap-6 lg:pl-5 mt-5 w-full animate__animated animate__fadeInUp">
           <label className="outline-none uppercase text-gray-600 text-2xl sm:text-2xl font-bold border-b-2 border-gray-200 animate__animated animate__zoomIn p-2">NAME: {getdata?.name}</label>
           <label className="outline-none text-gray-600 text-xl sm:text-xl font-bold border-b-2 border-gray-200 p-2">E-Mail: {getdata?.email}</label>
+
           {getdata && ( /*Showing authenticated getdata*/
             <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
               <img
                 className="w-15 h-15 rounded-full"
                 alt="profilepic"
               />
-              <p className="font-bold">{getdata.getdataName}</p>
+              <p className="font-bold">{getdata?.getdataName}</p>
             </div>
           )}
+          <div className='flex flex-col justify-center items-center content-center bgcustomcolor5 w-4/5'>
+            <div className='flex flex-col items-center w-1/5'>
+              <label className="mb-2 uppercase font-semibold text-md text-dark text-center md:ml-2" for="last_name">Mobile No <span> <input
+                type="text"
+                name="mobile"
+                value={getdata?.mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                placeholder="Mobile Number"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+              /></span></label>
 
-          <input
-            type="text"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            placeholder="Mobile Number"
-            className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
-          />
-          <input
-            type="text"
-            value={village}
-            onChange={(e) => setVillage(e.target.value)}
-            placeholder="Village"
-            className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
-          />
+              <label className="mb-2 uppercase font-semibold text-md text-dark text-center md:ml-2" for="last_name">Village <span>   <input
+                type="text"
+                name="village"
+                value={getdata?.village}
+                onChange={(e) => setVillage(e.target.value)}
+                placeholder="Village"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+              /></span></label>
 
-          <input
-            type="text"
-            value={postoffice}
-            onChange={(e) => setPostoffice(e.target.value)}
-            placeholder="Post Office"
-            className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
-          />
 
-          <input
-            type="text"
-            value={policestation}
-            onChange={(e) => setPolicestation(e.target.value)}
-            placeholder="Police Station"
-            className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
-          />
+              <label className="mb-2 uppercase font-semibold text-md text-dark text-center md:ml-2" for="last_name">Post Office <span>  <input
+                type="text"
+                name="postoffice"
+                value={getdata?.postoffice}
+                onChange={(e) => setPostoffice(e.target.value)}
+                placeholder="Post Office"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+              /></span></label>
+
+              <label className="mb-2 uppercase font-semibold text-md text-dark text-center md:ml-2" for="last_name">Police Station <span>  <input
+                type="text"
+                name="ps"
+                value={getdata?.ps}
+                onChange={(e) => setPolicestation(e.target.value)}
+                placeholder="Police Station"
+                className="outline-none text-base sm:text-lg border-b-2 border-gray-200 p-2"
+              /></span></label>
+            </div>
+          </div>
+
+          {/* End of Div for Showing Text boxes */}
+
 
           <div /*for dropdown*/ className="flex flex-col">
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">Select your district</p>
               <select
+                name="district"
+                value={getdata?.district}
                 onChange={(e) => {
                   setDistrict(e.target.value);
                 }}
@@ -201,6 +220,8 @@ const EditMyProfile = () => {
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">Select your city</p>
               <select
+                name="city"
+                value={getdata?.city}
                 onChange={(e) => {
                   setCity(e.target.value);
                 }}
@@ -220,8 +241,10 @@ const EditMyProfile = () => {
             <div>
               <p className="mb-2 font-semibold text:lg sm:text-xl">Select your designation</p>
               <select
+                name="designation"
+                value={getdata?.designation}
                 onChange={(e) => {
-                  setCategory(e.target.value);
+                  setDesignation(e.target.value);
                 }}
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
               >
@@ -238,8 +261,10 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Your Highest Qualification</p>
               <select
+                name="graduation"
+                value={getdata?.graduation}
                 onChange={(e) => {
-                  setHighestqualification(e.target.value);
+                  setGraduation(e.target.value);
                 }}
                 className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
               >
@@ -256,6 +281,8 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Name of your College</p>
               <select
+                name="collegename"
+                value={getdata?.collegename}
                 onChange={(e) => {
                   setCollege(e.target.value);
                 }}
@@ -274,6 +301,8 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Name of your University</p>
               <select
+                name="university"
+                value={getdata?.university}
                 onChange={(e) => {
                   setUniversity(e.target.value);
                 }}
@@ -292,6 +321,8 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Passing Year</p>
               <select
+                name="passingyear"
+                value={getdata?.passingyear}
                 onChange={(e) => {
                   setPassingyear(e.target.value);
                 }}
@@ -305,12 +336,14 @@ const EditMyProfile = () => {
                     <option>{data.passingyear}</option>
                   )
                 })}
-                
+
               </select>
               <p className="mb-2 mt-6 uppercase text-center underline font-bold text:lg sm:text-xl">Professional Skills</p>
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Expertise</p>
               <select
+                name="skilled"
+                value={getdata?.skilled}
                 onChange={(e) => {
                   setSkill(e.target.value);
                 }}
@@ -328,6 +361,8 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Computer Knowledge</p>
               <select
+                name='programsknown'
+                value={getdata?.programsknown}
                 onChange={(e) => {
                   setComputer(e.target.value);
                 }}
@@ -345,6 +380,8 @@ const EditMyProfile = () => {
 
               <p className="mb-2 font-semibold text:lg sm:text-xl">Working Experience</p>
               <select
+                name="yearofexperience"
+                value={getdata?.yearsofexperience}
                 onChange={(e) => {
                   setExperience(e.target.value);
                 }}
@@ -353,7 +390,7 @@ const EditMyProfile = () => {
                 <option /*default option*/ value="others" className="sm:text-bg bg-white">Choose Experience(in yeras)</option>
 
                 {/*Now we need to map all the categories form the categories*/}
-                
+
                 {yearsOfExperience.map((data) => {
                   return (
                     <option>{data.experience}</option>

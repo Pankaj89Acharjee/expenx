@@ -87,7 +87,7 @@ const AllExpenditure = () => {
             <div className="lg:w-full flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
                 <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
                     <h1 className='text-xl'>Total Amount Spent: <strong>{totalExpenseAmount}</strong></h1>
-                    <h4 className="text-2xl text-center font-normal font-bold mb-6">Hi! {oneusername}</h4>
+                    <h4 className="text-2xl text-center font-normal mb-6">Hi! {oneusername}</h4>
                     <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your expenses</h2>
                     <p className="text-sm mt-5">
                         Knowledge opens the door to Opportunity, Success and Achievements. A little water in the Sun will evaporate, but the ocean never

@@ -49,6 +49,13 @@ body {
   background-color: #00CED1;
 }
 
+.bgcustomcolor4 {
+  background-color: #7FE9DE;
+}
+ .bgcustomcolor5 {
+  background-color: #5fdacd;
+ }
+ 
 .ant-btn-primary {
   background-color: rgb(240, 130, 12);
 }

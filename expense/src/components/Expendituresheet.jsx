@@ -151,7 +151,7 @@ const Expendituresheet = () => {
                                                         yearDropdownItemNumber={25}
                                                         value={dateDefault}
                                                         onChangeRaw={setDateDefault}
-                                                        className="border border-solid border-gray-300 form-control px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                                        className="border border-solid form-control px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                                     />
                                                 </div>
 
@@ -182,7 +182,7 @@ const Expendituresheet = () => {
                                     </div>
                                     <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
                                         <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                                            <h4 className="text-2xl text-center font-normal font-bold mb-6">Get best out of EXPENX</h4>
+                                            <h4 className="text-2xl text-center font-bold mb-6">Get best out of EXPENX</h4>
                                             <p className="text-sm">
                                                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                                                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,

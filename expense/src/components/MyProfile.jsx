@@ -76,7 +76,7 @@ const MyProfile = () => {
                                                 <h4 className="text-xl text-white uppercase font-semibold  mb-5 pb-1">{userdata?.designation}</h4>
                                             </div>
                                             <div className="mb-4 flex">
-                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 underline uppercase mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">Basic Details</h2></span>
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 underline uppercase mb-2 text-center font-bold text-2xl text-gray-900 dark:text-gray">Basic Details</h2></span>
                                             </div>
 
                                             <div className="mb-4">
@@ -112,7 +112,7 @@ const MyProfile = () => {
                                     <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bgcustomcolor3">
                                         <div className="text-gray-900 px-4 py-6 md:p-6 md:mx-6">
                                             <div className="mb-4 flex">
-                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">educational details</h2></span>
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center font-bold text-2xl text-gray-900 dark:text-gray">educational details</h2></span>
                                             </div>
 
                                             <div className="mb-4">
@@ -133,7 +133,7 @@ const MyProfile = () => {
 
 
                                             <div className="mb-4 flex mt-10">
-                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center font-bold text-2xl font-normal text-gray-900 dark:text-gray">professional skills</h2></span>
+                                                <IoIosListBox className='text-3xl' /> <span><h2 for="amount" className="block ml-3 uppercase underline mb-2 text-center text-2xl font-normal text-gray-900 dark:text-gray">professional skills</h2></span>
                                             </div>
 
                                             <div className="mb-4">
@@ -147,11 +147,7 @@ const MyProfile = () => {
                                             <div className="mb-4">
                                                 <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Experience: {userdata?.city}</label>
                                             </div>
-
-
                                         </div>
-
-
                                     </div>
                                 </div>
                             </div>
