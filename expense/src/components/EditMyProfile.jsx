@@ -14,7 +14,7 @@ import { expertiseList } from '../data/expertiseList';
 import { highestQualification } from '../data/highestQualification';
 import { passingYears } from '../data/passingYearList';
 import { universities } from '../data/universityList';
-import { DatePicker, Space, message } from 'antd';
+import { message } from 'antd';
 import 'animate.css';
 
 const EditMyProfile = () => {
@@ -22,7 +22,7 @@ const EditMyProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [getdata, setGetdata] = useState({
-    
+
     mobile: "",
     village: "",
     postoffice: "",
@@ -38,39 +38,56 @@ const EditMyProfile = () => {
     programsknown: "",
     yearofexperience: ""
   }) //Hook for saving new data
-
-
-  const [loading, setLoading] = useState(false) 
-  const [imageAsset, setImageAsset] = useState(true);
+  const [loading, setLoading] = useState(false)
+  const [imageAsset, setImageAsset] = useState();
   const [wrongImageType, setWrongImageType] = useState(false);
   const [profileimage, setProfileimage] = useState();
   const [showinput, setShowinput] = useState(false);
-  const [success, setSuccess] = useState()
+  const [success, setSuccess] = useState();
+ 
 
 
   useEffect(() => {
     setLoading(true)  //later implement try-catch block
     const fetchDataToEdit = async () => {
-      const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`);
+      const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`, getdata);
       setGetdata(await response.data);
       console.log("User Profile Data", response.data);
       message.success('Profile Data Fetched Successfully!');
     }
     fetchDataToEdit();
     setLoading(false);
+    setShowinput(false);
   }, [])
 
   console.log("Data from backend", getdata);
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
-    // uploading asset to sanity
+    //console.log(selectedFile)   
     if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
-      setWrongImageType(false);
+      setWrongImageType(false);      
       setLoading(true);
+      try {
+        let formData = new FormData();
+        formData.append("avatar", selectedFile)
+        axios.post("http://localhost:5050/api/uploadprofilepic", formData)
+          .then((result) => {
+            setImageAsset(result);
+            console.log("Photo Uploaded", result.status);
+            message.success("Profile photo uploaded successfully");
+            setLoading(false);
+          })
+
+      } catch (err) {
+        console.log("Error", err)
+        message.error("Error in Uploading photo")
+      }
+
     } else {
       setLoading(false);
       setWrongImageType(true);
+      message.error("Please select png, svg, jpeg, gif, tff files only")
     }
   };
 
@@ -78,7 +95,24 @@ const EditMyProfile = () => {
     setGetdata({ ...getdata, [e.target.name]: e.target.value })
   }
 
+  const makeEditable = () => {
+    setShowinput(true);
+  }
 
+  const updateData = async (e) => {
+    e.preventDefault();
+    setShowinput(false);
+    const updateUser = await axios.patch(`http://localhost:5050/api/updateuserdata/${id}`);
+    setSuccess(updateUser.data.success)
+    const result = updateUser;
+    if (result.status === 422) {
+      console.log("Not Updated");
+      message.error('There was some issue to update your data!');
+    } else {
+      console.log("Data Updated");
+      message.success('Data Updated Successfully!');
+    }
+  }
 
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
@@ -95,8 +129,8 @@ const EditMyProfile = () => {
                   <p className='text-red-500'>It&apos;s incorrect file type.</p>
                 )
               }
-              {imageAsset ? (
-                
+              {!imageAsset ? (
+
                 <label className='text-white'>
                   <div className="flex flex-col items-center justify-center h-full">
                     <div className="flex flex-col justify-center items-center">
@@ -120,8 +154,8 @@ const EditMyProfile = () => {
                 </label>
               ) : (
                 <div className="relative h-full">
-                  <img 
-                    src={imageAsset?.url} 
+                  <img
+                    src={imageAsset?.url}
                     alt="uploaded-pic"
                     className="h-full w-full"
                   />
@@ -136,11 +170,11 @@ const EditMyProfile = () => {
             </div>
           </div>
 
-          <form /*form*/ className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
+          <form /*form*/ onSubmit={updateData} className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
             <label className="outline-none uppercase text-gray-600 text-2xl sm:text-2xl font-bold border-b-2 border-gray-200 animate__animated animate__zoomIn p-2">NAME: {getdata?.name}</label>
             <label className="outline-none text-gray-600 text-xl sm:text-xl font-bold border-b-2 border-gray-200 p-2">E-Mail: {getdata?.email}</label>
 
-            {getdata && ( 
+            {getdata && (
               <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
                 <img
                   className="w-15 h-15 rounded-full"
@@ -152,46 +186,98 @@ const EditMyProfile = () => {
             <div className='flex flex-col rounded-2xl justify-center items-center content-center bgcustomcolor5 gap-5 mt-5 mb-5 w-full'>
               <div className='flex flex-col items-center w-1/5'>
                 <label className="mb-2 font-semibold text:xl sm:text-sm text-dark text-center md:ml-2" for="last_name">Mobile No </label>
-                <input
-                  type="text"
-                  id="mobid"
-                  name="mobile"
-                  value={getdata?.mobile || ''}
-                  onChange={(e) => editDataHandler(e)}
-                  placeholder="Mobile Number"
-                  className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
-                />
+                {showinput ?
+                  <input
+                    type="text"
+                    id="mobid"
+                    name="mobile"
+                    value={getdata?.mobile || ''}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Mobile Number"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                  : <input
+                    type="text"
+                    id="mobid"
+                    name="mobile"
+                    disabled
+                    value={getdata?.mobile || ''}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Mobile Number"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />}
+                <label className="mb-2 font-semibold text:xl sm:text-sm text-dark text-center md:ml-2" for="last_name">Village</label>
+                {showinput ?
+                  <input
+                    type="text"
+                    id="villid"
+                    name="village"
+                    value={getdata?.village}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Village"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                  :
+                  <input
+                    type="text"
+                    id="villid"
+                    name="village"
+                    disabled
+                    value={getdata?.village}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Village"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                }
 
-                <label className="mb-2 font-semibold text:xl sm:text-sm text-dark text-center md:ml-2" for="last_name">Village <span>   <input
-                  type="text"
-                  id="villid"
-                  name="village"
-                  value={getdata?.village}
-                  onChange={(e) => editDataHandler(e)}
-                  placeholder="Village"
-                  className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
-                /></span></label>
 
+                <label className="mb-2 font-semibold text:xl sm:text-sm text-dark text-center md:ml-2" for="last_name">Post Office </label>
+                {showinput ?
+                  <input
+                    type="text"
+                    id="postid"
+                    name="postoffice"
+                    value={getdata?.postoffice}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Post Office"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                  :
+                  <input
+                    type="text"
+                    id="postid"
+                    name="postoffice"
+                    disabled
+                    value={getdata?.postoffice}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Post Office"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                }
 
-                <label className="mb-2 font-semibold text:xl sm:text-sm text-dark text-center md:ml-2" for="last_name">Post Office <span>  <input
-                  type="text"
-                  id="postid"
-                  name="postoffice"
-                  value={getdata?.postoffice}
-                  onChange={(e) => editDataHandler(e)}
-                  placeholder="Post Office"
-                  className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
-                /></span></label>
-
-                <label className="font-semibold text:xl sm:text-sm text-dark text-center mb-4 md:ml-2" for="last_name">Police Station <span>  <input
-                  type="text"
-                  id="psid"
-                  name="ps"
-                  value={getdata?.ps}
-                  onChange={(e) => editDataHandler(e)}
-                  placeholder="Police Station"
-                  className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
-                /></span></label>
+                <label className="font-semibold text:xl sm:text-sm text-dark text-center mb-4 md:ml-2" for="last_name">Police Station </label>
+                {showinput ?
+                  <input
+                    type="text"
+                    id="psid"
+                    name="ps"
+                    value={getdata?.ps}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Police Station"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                  :
+                  <input
+                    type="text"
+                    id="psid"
+                    name="ps"
+                    disabled
+                    value={getdata?.ps}
+                    onChange={(e) => editDataHandler(e)}
+                    placeholder="Police Station"
+                    className="form-control outline-none border-none rounded-2xl opacity-80 text-base text-center text:xl sm:text-sm border-b-2 border-gray-200 p-2"
+                  />
+                }
               </div>
             </div>
 
@@ -201,202 +287,405 @@ const EditMyProfile = () => {
             <div className="flex flex-col ">
               <div>
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Select your district</p>
-                <select
-                  name="district"
-                  value={getdata?.district}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select District</option>
+                {showinput ?
+                  <select
+                    name="district"
+                    value={getdata?.district}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select District</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {districts.map((data) => {
-                    return (
-                      <option>{data.dist}</option>
-                    )
-                  })}
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {districts.map((data) => {
+                      return (
+                        <option>{data.dist}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="district"
+                    value={getdata?.district}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select District</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+                    {districts.map((data) => {
+                      return (
+                        <option>{data.dist}</option>
+                      )
+                    })}
+                  </select>
+                }
               </div>
 
               <div>
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Select your city</p>
-                <select
-                  name="city"
-                  value={getdata?.city}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select Cities</option>
+                {showinput ?
+                  <select
+                    name="city"
+                    value={getdata?.city}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Cities</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {cities.map((data) => {
-                    return (
-                      <option>{data.cityName}</option>
-                    )
-                  })}
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {cities.map((data) => {
+                      return (
+                        <option>{data.cityName}</option>
+                      )
+                    })}
+                  </select>
+                  :
+
+                  <select
+                    name="city"
+                    value={getdata?.city}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Cities</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+                    {cities.map((data) => {
+                      return (
+                        <option>{data.cityName}</option>
+                      )
+                    })}
+                  </select>
+                }
               </div>
 
               <div>
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Select your designation</p>
-                <select
-                  name="designation"
-                  value={getdata?.designation}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select Designation</option>
+                {showinput ?
+                  <select
+                    name="designation"
+                    value={getdata?.designation}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Designation</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {designationList.map((data) => {
-                    return (
-                      <option>{data.desig}</option>
-                    )
-                  })}
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {designationList.map((data) => {
+                      return (
+                        <option>{data.desig}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="designation"
+                    value={getdata?.designation}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Designation</option>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {designationList.map((data) => {
+                      return (
+                        <option>{data.desig}</option>
+                      )
+                    })}
+                  </select>
+                }
+
                 <p className="mb-2 mt-6 uppercase text-center underline font-bold text:lg sm:text-xl">Educational Background</p>
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Your Highest Qualification</p>
-                <select
-                  name="graduation"
-                  value={getdata?.graduation}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select Qualification</option>
+                {showinput ?
+                  <select
+                    name="graduation"
+                    value={getdata?.graduation}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Qualification</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
+                    {/*Now we need to map all the categories form the categories*/}
 
-                  {highestQualification.map((data) => {
-                    return (
-                      <option>{data.qualification}</option>
-                    )
-                  })}
-                </select>
+                    {highestQualification.map((data) => {
+                      return (
+                        <option>{data.qualification}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="graduation"
+                    value={getdata?.graduation}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select Qualification</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+
+                    {highestQualification.map((data) => {
+                      return (
+                        <option>{data.qualification}</option>
+                      )
+                    })}
+                  </select>
+                }
+
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Name of your College</p>
-                <select
-                  name="collegename"
-                  value={getdata?.collegename}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select College</option>
+                {showinput ?
+                  <select
+                    name="collegename"
+                    value={getdata?.collegename}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select College</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
+                    {/*Now we need to map all the categories form the categories*/}
 
-                  {colleges.map((data) => {
-                    return (
-                      <option>{data.college}</option>
-                    )
-                  })}
-                </select>
+                    {colleges.map((data) => {
+                      return (
+                        <option>{data.college}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="collegename"
+                    value={getdata?.collegename}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select College</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+
+                    {colleges.map((data) => {
+                      return (
+                        <option>{data.college}</option>
+                      )
+                    })}
+                  </select>
+                }
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Name of your University</p>
-                <select
-                  name="university"
-                  value={getdata?.university}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Select University</option>
+                {showinput ?
+                  <select
+                    name="university"
+                    value={getdata?.university}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select University</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
+                    {/*Now we need to map all the categories form the categories*/}
 
-                  {universities.map((data) => {
-                    return (
-                      <option>{data.university}</option>
-                    )
-                  })}
-                </select>
+                    {universities.map((data) => {
+                      return (
+                        <option>{data.university}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="university"
+                    value={getdata?.university}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Select University</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+
+                    {universities.map((data) => {
+                      return (
+                        <option>{data.university}</option>
+                      )
+                    })}
+                  </select>
+                }
+
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Passing Year</p>
-                <select
-                  name="passingyear"
-                  value={getdata?.passingyear}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Choose Year</option>
+                {showinput ?
+                  <select
+                    name="passingyear"
+                    value={getdata?.passingyear}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Year</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {passingYears.map((data) => {
-                    return (
-                      <option>{data.passingyear}</option>
-                    )
-                  })}
+                    {/*Now we need to map all the categories form the categories*/}
+                    {passingYears.map((data) => {
+                      return (
+                        <option>{data.passingyear}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="passingyear"
+                    value={getdata?.passingyear}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Year</option>
 
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {passingYears.map((data) => {
+                      return (
+                        <option>{data.passingyear}</option>
+                      )
+                    })}
+                  </select>
+                }
+
+
                 <p className="mb-2 mt-6 uppercase text-center underline font-bold text:lg sm:text-xl">Professional Skills</p>
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Expertise</p>
-                <select
-                  name="skilled"
-                  value={getdata?.skilled}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Choose Your expertise</option>
+                {showinput ?
+                  <select
+                    name="skilled"
+                    value={getdata?.skilled}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Your expertise</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {expertiseList.map((data) => {
-                    return (
-                      <option>{data.expert}</option>
-                    )
-                  })}
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {expertiseList.map((data) => {
+                      return (
+                        <option>{data.expert}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="skilled"
+                    value={getdata?.skilled}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Your expertise</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+                    {expertiseList.map((data) => {
+                      return (
+                        <option>{data.expert}</option>
+                      )
+                    })}
+                  </select>
+                }
+
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Computer Knowledge</p>
-                <select
-                  name='programsknown'
-                  value={getdata?.programsknown}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Choose</option>
+                {showinput ?
+                  <select
+                    name='programsknown'
+                    value={getdata?.programsknown}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
-                  {computerKnowledge.map((data) => {
-                    return (
-                      <option>{data.knowledge}</option>
-                    )
-                  })}
-                </select>
+                    {/*Now we need to map all the categories form the categories*/}
+                    {computerKnowledge.map((data) => {
+                      return (
+                        <option>{data.knowledge}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name='programsknown'
+                    value={getdata?.programsknown}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+                    {computerKnowledge.map((data) => {
+                      return (
+                        <option>{data.knowledge}</option>
+                      )
+                    })}
+                  </select>
+                }
+
 
                 <p className="mb-2 font-semibold text:lg sm:text-xl">Working Experience</p>
-                <select
-                  name="yearofexperience"
-                  value={getdata?.yearsofexperience}
-                  onChange={(e) => editDataHandler(e)}
-                  className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
-                >
-                  <option /*default option*/ className="sm:text-bg bg-white">Choose Experience(in yeras)</option>
+                {showinput ?
+                  <select
+                    name="yearofexperience"
+                    value={getdata?.yearsofexperience}
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Experience(in yeras)</option>
 
-                  {/*Now we need to map all the categories form the categories*/}
+                    {/*Now we need to map all the categories form the categories*/}
 
-                  {yearsOfExperience.map((data) => {
-                    return (
-                      <option>{data.experience}</option>
-                    )
-                  })}
-                </select>
+                    {yearsOfExperience.map((data) => {
+                      return (
+                        <option>{data.experience}</option>
+                      )
+                    })}
+                  </select>
+                  :
+                  <select
+                    name="yearofexperience"
+                    value={getdata?.yearsofexperience}
+                    disabled
+                    onChange={(e) => editDataHandler(e)}
+                    className="outline-none w-4/5 text-base border-b-2 border-gray-200 p-2 rounded-md cursor-pointer"
+                  >
+                    <option /*default option*/ className="sm:text-bg bg-white">Choose Experience(in yeras)</option>
+
+                    {/*Now we need to map all the categories form the categories*/}
+
+                    {yearsOfExperience.map((data) => {
+                      return (
+                        <option>{data.experience}</option>
+                      )
+                    })}
+                  </select>
+                }
               </div>
 
+
               <div className='flex flex-row items-center justify-center space-x-4'>
+                {showinput && (
+                  <div /*for save button*/ className="flex justify-end items-end mt-5">
+                    <button
+                      type="submit"
+                      className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
+                    >
+                      Update
+                    </button>
+                  </div>
+                )}
+
+
                 <div /*for save button*/ className="flex justify-end items-end mt-5">
                   <button
                     type="button"
-
-                    className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
-                  >
-                    Save Data
-                  </button>
-                </div>
-
-                <div /*for save button*/ className="flex justify-end items-end mt-5">
-                  <button
-                    type="button"
-
+                    onClick={makeEditable}
                     className="bg-red-500 text-white font-bold p-2 rounded-full w-28 outline-none"
                   >
                     Edit

@@ -10,12 +10,16 @@ const Income = require("./models/income.model");
 const bcrypt = require("bcryptjs");
 const { Configuration, OpenAIApi } = require("openai");
 const moment = require("moment");
+const multer = require("multer");
+const fs = require("fs");
+const upload = multer({ dest: "./assets/uploads/" }) //Path for uploaded image
 const chatGPT = require("openai");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(express.static("./assets/uploads")) //Using static folder (uploads) for multer
 const DB_CONNECTION = process.env.MONGODBCONNECTION;
 const CHATGPTKEY = process.env.CHATGPTKEY
 
@@ -31,9 +35,25 @@ app.listen(PORT, () => {
     console.log("Server on port", PORT);
 })
 
+
+
 app.get("/", (req, res) => {
     res.send("Hi backend");
 })
+
+//For Uploding Profile Picture
+app.post("/api/uploadprofilepic", upload.single("avatar"), (req, res) => {
+    console.log("File Type is:", req.file);
+    let fileExtension = req.file.mimetype.split("/")[1];
+    console.log("File Extension is:", fileExtension);
+    let newFileName = (req.file.filename + "." + fileExtension);
+    console.log("New File Name for Image is:", newFileName);    
+    //fs.rename format => filePath, newFileName, callBackfx
+    fs.rename(`./assets/uploads/${req.file.filename}`, `./assets/uploads/${newFileName}`, function () {       
+        res.status(200).json({ Status: "Ok" })
+    })
+})
+
 
 app.post("/api/register", async (req, res) => {
     console.log(req.body);
@@ -214,7 +234,7 @@ app.post("/api/viewchart", async (req, res) => {
 
 
 app.post("/api/singleuser/:id", async (req, res) => {
-    const userid = req.params.id;  
+    const userid = req.params.id;
     console.log("Id from Frontend", userid);
     try {
         const allUsers = await User.findById(userid);
@@ -227,6 +247,17 @@ app.post("/api/singleuser/:id", async (req, res) => {
     }
 })
 
+app.patch("/api/updateuserdata/:id", async (req, res) => {
+    try {
+        const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const result = updateUser;
+        res.status(200).json(result);
+        console.log("User data updated successfully")
+    } catch (error) {
+        console.log("Error in updating expenditure");
+        return res.status(422).json(error.message);
+    }
+})
 // app.post("/api/getuserprofiledata/:id", async(req, res) => {
 //     const userid = req.params.id;
 //     try{
@@ -272,6 +303,7 @@ app.patch("/api/updateexpenditure/:id", async (req, res) => {
         return res.status(422).json(error.message);
     }
 })
+
 
 app.delete("/api/deleteexp/:id", async (req, res) => {
     try {
