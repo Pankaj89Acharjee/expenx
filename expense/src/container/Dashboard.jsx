@@ -13,8 +13,6 @@ import EditExpenditure from '../components/EditExpenditure'
 import ChatGPT from '../components/ChatGPT'
 import MyProfile from '../components/MyProfile'
 import EditMyProfile from '../components/EditMyProfile'
-import Navbar from '../components/Navbar'
-
 
 const Dashboard = ({ allusers }) => {
     const ussers = {allusers};
@@ -80,8 +78,7 @@ const Dashboard = ({ allusers }) => {
                     <Route path="/category/allincome" element={<AllIncome allusers={allusers && allusers}/>} />
                     <Route path="/category/chatgpt" element={<ChatGPT allusers={allusers && allusers}/>} />
                     <Route path="/category/myprofile" element={<MyProfile allusers={allusers && allusers} />} />
-                    <Route path="/api/edituserprofile/:id" element={<EditMyProfile allusers={allusers && allusers} />} />
-                    <Route path="navbar" element={<Navbar />} />
+                    <Route path="/api/edituserprofile/:id" element={<EditMyProfile allusers={allusers && allusers} />} />                   
                 </Routes>
             </div>
         </div>

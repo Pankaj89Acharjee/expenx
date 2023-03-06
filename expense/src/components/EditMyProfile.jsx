@@ -36,7 +36,7 @@ const EditMyProfile = () => {
     passingyear: "",
     skilled: "",
     programsknown: "",
-    yearofexperience: ""
+    yearofexperience: "",
   }) //Hook for saving new data
   const [loading, setLoading] = useState(false)
   const [imageAsset, setImageAsset] = useState();
@@ -44,7 +44,7 @@ const EditMyProfile = () => {
   const [profileimage, setProfileimage] = useState();
   const [showinput, setShowinput] = useState(false);
   const [success, setSuccess] = useState();
- 
+
 
 
   useEffect(() => {
@@ -60,21 +60,23 @@ const EditMyProfile = () => {
     setShowinput(false);
   }, [])
 
-  console.log("Data from backend", getdata);
+  //console.log("PAYLOAD HOOK", profileimage?.name)
+
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
     //console.log(selectedFile)   
     if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
-      setWrongImageType(false);      
+      setProfileimage(selectedFile);
+      setWrongImageType(false);
       setLoading(true);
       try {
         let formData = new FormData();
         formData.append("avatar", selectedFile)
-        axios.post("http://localhost:5050/api/uploadprofilepic", formData)
+        axios.post(`http://localhost:5050/api/uploadprofilepic/${id}`, formData)
           .then((result) => {
             setImageAsset(result);
-            console.log("Photo Uploaded", result.status);
+            console.log("Photo Uploaded");
             message.success("Profile photo uploaded successfully");
             setLoading(false);
           })
@@ -91,6 +93,24 @@ const EditMyProfile = () => {
     }
   };
 
+
+  //For Uploading Image into the Database
+  const uploadImageIntoDB = (e) => {
+
+    //console.log(selectedFile)      
+
+    let formData = new FormData();
+    formData.append("avatar", profileimage?.name)
+    axios.post(`http://localhost:5050/api/uploadphotoindb/${id}`, formData)
+      .then((result) => {
+        console.log("Photo uploaded in Data base", result);
+        message.success("Profile photo uploaded successfully in the Database");
+      }).catch((err) => {
+        console.log("Error", err)
+        message.error("Error in Uploading photo in the Database")
+      })
+  }
+  //Edit Data Handler
   const editDataHandler = (e) => {
     setGetdata({ ...getdata, [e.target.name]: e.target.value })
   }
@@ -117,6 +137,7 @@ const EditMyProfile = () => {
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       EDIT AND UPDATE YOUR OWN PROFILE
+
       {getdata?.length === 0 ? "Nothing to show" : (
         <div className=" flex flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5  w-full">
           <div className="bgcustomcolor3 p-3 flex flex-0.7 w-full rounded-lg animate__animated animate__flipInY">
@@ -130,7 +151,6 @@ const EditMyProfile = () => {
                 )
               }
               {!imageAsset ? (
-
                 <label className='text-white'>
                   <div className="flex flex-col items-center justify-center h-full">
                     <div className="flex flex-col justify-center items-center">
@@ -147,36 +167,47 @@ const EditMyProfile = () => {
                   </div>
                   <input
                     type="file"
-                    name="profileimage"
+                    name="avatar"
                     onChange={uploadImage}
                     className="w-0 h-0"
                   />
                 </label>
               ) : (
                 <div className="relative h-full">
-                  <img
-                    src={imageAsset?.url}
+                  <img //for previewing uploaded image, we need URL.createObjectURL(HOOK)
+                    src={profileimage === `` ? `` : URL.createObjectURL(profileimage)}
                     alt="uploaded-pic"
                     className="h-full w-full"
                   />
                   <button
                     type="button"
                     className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+                    onClick={() => setImageAsset(null)}
                   >
                     <MdDelete />
+                  </button>
+
+                  <button
+                    type="button"
+                    className="absolute bottom-3 left-3 p-3 rounded-full bg-amber-500 text-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+                    onClick={uploadImageIntoDB}
+                  >
+                    UPLOAD
                   </button>
                 </div>
               )}
             </div>
           </div>
 
-          <form /*form*/ onSubmit={updateData} className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
+
+          <form /*form*/ onSubmit={updateData} encType="multipart/form-data" className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
             <label className="outline-none uppercase text-gray-600 text-2xl sm:text-2xl font-bold border-b-2 border-gray-200 animate__animated animate__zoomIn p-2">NAME: {getdata?.name}</label>
             <label className="outline-none text-gray-600 text-xl sm:text-xl font-bold border-b-2 border-gray-200 p-2">E-Mail: {getdata?.email}</label>
 
             {getdata && (
               <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
                 <img
+
                   className="w-15 h-15 rounded-full"
                   alt="profilepic"
                 />
@@ -681,7 +712,6 @@ const EditMyProfile = () => {
                   </div>
                 )}
 
-
                 <div /*for save button*/ className="flex justify-end items-end mt-5">
                   <button
                     type="button"
@@ -696,8 +726,7 @@ const EditMyProfile = () => {
           </form>
         </div>
       )}
-
-    </div>
+    </div >
   );
 };
 

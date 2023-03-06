@@ -42,16 +42,45 @@ app.get("/", (req, res) => {
 })
 
 //For Uploding Profile Picture
-app.post("/api/uploadprofilepic", upload.single("avatar"), (req, res) => {
+app.post("/api/uploadprofilepic/:id", upload.single("avatar"), (req, res) => {
     console.log("File Type is:", req.file);
     let fileExtension = req.file.mimetype.split("/")[1];
     console.log("File Extension is:", fileExtension);
     let newFileName = (req.file.filename + "." + fileExtension);
-    console.log("New File Name for Image is:", newFileName);    
+    console.log("New File Name for Image is:", newFileName);
+
     //fs.rename format => filePath, newFileName, callBackfx
-    fs.rename(`./assets/uploads/${req.file.filename}`, `./assets/uploads/${newFileName}`, function () {       
-        res.status(200).json({ Status: "Ok" })
+    fs.rename(`./assets/uploads/${req.file.filename}`, `./assets/uploads/${newFileName}`, function () {
+        if (!req.file) {
+            res.status(500).json({ Message: "Error in file upload" })
+        } else {
+            console.log("Image uploaded!")
+            res.status(200).json({ Status: "Ok" })
+        }
     })
+})
+
+app.patch("/api/updateuserdata/:id", async (req, res) => {
+    try {
+        const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const result = updateUser;
+        res.status(200).json(result);
+        console.log("User data updated successfully")
+    } catch (error) {
+        console.log("Error in updating expenditure");
+        return res.status(422).json(error.message);
+    }
+})
+
+app.post("/api/uploadphotoindb/:id", upload.single("avatar"), async (req, res) => {
+    try {
+        const uploadUserPhoto = await User.findByIdAndUpdate(req.params.id, { profileimage: req.file })
+        console.log("Profile picture uploaded in database", uploadUserPhoto)
+        res.status(200).json(uploadUserPhoto);
+    } catch (error) {
+        console.log("Error in uploading photo");
+        return res.status(422).json(error.message);
+    }
 })
 
 
@@ -247,17 +276,7 @@ app.post("/api/singleuser/:id", async (req, res) => {
     }
 })
 
-app.patch("/api/updateuserdata/:id", async (req, res) => {
-    try {
-        const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        const result = updateUser;
-        res.status(200).json(result);
-        console.log("User data updated successfully")
-    } catch (error) {
-        console.log("Error in updating expenditure");
-        return res.status(422).json(error.message);
-    }
-})
+
 // app.post("/api/getuserprofiledata/:id", async(req, res) => {
 //     const userid = req.params.id;
 //     try{
