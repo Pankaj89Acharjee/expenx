@@ -46,7 +46,8 @@ app.post("/api/uploadprofilepic/:id", upload.single("avatar"), (req, res) => {
     console.log("File Type is:", req.file);
     let fileExtension = req.file.mimetype.split("/")[1];
     console.log("File Extension is:", fileExtension);
-    let newFileName = (req.file.filename + "." + fileExtension);
+    //let newFileName = (req.file.originalname + "." + fileExtension); For adding extension by this code
+    let newFileName = (req.file.originalname); //Takes extension by default
     console.log("New File Name for Image is:", newFileName);
 
     //fs.rename format => filePath, newFileName, callBackfx
@@ -60,7 +61,7 @@ app.post("/api/uploadprofilepic/:id", upload.single("avatar"), (req, res) => {
     })
 })
 
-app.patch("/api/updateuserdata/:id", async (req, res) => {
+app.patch("/api/updateuserdata/:id", async (req, res) => {    
     try {
         const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         const result = updateUser;
@@ -73,8 +74,10 @@ app.patch("/api/updateuserdata/:id", async (req, res) => {
 })
 
 app.post("/api/uploadphotoindb/:id", upload.single("avatar"), async (req, res) => {
+    console.log("Id from Frontend", req.params.id);
+    console.log("REQ>FILE from Frontend", req.file.originalname);
     try {
-        const uploadUserPhoto = await User.findByIdAndUpdate(req.params.id, { profileimage: req.file })
+        const uploadUserPhoto = await User.findByIdAndUpdate(req.params.id, { profileimage: req.file.originalname })
         console.log("Profile picture uploaded in database", uploadUserPhoto)
         res.status(200).json(uploadUserPhoto);
     } catch (error) {
@@ -268,6 +271,7 @@ app.post("/api/singleuser/:id", async (req, res) => {
     try {
         const allUsers = await User.findById(userid);
         const result = allUsers;
+        const imagePath = path.join(__dirname, "./assets/uploads", allUsers.profileimage)
         res.status(200).json(result);
         console.log(result);
     } catch (error) {

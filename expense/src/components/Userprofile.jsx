@@ -7,7 +7,9 @@ import Spinner from './Spinner'
 import { MdEditNote } from 'react-icons/md';
 
 
-const Userprofile = ({ allusers }) => {
+const Userprofile = ( props ) => {
+    const profileimage = props.profImg;
+    console.log("profileimage props in user profile is", profileimage)
     const { id } = useParams();
 
     const [loading, setLoading] = useState(false);
@@ -48,7 +50,7 @@ const Userprofile = ({ allusers }) => {
                                     alt="banner"
                                 />
                                 <img
-                                    src="https://mdbcdn.b-cdn.net/img/new/avatars/8.webp"
+                                    src={profileimage}
                                     className="rounded-full w-24 h-24 mb-4 -mt-10 shadow-lg object-cover"
                                     alt="userpic"
                                 />

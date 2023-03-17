@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Routes, Route } from 'react-router-dom'
 import Spinner from './Spinner'
 import { AiOutlineUpload } from 'react-icons/ai';
 import { MdDelete, MdEditNote } from 'react-icons/md';
@@ -15,7 +15,8 @@ import { highestQualification } from '../data/highestQualification';
 import { passingYears } from '../data/passingYearList';
 import { universities } from '../data/universityList';
 import { message } from 'antd';
-import 'animate.css';
+//import '../../../backend/assets/uploads'
+//import 'animate.css';
 
 const EditMyProfile = () => {
 
@@ -44,28 +45,36 @@ const EditMyProfile = () => {
   const [profileimage, setProfileimage] = useState();
   const [showinput, setShowinput] = useState(false);
   const [success, setSuccess] = useState();
-
+  const [image, setImage] = useState('');
 
 
   useEffect(() => {
     setLoading(true)  //later implement try-catch block
     const fetchDataToEdit = async () => {
-      const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`, getdata);
-      setGetdata(await response.data);
-      console.log("User Profile Data", response.data);
-      message.success('Profile Data Fetched Successfully!');
+      try {
+        const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`, getdata);
+        setGetdata(await response.data);
+        console.log("User Profile Data", response.data.profileimage);
+        message.success('Profile Data Fetched Successfully!');
+        const imgUrl = `../../../backend/assets/uploads/${response.data.profileimage}`
+        console.log("Image URL is", imgUrl)
+        setImage(imgUrl)
+      } catch (err) {
+        console.log("Error in Data fetching in useEffect")
+      }
     }
     fetchDataToEdit();
     setLoading(false);
     setShowinput(false);
-  }, [])
+  }, [id])
 
-  //console.log("PAYLOAD HOOK", profileimage?.name)
+
+
 
 
   const uploadImage = (e) => {
     const selectedFile = e.target.files[0];
-    //console.log(selectedFile)   
+    console.log("SelectedFile variable is", selectedFile)
     if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
       setProfileimage(selectedFile);
       setWrongImageType(false);
@@ -80,12 +89,10 @@ const EditMyProfile = () => {
             message.success("Profile photo uploaded successfully");
             setLoading(false);
           })
-
       } catch (err) {
         console.log("Error", err)
         message.error("Error in Uploading photo")
       }
-
     } else {
       setLoading(false);
       setWrongImageType(true);
@@ -95,12 +102,11 @@ const EditMyProfile = () => {
 
 
   //For Uploading Image into the Database
-  const uploadImageIntoDB = (e) => {
-
-    //console.log(selectedFile)      
-
+  const uploadImageIntoDB = () => {
+    console.log("HOOK Value for Profile Image hook is", profileimage)
     let formData = new FormData();
-    formData.append("avatar", profileimage?.name)
+    formData.append("avatar", profileimage)
+    console.log("PHOTODATA Variable is", formData)
     axios.post(`http://localhost:5050/api/uploadphotoindb/${id}`, formData)
       .then((result) => {
         console.log("Photo uploaded in Data base", result);
@@ -110,6 +116,9 @@ const EditMyProfile = () => {
         message.error("Error in Uploading photo in the Database")
       })
   }
+
+
+
   //Edit Data Handler
   const editDataHandler = (e) => {
     setGetdata({ ...getdata, [e.target.name]: e.target.value })
@@ -118,6 +127,7 @@ const EditMyProfile = () => {
   const makeEditable = () => {
     setShowinput(true);
   }
+
 
   const updateData = async (e) => {
     e.preventDefault();
@@ -134,10 +144,10 @@ const EditMyProfile = () => {
     }
   }
 
+
   return (
     <div className="flex flex-col justify-center items-center mt-5 lg:h-4/5">
       EDIT AND UPDATE YOUR OWN PROFILE
-
       {getdata?.length === 0 ? "Nothing to show" : (
         <div className=" flex flex-col justify-center items-center bg-white lg:p-5 p-3 lg:w-4/5  w-full">
           <div className="bgcustomcolor3 p-3 flex flex-0.7 w-full rounded-lg animate__animated animate__flipInY">
@@ -186,18 +196,20 @@ const EditMyProfile = () => {
                   >
                     <MdDelete />
                   </button>
-
-                  <button
-                    type="button"
-                    className="absolute bottom-3 left-3 p-3 rounded-full bg-amber-500 text-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                    onClick={uploadImageIntoDB}
-                  >
-                    UPLOAD
-                  </button>
                 </div>
               )}
             </div>
           </div>
+
+          <form method='post' encType='multipart/form-data'>
+            <button /*for uploading in Database*/
+              type="button"
+              className="absolute bottom-3 left-3 p-3 rounded-full bg-amber-500 text-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+              onClick={uploadImageIntoDB}
+            >
+              UPLOAD
+            </button>
+          </form>
 
 
           <form /*form*/ onSubmit={updateData} encType="multipart/form-data" className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
@@ -205,10 +217,10 @@ const EditMyProfile = () => {
             <label className="outline-none text-gray-600 text-xl sm:text-xl font-bold border-b-2 border-gray-200 p-2">E-Mail: {getdata?.email}</label>
 
             {getdata && (
-              <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
+              <div className="flex gap-2 mt-2 mb-2 items-center rounded-lg ">
                 <img
-
-                  className="w-15 h-15 rounded-full"
+                  src={image}
+                  className="w-12 h-12 rounded-full"
                   alt="profilepic"
                 />
                 <p className="font-bold">{getdata?.getdataName}</p>
