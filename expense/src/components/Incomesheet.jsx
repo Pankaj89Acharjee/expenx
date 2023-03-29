@@ -132,7 +132,7 @@ const Incomesheet = () => {
                                         </select>
                                     </div>
 
-                                    <div className=" flex flex-row inline-block text-center lg:text-left mb-4">
+                                    <div className=" flex flex-row text-center lg:text-left mb-4">
                                         <button
                                             id="btn"
                                             type="submit"

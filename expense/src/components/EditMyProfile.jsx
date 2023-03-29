@@ -54,9 +54,10 @@ const EditMyProfile = () => {
       try {
         const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`, getdata);
         setGetdata(await response.data);
-        console.log("User Profile Data", response.data.profileimage);
+        console.log("Image File Name in DB is: - ", response.data.profileimage);        
         message.success('Profile Data Fetched Successfully!');
-        const imgUrl = `../../../backend/assets/uploads/${response.data.profileimage}`
+        const imgUrl = `../../../backend/assets/uploads/${response.data.profileimage}`                
+        //const url = URL.createObjectURL(imgUrl);
         console.log("Image URL is", imgUrl)
         setImage(imgUrl)
       } catch (err) {

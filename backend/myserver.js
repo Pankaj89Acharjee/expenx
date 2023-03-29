@@ -61,7 +61,7 @@ app.post("/api/uploadprofilepic/:id", upload.single("avatar"), (req, res) => {
     })
 })
 
-app.patch("/api/updateuserdata/:id", async (req, res) => {    
+app.patch("/api/updateuserdata/:id", async (req, res) => {
     try {
         const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
         const result = updateUser;
@@ -216,6 +216,10 @@ app.post("/api/getexpense", async (req, res) => {
     try {
         const { frequency, selectedDate } = req.body;
         // console.log("Frequency from req body", frequency);
+        const numberOfDataPerPage = 10; //for pagination
+        const pageNumber = parseInt(req.query.pageNumber) || 1;
+        const dataSize = await Expense.countDocuments({});
+        console.log("Total Number of data is", dataSize);
         const singleExpense = await Expense.find({
             ...(frequency !== "custom" ? {
                 dateofexp: {
@@ -228,12 +232,15 @@ app.post("/api/getexpense", async (req, res) => {
                 }
             }),
             userid: req.body.userid,
-        });
-        const result = singleExpense;
-        res.status(200).json(result);
-        console.log(result);
+        })
+            .limit(numberOfDataPerPage) //mongoose fx for setting limit in pagination
+            .skip((pageNumber - 1) * numberOfDataPerPage) //mongoose fx for skipping page in pagination
+
+        const result = singleExpense;       
+        res.status(200).json({ totalPages: Math.ceil(dataSize / numberOfDataPerPage), data: result });
+        //console.log(result);
     } catch (error) {
-        console.log("Error in finding expenditure");
+        console.log("Error in finding expenditure", error);
         return res.status(500).json(error.message);
     }
 })

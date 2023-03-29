@@ -17,8 +17,8 @@ const AllExpenditure = () => {
     const [oneusername, setOneusername] = useState(null);
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
-
-
+    const [pageNumber, setPageNumber] = useState(1);
+    const [numberofpages, setNumberofpages] = useState(1);
 
     //For Opting Cancellation
     function cancel(e) {
@@ -39,7 +39,7 @@ const AllExpenditure = () => {
         const userId = decodetoken.id;
         //console.log("Value of user in All Expenditure", userId);
         const response = await axios.post("http://localhost:5050/api/getexpense", { userid: userId, frequency: frequency, selectedDate: selectedDate });
-        setUserexp(response.data);
+        setUserexp(response.data.data);
         setLoading(false);
     }
 
@@ -53,16 +53,21 @@ const AllExpenditure = () => {
             const userName = decodetoken.name
             setOneusername(userName);
             //console.log("Value of user in All Expenditure", userId);
-            const response = await axios.post("http://localhost:5050/api/getexpense", { userid: userId, frequency: frequency, selectedDate: selectedDate });
-            setUserexp(response.data);
-            console.log("expense data", response.data)
+            const response = await axios.post(`http://localhost:5050/api/getexpense?pageNumber=${pageNumber}`, { userid: userId, frequency: frequency, selectedDate: selectedDate });
+            setUserexp(response.data.data);
+            //console.log("Data of exp is", response.data.data)
+            console.log("Total Pages are", response.data.totalPages)
+            setNumberofpages(response.data.totalPages)
             setLoading(false);
         }, 1000);
-    }, [frequency, selectedDate])
+    }, [frequency, selectedDate, pageNumber])
 
-    //array.reduce is used to calculate sum or total shorten collective result
-    console.log((userexp.reduce((a, v) => a = a + v.amount, 0)))
+    //array.reduce is used to calculate sum or total shorten collective result   
     var totalExpenseAmount = userexp.reduce((a, v) => a = a + v.amount, 0);
+
+    //For showing buttons as page numbers in the bottom of the page
+    const noOfPages = new Array(numberofpages).fill(null).map((value, index) => index);
+    //console.log("Number of pages are", noOfPages);
 
     if (loading) {
         return <Spinner message="Loading!" />
@@ -279,7 +284,8 @@ const AllExpenditure = () => {
 
             </>
 
-            <div className='flex flex-inline box position-relative w-full items-center justify-center'>
+            <div className='flex flex-col box position-relative w-full items-center justify-center'>
+
                 <button type="submit" onClick={gotoExpScreen} className="w-2/5 justify-center text-center align-center px-6
       py-2.5
       bg-blue-600
@@ -296,7 +302,40 @@ const AllExpenditure = () => {
       transition
       duration-150
       ease-in-out">View Charts</button>
+
+                <div>
+                    <h4>Page No: {pageNumber + 1}</h4>
+                </div>
             </div>
+
+            <div className='text-center justify-end align-baseline'>
+                {noOfPages.map((pageIndex) => (
+                    <button
+                        key = {pageIndex}
+                        className="text-center align-center px-6
+            py-2.5
+            bg-amber-500
+            text-white
+            font-medium
+            text-xs
+            leading-tight
+            uppercase
+            rounded
+            shadow-md
+            hover:bg-green-900 hover:shadow-lg
+            focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+            active:bg-green-800 active:shadow-lg
+            transition
+            delay-150
+            mr-2
+            duration-200
+            ease-in-out"
+                        onClick={() => setPageNumber(pageIndex)}>{pageIndex + 1}</button>
+                ))
+                }
+            </div>
+
+
         </div>
     )
 }
