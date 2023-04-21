@@ -59,3 +59,8 @@ body {
 .ant-btn-primary {
   background-color: rgb(240, 130, 12);
 }
+
+.highlight{
+  background-color: rgb(177, 4, 139);
+  color: black;
+}

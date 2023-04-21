@@ -9,17 +9,20 @@ const Expense = require("./models/expenditure.model");
 const Income = require("./models/income.model");
 const bcrypt = require("bcryptjs");
 const { Configuration, OpenAIApi } = require("openai");
-const moment = require("moment");
+const moment = require('moment-timezone');
+require('dotenv').config();
+moment().tz("Asia/Calcutta").format();
+process.env.TZ = 'Asia/Calcutta';
 const multer = require("multer");
 const fs = require("fs");
-const upload = multer({ dest: "./assets/uploads/" }) //Path for uploaded image
+//const upload = multer({ dest: "./assets/uploads/" }) //Path for uploaded image
 const chatGPT = require("openai");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(express.static("./assets/uploads")) //Using static folder (uploads) for multer
+app.use('/assets/uploads', express.static('assets/uploads')) //Using static folder (uploads) for multer
 const DB_CONNECTION = process.env.MONGODBCONNECTION;
 const CHATGPTKEY = process.env.CHATGPTKEY
 
@@ -35,6 +38,24 @@ app.listen(PORT, () => {
     console.log("Server on port", PORT);
 })
 
+//---Storge defining for using multer
+const documentStorage = multer.diskStorage({
+    destination: (req, res, callback) => {
+        callback(null, "./assets/uploads/")
+    },
+    filename: async (req, file, callback) => {
+        const userId = req.params.id;
+        const allUsers = await User.findById(userId)
+        const userName = allUsers.name?.split(" ")[0];
+        let finalFileName = `${file.fieldname}_${userName}_${moment().format('YYYY-MM-DD')}.${file.mimetype.split("/")[1]}`
+        callback(null, finalFileName)
+    },
+});
+
+const upload = multer({
+    storage: documentStorage,
+    //limits: { fileSize: 20000000 }, //20MB        
+});
 
 
 app.get("/", (req, res) => {
@@ -42,24 +63,34 @@ app.get("/", (req, res) => {
 })
 
 //For Uploding Profile Picture
-app.post("/api/uploadprofilepic/:id", upload.single("avatar"), (req, res) => {
-    console.log("File Type is:", req.file);
-    let fileExtension = req.file.mimetype.split("/")[1];
-    console.log("File Extension is:", fileExtension);
-    //let newFileName = (req.file.originalname + "." + fileExtension); For adding extension by this code
-    let newFileName = (req.file.originalname); //Takes extension by default
-    console.log("New File Name for Image is:", newFileName);
+app.post("/api/uploadprofilepic/:id", upload.single("user"), (req, res) => {
+    const profileImgFile = req.file.path;
+    if (!profileImgFile) {
+        res.status(400).json({ Message: "Please choose image" })
+    } else {
+        console.log("Image uploaded!")
+        res.status(200).json({ Status: "Ok" })
+    }
+});
 
-    //fs.rename format => filePath, newFileName, callBackfx
-    fs.rename(`./assets/uploads/${req.file.filename}`, `./assets/uploads/${newFileName}`, function () {
-        if (!req.file) {
-            res.status(500).json({ Message: "Error in file upload" })
+//For uploading photo in DB
+app.post("/api/uploadphotoindb/:id", upload.single("user"), async (req, res) => {
+    try {
+        const uploadUserPhoto = await User.findByIdAndUpdate(req.params.id, { profileimage: req.file.path })
+        if (uploadUserPhoto) {
+            console.log("Profile picture uploaded in database")
+            return res.status(200).json({ statusCode: 1, message: "Profile picture uploaded in database" });
         } else {
-            console.log("Image uploaded!")
-            res.status(200).json({ Status: "Ok" })
+            console.log("Profile picture couldnot be uploaded in database")
+            return res.status(500).json({ statusCode: 0, error: "Profile picture couldnot be uploaded in database" });
         }
-    })
-})
+    } catch (error) {
+        console.log("Error in uploading photo");
+        return res.status(422).json({ statusCode: 0, error: error.message });
+    }
+});
+
+
 
 app.patch("/api/updateuserdata/:id", async (req, res) => {
     try {
@@ -73,18 +104,7 @@ app.patch("/api/updateuserdata/:id", async (req, res) => {
     }
 })
 
-app.post("/api/uploadphotoindb/:id", upload.single("avatar"), async (req, res) => {
-    console.log("Id from Frontend", req.params.id);
-    console.log("REQ>FILE from Frontend", req.file.originalname);
-    try {
-        const uploadUserPhoto = await User.findByIdAndUpdate(req.params.id, { profileimage: req.file.originalname })
-        console.log("Profile picture uploaded in database", uploadUserPhoto)
-        res.status(200).json(uploadUserPhoto);
-    } catch (error) {
-        console.log("Error in uploading photo");
-        return res.status(422).json(error.message);
-    }
-})
+
 
 
 app.post("/api/register", async (req, res) => {
@@ -219,7 +239,7 @@ app.post("/api/getexpense", async (req, res) => {
         const numberOfDataPerPage = 10; //for pagination
         const pageNumber = parseInt(req.query.pageNumber) || 1;
         const dataSize = await Expense.countDocuments({});
-        console.log("Total Number of data is", dataSize);
+        //console.log("Total Number of data is", dataSize);
         const singleExpense = await Expense.find({
             ...(frequency !== "custom" ? {
                 dateofexp: {
@@ -236,7 +256,7 @@ app.post("/api/getexpense", async (req, res) => {
             .limit(numberOfDataPerPage) //mongoose fx for setting limit in pagination
             .skip((pageNumber - 1) * numberOfDataPerPage) //mongoose fx for skipping page in pagination
 
-        const result = singleExpense;       
+        const result = singleExpense;
         res.status(200).json({ totalPages: Math.ceil(dataSize / numberOfDataPerPage), data: result });
         //console.log(result);
     } catch (error) {
@@ -273,27 +293,18 @@ app.post("/api/viewchart", async (req, res) => {
 
 
 app.post("/api/singleuser/:id", async (req, res) => {
-    const userid = req.params.id;
-    console.log("Id from Frontend", userid);
+    const userid = req.params.id;   
     try {
         const allUsers = await User.findById(userid);
         const result = allUsers;
-        const imagePath = path.join(__dirname, "./assets/uploads", allUsers.profileimage)
-        res.status(200).json(result);
-        console.log(result);
+        res.status(200).json({ data: result });
+        // console.log(result);
     } catch (error) {
         console.log("Error in finding users");
         return res.status(500).json(error.message);
     }
 })
 
-
-// app.post("/api/getuserprofiledata/:id", async(req, res) => {
-//     const userid = req.params.id;
-//     try{
-
-//     }
-// })
 
 
 app.post("/category/myprofile", async (req, res) => {

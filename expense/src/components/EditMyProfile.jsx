@@ -18,7 +18,10 @@ import { message } from 'antd';
 //import '../../../backend/assets/uploads'
 //import 'animate.css';
 
-const EditMyProfile = () => {
+
+
+
+const EditMyProfile = ({ imageName }) => {
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -53,15 +56,13 @@ const EditMyProfile = () => {
     const fetchDataToEdit = async () => {
       try {
         const response = await axios.post(`http://localhost:5050/api/singleuser/${id}`, getdata);
-        setGetdata(await response.data);
-        console.log("Image File Name in DB is: - ", response.data.profileimage);        
+        setGetdata(await response.data.data);
+        //console.log("Profile data fetched as: - ", response.data.data);
         message.success('Profile Data Fetched Successfully!');
-        const imgUrl = `../../../backend/assets/uploads/${response.data.profileimage}`                
-        //const url = URL.createObjectURL(imgUrl);
-        console.log("Image URL is", imgUrl)
-        setImage(imgUrl)
+        setImage(response.data.data.profileimage)
       } catch (err) {
-        console.log("Error in Data fetching in useEffect")
+        message.error(err.message);
+        console.log("Error in Data fetching in useEffect", err)
       }
     }
     fetchDataToEdit();
@@ -82,7 +83,7 @@ const EditMyProfile = () => {
       setLoading(true);
       try {
         let formData = new FormData();
-        formData.append("avatar", selectedFile)
+        formData.append("user", selectedFile)
         axios.post(`http://localhost:5050/api/uploadprofilepic/${id}`, formData)
           .then((result) => {
             setImageAsset(result);
@@ -103,23 +104,29 @@ const EditMyProfile = () => {
 
 
   //For Uploading Image into the Database
-  const uploadImageIntoDB = () => {
-    console.log("HOOK Value for Profile Image hook is", profileimage)
-    let formData = new FormData();
-    formData.append("avatar", profileimage)
-    console.log("PHOTODATA Variable is", formData)
-    axios.post(`http://localhost:5050/api/uploadphotoindb/${id}`, formData)
-      .then((result) => {
-        console.log("Photo uploaded in Data base", result);
-        message.success("Profile photo uploaded successfully in the Database");
-      }).catch((err) => {
-        console.log("Error", err)
-        message.error("Error in Uploading photo in the Database")
-      })
+  const uploadImageIntoDB = async () => {
+    try {
+      let formData = new FormData();
+      formData.append("user", profileimage);
+      const uploadInDB = await axios.post(`http://localhost:5050/api/uploadphotoindb/${id}`, formData);
+      if (uploadInDB.status === 200) {
+        message.success(uploadInDB.data.message);
+        setTimeout(() => {
+          reloadPage()
+        }, 2000)
+      } else if (uploadInDB.statusCode === 0) {
+        message.error(uploadInDB.data.error)
+      }
+    } catch (err) {
+      message.error(err.message);
+    }
   }
 
-
-
+  function reloadPage() {    
+    navigate(-1)
+    //navigate(`/api/edituserprofile/${id}`)
+  }
+  
   //Edit Data Handler
   const editDataHandler = (e) => {
     setGetdata({ ...getdata, [e.target.name]: e.target.value })
@@ -162,27 +169,30 @@ const EditMyProfile = () => {
                 )
               }
               {!imageAsset ? (
-                <label className='text-white'>
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <div className="flex flex-col justify-center items-center">
-                      <p className="text-lg">Upload Your Profile Picture</p>
-                      <br />
-                      <p className="font-bold text-2xl">
-                        <AiOutlineUpload />
+                <>
+                  <label className='text-white'>
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <div className="flex flex-col justify-center items-center">
+                        <p className="text-lg">Upload Your Profile Picture</p>
+                        <br />
+                        <p className="font-bold text-2xl">
+                          <AiOutlineUpload />
+                        </p>
+                      </div>
+
+
+                      <p className="mt-32 text-black-300">
+                        Supported formats - JPG, JPEG, SVG, PNG, GIF and TIFF within 20 MB
                       </p>
                     </div>
-
-                    <p className="mt-32 text-black-300">
-                      Supported formats - JPG, JPEG, SVG, PNG, GIF and TIFF within 20 MB
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    name="avatar"
-                    onChange={uploadImage}
-                    className="w-0 h-0"
-                  />
-                </label>
+                    <input
+                      type="file"
+                      name="avatar"
+                      onChange={uploadImage}
+                      className="w-0 h-0"
+                    />
+                  </label>
+                </>
               ) : (
                 <div className="relative h-full">
                   <img //for previewing uploaded image, we need URL.createObjectURL(HOOK)
@@ -197,33 +207,38 @@ const EditMyProfile = () => {
                   >
                     <MdDelete />
                   </button>
+
+                  <div className="flex flex-row justify-center items-center">
+                    <button /*for uploading in Database*/
+                      type="button"
+                      className="absolute bottom-3 left-3 p-3 rounded-full bg-amber-500 text-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
+                      onClick={uploadImageIntoDB}
+                    >
+                      UPLOAD
+                    </button>
+                  </div>
                 </div>
+
+
               )}
             </div>
           </div>
 
-          <form method='post' encType='multipart/form-data'>
-            <button /*for uploading in Database*/
-              type="button"
-              className="absolute bottom-3 left-3 p-3 rounded-full bg-amber-500 text-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-              onClick={uploadImageIntoDB}
-            >
-              UPLOAD
-            </button>
-          </form>
 
-
+          {image &&
+            < img
+              src={`http://localhost:5050/${image}`}
+              className="w-12 h-12 rounded-full"
+              alt="profilepic"
+            />
+          }
           <form /*form*/ onSubmit={updateData} encType="multipart/form-data" className="flex flex-1 flex-col gap-6 lg:p-5 p-3 lg:w-4/5 w-full animate__animated animate__fadeInUp shadow-stone-400 shadow-2xl">
             <label className="outline-none uppercase text-gray-600 text-2xl sm:text-2xl font-bold border-b-2 border-gray-200 animate__animated animate__zoomIn p-2">NAME: {getdata?.name}</label>
             <label className="outline-none text-gray-600 text-xl sm:text-xl font-bold border-b-2 border-gray-200 p-2">E-Mail: {getdata?.email}</label>
 
             {getdata && (
               <div className="flex gap-2 mt-2 mb-2 items-center rounded-lg ">
-                <img
-                  src={image}
-                  className="w-12 h-12 rounded-full"
-                  alt="profilepic"
-                />
+
                 <p className="font-bold">{getdata?.getdataName}</p>
               </div>
             )}

@@ -17,8 +17,9 @@ const AllExpenditure = () => {
     const [oneusername, setOneusername] = useState(null);
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
-    const [pageNumber, setPageNumber] = useState(1);
-    const [numberofpages, setNumberofpages] = useState(1);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [numberofpages, setNumberofpages] = useState(0);
+   
 
     //For Opting Cancellation
     function cancel(e) {
@@ -53,7 +54,7 @@ const AllExpenditure = () => {
             const userName = decodetoken.name
             setOneusername(userName);
             //console.log("Value of user in All Expenditure", userId);
-            const response = await axios.post(`http://localhost:5050/api/getexpense?pageNumber=${pageNumber}`, { userid: userId, frequency: frequency, selectedDate: selectedDate });
+            const response = await axios.post(`http://localhost:5050/api/getexpense?pageNumber=${pageNumber + 1}`, { userid: userId, frequency: frequency, selectedDate: selectedDate });
             setUserexp(response.data.data);
             //console.log("Data of exp is", response.data.data)
             console.log("Total Pages are", response.data.totalPages)
@@ -67,8 +68,17 @@ const AllExpenditure = () => {
 
     //For showing buttons as page numbers in the bottom of the page
     const noOfPages = new Array(numberofpages).fill(null).map((value, index) => index);
-    //console.log("Number of pages are", noOfPages);
+    //console.log("Number of pages for all records", noOfPages);
 
+    //For Previous Button
+    const prevButtonAction = () => {
+        setPageNumber(Math.max(0, pageNumber - 1));
+    }
+
+    const nextButtonAction = () => {
+        setPageNumber(Math.min(numberofpages - 1, pageNumber + 1));
+        // setHighlighted(!hightlighted);
+    }
     if (loading) {
         return <Spinner message="Loading!" />
     }
@@ -309,9 +319,31 @@ const AllExpenditure = () => {
             </div>
 
             <div className='text-center justify-end align-baseline'>
+                <button
+                    className="text-center align-center px-6
+                py-2.5
+                bg-amber-500
+                text-white
+                font-medium
+                text-xs
+                leading-tight
+                uppercase
+                rounded
+                shadow-md
+                hover:bg-green-900 hover:shadow-lg
+                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+                active:bg-green-800 active:shadow-lg
+                transition
+                delay-150
+                mr-2
+                duration-200
+                ease-in-out"
+
+                    onClick={prevButtonAction}
+                >Prev</button>
                 {noOfPages.map((pageIndex) => (
                     <button
-                        key = {pageIndex}
+                        key={pageIndex}
                         className="text-center align-center px-6
             py-2.5
             bg-amber-500
@@ -333,6 +365,30 @@ const AllExpenditure = () => {
                         onClick={() => setPageNumber(pageIndex)}>{pageIndex + 1}</button>
                 ))
                 }
+                <button
+                    className="text-center align-center px-6
+                py-2.5
+                bg-amber-500
+                text-white
+                font-medium
+                text-xs
+                leading-tight
+                uppercase
+                rounded
+                shadow-md
+                hover:bg-green-900 hover:shadow-lg
+                focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
+                active:bg-green-800 active:shadow-lg
+                transition
+                delay-150
+                mr-2
+                duration-200
+                highlight
+                ease-in-out"
+
+
+                    onClick={nextButtonAction}
+                >Next</button>
             </div>
 
 
