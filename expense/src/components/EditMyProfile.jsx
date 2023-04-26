@@ -2,8 +2,8 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Routes, Route } from 'react-router-dom'
 import Spinner from './Spinner'
-import { AiOutlineUpload } from 'react-icons/ai';
-import { MdDelete, MdEditNote } from 'react-icons/md';
+import { AiOutlineUpload, AiOutlineLogout } from 'react-icons/ai';
+import { MdDelete, MdEditNote, MdKeyboardArrowDown } from 'react-icons/md';
 import { cities } from '../data/cityList';
 import { colleges } from '../data/collegeList';
 import { computerKnowledge } from '../data/computerKnowledge';

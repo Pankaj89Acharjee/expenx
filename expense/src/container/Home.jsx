@@ -54,7 +54,6 @@ const Home = ({ alluser }) => {
                     <Route path="/*" element={<Dashboard allusers={allusers && allusers} />} />
                 </Routes>
             </div>
-
         </div>
     )
 }

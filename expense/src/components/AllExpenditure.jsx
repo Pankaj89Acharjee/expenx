@@ -6,6 +6,9 @@ import jwtDecode from 'jwt-decode';
 import { Link, useParams } from "react-router-dom"
 import { DatePicker, Space, Popconfirm, message } from 'antd';
 import { MdDelete, MdEditNote } from 'react-icons/md';
+import cardImgA from '../assets/cardbg1.jpg'
+import cardImgB from '../assets/cardbg2.jpg'
+import cardImgC from '../assets/cardbg3.jpg'
 const { RangePicker } = DatePicker;
 
 
@@ -15,11 +18,15 @@ const AllExpenditure = () => {
     const [userexp, setUserexp] = useState([]);
     const [loading, setLoading] = useState(false);
     const [oneusername, setOneusername] = useState(null);
-    const [frequency, setFrequency] = useState('365');
+    const [frequency, setFrequency] = useState('30');
     const [selectedDate, setSelectedDate] = useState([]);
     const [pageNumber, setPageNumber] = useState(0);
     const [numberofpages, setNumberofpages] = useState(0);
-   
+    const [totalexp, setTotalexp] = useState(0);
+    const [sortamt, setSortamt] = useState();
+    const [sortitem, setSortitem] = useState();
+    const [lastmonthexp, setLastmonthexp] = useState();
+    const [lastmonthtiem, setLastmonthitem] = useState();
 
     //For Opting Cancellation
     function cancel(e) {
@@ -57,14 +64,50 @@ const AllExpenditure = () => {
             const response = await axios.post(`http://localhost:5050/api/getexpense?pageNumber=${pageNumber + 1}`, { userid: userId, frequency: frequency, selectedDate: selectedDate });
             setUserexp(response.data.data);
             //console.log("Data of exp is", response.data.data)
-            console.log("Total Pages are", response.data.totalPages)
+            //console.log("Total Pages are", response.data.totalPages)
             setNumberofpages(response.data.totalPages)
             setLoading(false);
         }, 1000);
     }, [frequency, selectedDate, pageNumber])
 
-    //array.reduce is used to calculate sum or total shorten collective result   
-    var totalExpenseAmount = userexp.reduce((a, v) => a = a + v.amount, 0);
+
+    useEffect(() => {
+        const loadData = async () => {
+            const token = localStorage.getItem('token');
+            const decodetoken = jwtDecode(token);
+            const userId = decodetoken.id;
+            const fetchData = await axios.post('http://localhost:5050/api/getTotalAmount', { userid: userId, frequency: frequency, selectedDate: selectedDate });
+            if (fetchData.status === 200) {
+                setTotalexp(fetchData.data.data);
+                setSortamt(fetchData.data.sortAmount);
+                setSortitem(fetchData.data.sortItems);
+            } else {
+                message.error(fetchData.data.message);
+                setTotalexp(null);
+            }
+            //console.log("TfetchData", fetchData.data.totalData)
+        }
+        loadData();
+    }, [frequency, selectedDate, pageNumber])
+
+
+    useEffect(() => {
+        const loadPrevData = async () => {
+            const token = localStorage.getItem('token');
+            const decodetoken = jwtDecode(token);
+            const userId = decodetoken.id;
+            const fetchData = await axios.post('http://localhost:5050/api/getLastMonthExp', { userid: userId, frequency: 30 });
+            if (fetchData.status === 200) {
+                setLastmonthexp(fetchData.data.sortAmount);
+                setLastmonthitem(fetchData.data.sortItems);
+            } else {
+                message.error(fetchData.data.message);
+            }
+            console.log("TfetchData", fetchData.data)
+        }
+        loadPrevData();
+    }, [frequency, selectedDate, pageNumber])
+
 
     //For showing buttons as page numbers in the bottom of the page
     const noOfPages = new Array(numberofpages).fill(null).map((value, index) => index);
@@ -99,37 +142,144 @@ const AllExpenditure = () => {
 
     return (
         <div>
-            <div className="lg:w-full flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
-                <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                    <h1 className='text-xl'>Total Amount Spent: <strong>{totalExpenseAmount}</strong></h1>
-                    <h4 className="text-2xl text-center font-normal mb-6">Hi! {oneusername}</h4>
-                    <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your expenses</h2>
-                    <p className="text-sm mt-5">
-                        Knowledge opens the door to Opportunity, Success and Achievements. A little water in the Sun will evaporate, but the ocean never
-                        dries up. Limited responsibility tires you, but unlimited responsibility empowers you.
-                    </p>
+            {/* This is card section */}
+            <div className='flex flex-auto justify-center'>
+                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                    <a href="#" className="group relative block bg-black h-44">
+                        <img
+                            alt="firstcard"
+                            src={cardImgA}
+                            className="absolute mr-2 inset-0 h-24 w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                        />
+                        <div className="relative p-4 sm:p-6 lg:p-8">
+                            <p className="text-sm text-center font-medium uppercase tracking-widest text-pink-500">
+                                Total Spending
+                            </p>
+                            <p className="text-xl text-center font-bold text-white sm:text-2xl">{totalexp}</p>
+                            <div className="mt-32 sm:mt-48 lg:mt-64">
+                                <div
+                                    className="-translate-y-8 transform opacity-0 transition-all group-hover:-translate-y-56 group-hover:opacity-100"
+                                >
+                                    <p className="text-sm text-white text-center">
+                                        Expensed Amount Rs. {totalexp}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                    <a href="#" className="group relative block bg-black h-44">
+                        <img
+                            alt="2ndcard"
+                            src={cardImgB}
+                            className="absolute inset-0 h-24 w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                        />
+                        <div className="relative p-4 sm:p-6 lg:p-8">
+                            <p className="text-sm text-center font-medium uppercase tracking-widest text-pink-500">
+                                Last month total
+                            </p>
+                            <p className="text-xl text-center font-bold text-white sm:text-2xl">{lastmonthexp}</p>
+                            <div className="mt-32 sm:mt-48 lg:mt-64">
+                                <div
+                                    className="-translate-y-8 transform opacity-0 transition-all group-hover:-translate-y-56 group-hover:opacity-100"
+                                >
+                                    <p className="text-sm text-white text-center">
+                                        Expensed Amount Rs. {lastmonthexp}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                    <a href="#" className="group relative block bg-black h-44">
+                        <img
+                            alt="3rdcard"
+                            src={cardImgC}
+                            className="absolute inset-0 h-24 w-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                        />
+                        <div className="relative p-4 sm:p-6 lg:p-8">
+                            <p className="text-sm text-center font-medium uppercase tracking-widest text-pink-500">
+                                Items name
+                            </p>
+                            <p className="text-base text-center font-bold text-white sm:text-2xl">{lastmonthtiem}</p>
+                            <div className="mt-32 sm:mt-48 lg:mt-64">
+                                <div
+                                    className="-translate-y-8 transform opacity-0 transition-all group-hover:-translate-y-56 group-hover:opacity-100"
+                                >
+                                    <p className="text-sm text-white text-center">
+                                        Item expense in. {lastmonthtiem}                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
             </div>
 
+            {/* This is table section for showing total expense */}
+            <div className="flex flex-row items-center justify-center rounded-2xl">
+                <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                        <div className="overflow-hidden rounded-lg">
+                            <table className="min-w-full text-center text-sm font-light rounded-4xl">
+                                <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bgcustomcolor4">
+                                    <tr>
+                                        <th scope="col" className="px-6 py-4">Total Expense Incurred</th>
+                                        <th scope="col" className="px-6 py-4">Highest Spent</th>
+                                        <th scope="col" className="px-6 py-4">Second Highest Spent</th>
+                                        <th scope="col" className="px-6 py-4">Third Highest Spent</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr className="border-b dark:border-neutral-500">
+                                        {!totalexp ? '' : (
+                                            <td className="whitespace-nowrap px-6 py-4 text-red-500 font-extrabold text-lg">
+                                                {totalexp}
+                                            </td>
+                                        )}
+
+                                        {!sortamt ? '' : (
+                                            <>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortamt[0]}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortamt[1]}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortamt[2]}</td>
+                                            </>
+                                        )}
+                                    </tr>
+
+                                    <tr className="border-b dark:border-neutral-500">
+                                        <td className="whitespace-nowrap px-6 py-4 font-bold border-b border-neutral-700 bg-neutral-800 text-gray-800 dark:border-neutral-600 bgcustomcolor4">
+                                            Items Involved
+                                        </td>
+                                        {!sortitem ? '' : (
+                                            <>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortitem[0]}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortitem[1]}</td>
+                                                <td className="whitespace-nowrap px-6 py-4">{sortitem[2]}</td>
+                                            </>
+                                        )}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
             <>
                 <div className='items-center text-2xl text-center font-bold text-red-700'>
-
                 </div>
                 <div className="flex flex-col">
                     <div className="overflow-x-auto">
                         <div className="flex justify-between py-3 pl-2 ">
                             <div className="relative w-full">
-                                <label htmlFor="hs-table-search" className="sr-only">
-                                    Search
-                                </label>
-                                <input
-                                    type="text"
-                                    name="hs-table-search"
-                                    id="hs-table-search"
-                                    className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-                                    placeholder="Search..."
-                                />
-
                                 <div className="mb-4 w-full">
                                     <label for="frequency" className="block mt-2 mb-2 text-md font-medium text-gray-900 dark:text-gray">Select Frequency</label>
                                     <select className="form-control block w-1/3 px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
@@ -390,8 +540,6 @@ const AllExpenditure = () => {
                     onClick={nextButtonAction}
                 >Next</button>
             </div>
-
-
         </div>
     )
 }

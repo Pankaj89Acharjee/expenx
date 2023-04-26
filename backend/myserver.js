@@ -15,7 +15,6 @@ moment().tz("Asia/Calcutta").format();
 process.env.TZ = 'Asia/Calcutta';
 const multer = require("multer");
 const fs = require("fs");
-//const upload = multer({ dest: "./assets/uploads/" }) //Path for uploaded image
 const chatGPT = require("openai");
 require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const app = express();
@@ -235,7 +234,7 @@ app.post("/api/getincome", async (req, res) => {
 app.post("/api/getexpense", async (req, res) => {
     try {
         const { frequency, selectedDate } = req.body;
-        // console.log("Frequency from req body", frequency);
+        //console.log("Frequency from req body", frequency);
         const numberOfDataPerPage = 10; //for pagination
         const pageNumber = parseInt(req.query.pageNumber) || 1;
         const dataSize = await Expense.countDocuments({});
@@ -256,9 +255,99 @@ app.post("/api/getexpense", async (req, res) => {
             .limit(numberOfDataPerPage) //mongoose fx for setting limit in pagination
             .skip((pageNumber - 1) * numberOfDataPerPage) //mongoose fx for skipping page in pagination
 
-        const result = singleExpense;
+        //For sorting in decending order of amount
+        const result = singleExpense.sort((a, b) => {
+            return b.amount - a.amount
+        });
         res.status(200).json({ totalPages: Math.ceil(dataSize / numberOfDataPerPage), data: result });
-        //console.log(result);
+    } catch (error) {
+        console.log("Error in finding expenditure", error);
+        return res.status(500).json(error.message);
+    }
+})
+
+//For getting Total Expenditure
+app.post("/api/getTotalAmount", async (req, res) => {
+    try {
+        const { frequency, selectedDate } = req.body;
+        //console.log("Frequency from req body", frequency);
+        const singleExpense = await Expense.find({
+            ...(frequency !== "custom" ? {
+                dateofexp: {
+                    $gt: moment().subtract(Number(frequency), 'd').toDate()
+                },
+            } : {
+                dateofexp: {
+                    $gte: selectedDate[0],
+                    $lte: selectedDate[1]
+                }
+            }),
+            userid: req.body.userid,
+        })
+
+        //For sorting according to highest amount
+        const result = singleExpense.sort((a, b) => {
+            return b.amount - a.amount
+        });
+
+        var amountArray = [];
+        result.map((value, index) => {
+            amountArray[index] = value.amount
+        })
+
+        var itemsArray = [];
+        result.map((value, index) => {
+            itemsArray[index] = value.exppurpose
+        })
+
+        if (result.length !== 0 || result !== undefined) {
+            let totalExp = result.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0)
+            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), sortItems: itemsArray.slice(0, 3) });
+        } else {
+            console.log("Found no such expenditure");
+            return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
+        }
+    } catch (error) {
+        console.log("Error in finding expenditure", error);
+        return res.status(500).json(error.message);
+    }
+})
+
+
+//For getting Total Expenditure
+app.post("/api/getLastMonthExp", async (req, res) => {
+    try {
+        const { frequency } = req.body;
+        //console.log("Frequency from req body", frequency);
+        const singleExpense = await Expense.find({
+            dateofexp: {
+                $gt: moment().subtract(Number(frequency), 'd').toDate()
+            },
+            userid: req.body.userid,
+        })
+
+        const result = singleExpense.sort((a, b) => {
+            return b.amount - a.amount
+        });
+
+        //For sorting the amount and items
+        var arrayAmount = [];
+        var arrayItems = [];
+        result.map((value, index) => {
+            arrayAmount[index] = value.amount
+            arrayItems[index] = value.exppurpose
+        })
+       
+        const sortedAmountLastMonth = arrayAmount[0]
+        const sortedItemsLastMonth = arrayItems[0];
+
+
+        if (result.length !== 0 || result !== undefined) {
+            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedItemsLastMonth });
+        } else {
+            console.log("Found no such expenditure");
+            return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
+        }
     } catch (error) {
         console.log("Error in finding expenditure", error);
         return res.status(500).json(error.message);
@@ -293,7 +382,7 @@ app.post("/api/viewchart", async (req, res) => {
 
 
 app.post("/api/singleuser/:id", async (req, res) => {
-    const userid = req.params.id;   
+    const userid = req.params.id;
     try {
         const allUsers = await User.findById(userid);
         const result = allUsers;
