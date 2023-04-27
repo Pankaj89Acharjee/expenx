@@ -76,7 +76,7 @@ const Expendituresheet = () => {
     return (
         <div>
             {/* This is the new section. Now implement this one*/}
-            <section className="h-full rounded gradient-form bg-gradient-to-br from-blue-400 via-green-500 to-blue-500 md:h-full md:w-auto">
+            <section className="h-full rounded md:h-full md:w-auto">
                 <div className="container py-12 px-6 h-full md:h-auto">
                     <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
                         <div className="xl:w-11/12 md:w-8/12">
