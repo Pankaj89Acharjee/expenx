@@ -223,11 +223,20 @@ app.post("/api/getincome", async (req, res) => {
             userid: req.body.userid,
         })
         const result = allIncome;
-        res.status(200).json(result)
-        console.log(result);
+        const annualIncome = result.reduce((accumulator, value) => (accumulator = accumulator + value.amount), 0);
+        const highestSalary = allIncome.sort((a, b) => {
+            return b.amount - a.amount
+        })
+       
+        var salary = [];
+        highestSalary?.map((value, index) => {
+            salary[index] = value.amount
+        })
+        res.status(200).json({statusCode: 1, data: result, annualSalary: annualIncome, highestSalary: salary.slice(0, 3)})
+        //console.log("Salaty income is", salary);
     } catch (error) {
         console.log("Error in finding income");
-        return res.status(404).json(error.message)
+        return res.status(404).json({ message: error.message})
     }
 })
 

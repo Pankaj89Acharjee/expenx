@@ -67,7 +67,7 @@ const Expendituresheet = () => {
         });
     };
 
-    //const randomImage = 'https://source.unsplash.com/850x250/?nature,photography,technology,cars,personality'
+   
 
     if (loading) {
         return <Spinner message="Loading!" />

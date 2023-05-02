@@ -125,7 +125,7 @@ const Chartexp = () => {
                     data: [totalExp, totalInc]
                 }
             ]
-        })       
+        })
     }
 
 
@@ -221,6 +221,9 @@ const Chartexp = () => {
                     onClick={() => window.location.reload()}>Refresh</button>
             </div>
 
+
+
+            {/* For Income Chart */}
             <h1 className='lg:w-full md:w-auto mt-5 text-white text-normal text-center justify-center h-8 text-xl bg-gradient-to-br from-purple-600 via-gray-900 to-blue-900 font-bold  rounded'>View Your Income Chart</h1>
 
             <div className="mb-4 w-full">
@@ -352,7 +355,7 @@ const Chartexp = () => {
             leading-tight
             uppercase
             rounded
-            shadow-md
+           
             hover:bg-green-900 hover:shadow-lg
             focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0
             active:bg-green-800 active:shadow-lg
@@ -360,8 +363,8 @@ const Chartexp = () => {
             delay-150
             duration-200
             ease-in-out
-            shadow shadow-lg shadow-green-900"
-            
+            shadow-lg shadow-green-900"
+
                     onClick={dataForChart}>View Income Vs Expenditure
                 </button>
 

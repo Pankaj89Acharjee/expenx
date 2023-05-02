@@ -28,7 +28,7 @@ const Sidebar = ({ allusers, closeToggle }) => {
 
                 <div className='flex flex-col gap-5'>
                     <NavLink
-                        to="/dashboard"
+                        to="/dashboardscreen"
                         className={({ isActive }) => isActive ? isActiveStyle : isNotActiveStyle}
                         onClick={handleCloseSidebar}
                     >

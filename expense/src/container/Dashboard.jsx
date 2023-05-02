@@ -19,7 +19,9 @@ import { message, Popconfirm } from 'antd';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import Navbar from './Navbar'
-import bgstickerexp from '../assets/logomain2.png'
+import bgstickerexp from '../assets/darklogo.png'
+import logo3 from '../assets/Logo Stocks.png'
+import DashboardScreen from '../components/DashboardScreen'
 
 const Dashboard = ({ allusers }) => {
 
@@ -72,7 +74,8 @@ const Dashboard = ({ allusers }) => {
         <div className='mr-1'>
             <nav className="border-gray-700">
                 <div /*For top header */ className="flex flex-wrap items-center justify-between mx-auto p-1">
-                    <img src={bgstickerexp} className="h-24 mr-1 rounded-full" alt="Expenx Logo" />
+                    <img src={bgstickerexp} className="h-28 ml-2 mt-2 rounded-lg" alt="Expenx Logo" />
+                    <img src={logo3} className="mr-1 h-28 rounded-full" alt="Expenx Logo" />
                     <div className='flex flex-wrap items-center justify-evenly space-x-4 mr-3'>
                         <div className='relative'>
                             <button type='button' className='bg-white hidden md:block p-1 rounded-full cursor-pointer outline-none shadow-lg' onClickCapture={() => setDropdowns(!dropdowns)}>
@@ -112,6 +115,7 @@ const Dashboard = ({ allusers }) => {
 
                         </div>
 
+
                         <div className='ml-2'>
                             {!username ? <div className="bg-red-100 rounded-lg py-5 px-6 mb-3 text-base text-red-700 inline-flex items-center w-full" role="alert">
                                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times-circle" className="w-4 h-4 mr-2 fill-current" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -132,7 +136,7 @@ const Dashboard = ({ allusers }) => {
                                     className='bg-white p-2 rounded-full cursor-pointer outline-none shadow-md'
                                 >
                                     <Popconfirm title="Are you sure to logout?" onConfirm={logoutUser} onCancel={cancel} okText="Yes" cancelText="No">
-                                        <a href="#"><AiOutlineLogout className="rotate-90" color="red" fontSize={25} /></a>
+                                        <AiOutlineLogout className="rotate-90" color="red" fontSize={25} />
                                     </Popconfirm>
                                 </button>
                             )}
@@ -140,7 +144,7 @@ const Dashboard = ({ allusers }) => {
                     </div>
                 </div>
             </nav >
-            <div className="p-2 continer">
+            <div className="container min-w-fit h-12">
                 <Navbar />
             </div>
 
@@ -159,6 +163,7 @@ const Dashboard = ({ allusers }) => {
                     <Route path="/category/chatgpt" element={<ChatGPT allusers={allusers && allusers} />} />
                     <Route path="/category/myprofile" element={<MyProfile allusers={allusers && allusers} />} />
                     <Route path="/api/edituserprofile/:id" element={<EditMyProfile allusers={allusers && allusers} />} />
+                    <Route path="/dashboardscreen" element={<DashboardScreen />} />
                 </Routes>
             </div>
         </div >
