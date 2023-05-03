@@ -3,13 +3,16 @@ import jwtDecode from 'jwt-decode';
 import { AiOutlineUser, AiOutlineBuild, AiFillBuild, AiFillContacts } from 'react-icons/ai';
 import { FaSchool } from 'react-icons/fa'
 import { FcWorkflow } from 'react-icons/fc'
-import { FiBook, FiDollarSign, FiPhone } from 'react-icons/fi'
+import { FiBook, FiDollarSign, FiPhone, FiArrowDown } from 'react-icons/fi'
 import { DatePicker, Space, Popconfirm, message } from 'antd';
 import expPhoto from '../assets/rsLogo.png'
 import logo2 from '../assets/logo34.png'
 import logo3 from '../assets/Calculate.png'
+import cardImgA from '../assets/cardbg1.jpg'
+import cardImgB from '../assets/cardbg2.jpg'
+import cardImgC from '../assets/cardbg3.jpg'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, registerables } from 'chart.js';
-import { Bar, Doughnut, Pie, Scatter, Line} from 'react-chartjs-2';
+import { Bar, Doughnut, Pie, Scatter, Line } from 'react-chartjs-2';
 import axios from 'axios';
 import Spinner from './Spinner';
 ChartJS.register(...registerables);
@@ -17,8 +20,11 @@ ChartJS.register(...registerables);
 const DashboardScreen = () => {
 
     const [annualIncome, setAnnualIncome] = useState([]);
+    const [annualExpense, setAnnualExpense] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [sortamt, setSortamt] = useState();
+    const [incexpdata, setIncexpdata] = useState();
+    const [doughnutdata, setDoughnutdata] = useState();
 
 
     const getIncomeData = async () => {
@@ -29,7 +35,7 @@ const DashboardScreen = () => {
         if (fetchIncomeData?.status === 200) {
             setAnnualIncome(fetchIncomeData.data.annualSalary)
             let annualSal = fetchIncomeData.data.highestSalary
-            console.log("Annual salary is ", annualSal)
+            console.log("Annual salary is ", fetchIncomeData.data.annualSalary)
             setChartData({
                 labels: "Salary/Month",
                 datasets: [
@@ -69,7 +75,7 @@ const DashboardScreen = () => {
 
     useEffect(() => {
         getIncomeData();
-    }, [])
+    }, 2000, [])
 
     useEffect(() => {
         const loadData = async () => {
@@ -78,27 +84,67 @@ const DashboardScreen = () => {
             const userId = decodetoken.id;
             const fetchData = await axios.post('http://localhost:5050/api/getTotalAmount', { userid: userId, frequency: 365 });
             if (fetchData.status === 200) {
-                let sortedAmounts = fetchData.data.sortAmount
+                setAnnualExpense(fetchData.data.data)
+                console.log("Annual Expense", fetchData.data.fiveSortAmount)
+                let sortedAmounts = fetchData.data.fiveSortAmount
+                let sortedItems = fetchData.data.fiveSortItems
                 setSortamt({
-                    labels: "Spending Trends",
+                    labels: sortedItems,
                     datasets: [
                         {
                             label: "Expenditure Trend",
                             fill: false,
                             borderColor: 'rgb(75, 192, 192)',
-                            tension: 5,
+                            tension: 1,
                             data: sortedAmounts
                         }
                     ]
                 });
+                setIncexpdata({
+                    labels: ["Income", "Expenditure"],
+                    datasets: [
+                        {
+                            label: 'Income Vs Expenditure',
+                            backgroundColor: [
+                                'rgba(154, 362, 635, 2.2)', 'rgba(10, 125, 217, 0.9)'],
 
+                            borderColor: [
+                                'rgb(75, 192, 192)', 'rgb(255, 99, 132)',
+                            ],
+                            borderWidth: 0,
+                            data: [annualIncome, annualExpense]
+                        }
+                    ]
+                })
+
+                setDoughnutdata({
+                    labels: ["Income", "Expenditure"],
+                    datasets: [
+                        {
+                            label: 'Income Vs Expenditure',
+                            backgroundColor: [
+                                'rgba(137, 196, 244, 1)', 'rgba(25, 181, 254, 0.2)'],
+
+                            borderColor: [
+                                'rgb(75, 192, 192)', 'rgb(255, 99, 132)',
+                            ],
+                            borderWidth: 0,
+                            data: [annualIncome, annualExpense]
+                        }
+                    ]
+                })
             } else {
-                message.error(fetchData.data.message);               
+                message.error(fetchData.data.message);
             }
             //console.log("TfetchData", fetchData.data.totalData)
         }
         loadData();
-    }, [])
+
+    }, [annualIncome, annualExpense])
+
+
+
+
 
 
     return (
@@ -337,14 +383,14 @@ const DashboardScreen = () => {
                         </div>
                         <div className='transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
                             {/* This is Chart section for Income  */}
-                            {chartData?.length === 0 || !chartData ? '' : (
+                            {incexpdata?.length === 0 || !incexpdata ? '' : (
                                 <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg text-center border-orange-400'>
                                     <Bar
-                                        data={chartData}
+                                        data={incexpdata}
                                         options={{
                                             title: {
                                                 display: true,
-                                                text: 'Salary',
+                                                text: 'Income Vs Expense',
                                                 fontSize: 2
                                             },
                                             legend: {
@@ -361,14 +407,131 @@ const DashboardScreen = () => {
                     </div>
 
 
+                    {/* This is cards section  */}
+                    <div className='md:flex md:flex-col justify-between mb-5 mt-3 rounded-xl md:ml-5 md:mb-3 md:justify-center'>
+                        <div className='mr-3 lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col md:m-2 sm:m-2 xm:m-2 m-2'>
+                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                    <div className="group relative block bg-black h-22">
+                                        <img
+                                            alt="firstcard"
+                                            src={cardImgA}
+                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                        />
+                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                Total Spending
+                                            </p>
+                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                    <div className="group relative block bg-black h-22">
+                                        <img
+                                            alt="firstcard"
+                                            src={cardImgA}
+                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                        />
+                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                Total Income
+                                            </p>
+                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
 
+                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                    <div className="group relative block bg-black h-22">
+                                        <img
+                                            alt="firstcard"
+                                            src={cardImgA}
+                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                        />
+                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                Last Income
+                                            </p>
+                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                    <div className="group relative block bg-black h-22">
+                                        <img
+                                            alt="firstcard"
+                                            src={cardImgA}
+                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                        />
+                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                Last Spending
+                                            </p>
+                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-
-
+            {/* This is enlarged charts section */}
+            <div className='md:flex md:flex-col justify-between mb-5 mt-3 rounded-xl md:ml-5 md:mb-3 md:justify-center'>
+                <div className='mr-3 lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col md:m-2 sm:m-2 xm:m-2 m-2'>
+                    {/* This is Chart section for Income  */}
+                    {sortamt?.length === 0 || !sortamt ? '' : (
+                        <div className='bg-gray-100 max-w-2xl w-3/4 justify-center items-center mr-5 -pr-4 h-auto text-gray-200 rounded-2xl shadow-lg'>
+                            <Line
+                                data={sortamt}
+                                options={{ responsive: true, maintainAspectRatio: true }}
+                            />
+                        </div>
+                    )}
+                    <div className="bg-gray-900 max-w-lg w-auto rounded-2xl p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                        <p className='text-center items-center justify-center text-gray-300'>Your income vs expenditure</p>
+                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
+                            <Doughnut
+                                data={doughnutdata}
+                                options={
+                                    { responsive: true, maintainAspectRatio: true }
+                                }
+                            />
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -368,7 +368,7 @@ const Chartexp = () => {
                     onClick={dataForChart}>View Income Vs Expenditure
                 </button>
 
-                <div className='flex flex-row mt-6 bg-gradient-to-br from-yellow-600 via-green-400 to-blue-400 rounded shadow shadow-2xl shadow-gray-900 hover:shadow-blue-800'>
+                <div className='flex flex-row mt-6 bg-gradient-to-br from-yellow-600 via-green-400 to-blue-400 rounded shadow-2xl shadow-gray-900 hover:shadow-blue-800'>
                     {incomeexpdata?.length === 0 ? "" : (
                         <div className='py-2 px-2 m-2'>
 

@@ -311,7 +311,7 @@ app.post("/api/getTotalAmount", async (req, res) => {
 
         if (result.length !== 0 || result !== undefined) {
             let totalExp = result.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0)
-            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), sortItems: itemsArray.slice(0, 3) });
+            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), fiveSortAmount: amountArray.slice(0, 14), fiveSortItems: itemsArray.slice(0, 14) , sortItems: itemsArray.slice(0, 3) });
         } else {
             console.log("Found no such expenditure");
             return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
