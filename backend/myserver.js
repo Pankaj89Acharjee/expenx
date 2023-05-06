@@ -137,7 +137,7 @@ app.post("/api/newexpense", async (req, res) => {
 
         })
         const createdExpense = await expense.save()
-        console.log("Created Expense!", createdExpense);
+        //console.log("Created Expense!", createdExpense);
         res.status(200).json({ StatusCode: "1", message: 'New Expenditure Created', expense: createdExpense });
 
     } catch (error) {
@@ -155,7 +155,7 @@ app.post("/api/newincome", async (req, res) => {
             incomefrom: req.body.incomefrom,
         })
         const createdIncome = await income.save()
-        console.log("Created Income!", createdIncome);
+        //console.log("Created Income!", createdIncome);
         res.status(200).json({ StatusCode: '1', Message: 'New Income Created', Income: createdIncome });
 
     } catch (error) {
@@ -227,16 +227,31 @@ app.post("/api/getincome", async (req, res) => {
         const highestSalary = allIncome.sort((a, b) => {
             return b.amount - a.amount
         })
-       
+
         var salary = [];
+        var incomeSource = [];
+        var incomeDate = [];
+
         highestSalary?.map((value, index) => {
-            salary[index] = value.amount
-        })
-        res.status(200).json({statusCode: 1, data: result, annualSalary: annualIncome, highestSalary: salary.slice(0, 3)})
-        //console.log("Salaty income is", salary);
+            salary[index] = value.amount;
+            incomeSource[index] = value.incomefrom;
+            incomeDate[index] = value.dateselect;
+        });
+
+        res.status(200).json({
+            statusCode: 1,
+            data: result,
+            sortedData: highestSalary.slice(0, 3),
+            annualSalary: annualIncome,
+            highestSalary: salary.slice(0, 3),
+            incomeFrom: incomeSource.slice(0, 3),
+            incomeDate: incomeDate.slice(0, 3)
+        });
+
+        console.log("Salaty income is", salary);
     } catch (error) {
         console.log("Error in finding income");
-        return res.status(404).json({ message: error.message})
+        return res.status(404).json({ message: error.message })
     }
 })
 
@@ -311,7 +326,7 @@ app.post("/api/getTotalAmount", async (req, res) => {
 
         if (result.length !== 0 || result !== undefined) {
             let totalExp = result.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0)
-            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), fiveSortAmount: amountArray.slice(0, 14), fiveSortItems: itemsArray.slice(0, 14) , sortItems: itemsArray.slice(0, 3) });
+            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), fiveSortAmount: amountArray.slice(0, 14), fiveSortItems: itemsArray.slice(0, 14), sortItems: itemsArray.slice(0, 3) });
         } else {
             console.log("Found no such expenditure");
             return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
@@ -346,7 +361,7 @@ app.post("/api/getLastMonthExp", async (req, res) => {
             arrayAmount[index] = value.amount
             arrayItems[index] = value.exppurpose
         })
-       
+
         const sortedAmountLastMonth = arrayAmount[0]
         const sortedItemsLastMonth = arrayItems[0];
 
@@ -395,6 +410,7 @@ app.post("/api/singleuser/:id", async (req, res) => {
     try {
         const allUsers = await User.findById(userid);
         const result = allUsers;
+        let userName = result.name;
         res.status(200).json({ data: result });
         // console.log(result);
     } catch (error) {
