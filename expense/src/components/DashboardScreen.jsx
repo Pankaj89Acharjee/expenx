@@ -26,6 +26,8 @@ const DashboardScreen = () => {
     const [getuser, setGetuser] = useState({});
     const [image, setImage] = useState('');
     const [sortedData, setSortedData] = useState([]);
+    const [exprecurring, setExprecurring] = useState([]);
+    const [exprecchart, setExprecchart] = useState([]);
 
     const getIncomeData = async () => {
         const token = localStorage.getItem('token');
@@ -155,10 +157,35 @@ const DashboardScreen = () => {
                     }
                 ]
             })
+
+            // setExprecchart({
+            //     labels: 
+            // })
         }, 2000)
     })
 
 
+const fetchRrecurringExp = async () => {
+    const token = localStorage.getItem('token');
+    const decodetoken = jwtDecode(token);
+    const userId = decodetoken.id;
+    const fetchData = await axios.post("http://localhost:5050/api/findExpenseRecurrence", {userid: userId})
+    if(fetchData.status === 200) {
+        console.log("recurring exp data", fetchData.data.data);
+        setExprecurring(fetchData.data.data);
+
+    } else {
+        message.error(fetchData.data.message);
+    }
+}
+
+
+//For recurring expenditure
+useEffect(() => {
+    setTimeout(() => {
+        fetchRrecurringExp();        
+    }, 1500)
+}, [])
 
 
 
@@ -362,7 +389,7 @@ const DashboardScreen = () => {
                                                 display: true,
                                                 position: 'left',
                                                 responsive: true,
-                                                maintainAspectRatio: true,                                               
+                                                maintainAspectRatio: true,
                                             }
                                         }}
                                     />
@@ -568,7 +595,7 @@ const DashboardScreen = () => {
                             // width = {20}
                             // height={200}
                             />
-                            <span><p className='p-1 text-center capitalize '>Your expenditure trends since starting</p></span>
+                            <span><p className='p-1 text-center capitalize text-white font-bold'>Your expenditure trends since starting</p></span>
                         </div>
                     )}
 
@@ -588,6 +615,61 @@ const DashboardScreen = () => {
                     </div>
                 </div>
             </div>
+
+            {/* For table section of recurrence data */}
+            <div className='hidden lg:block flex-row mt-2 mb-3'>
+                <div className='flex justify-center mb-5 items-center rounded-xl'>
+                    <div className='flex flex-row overflow-hidden rounded-lg'>
+                        <div className='overflow-hidden rounded-xl mb-3 ml-2 mr-1'>
+                            <p className='text-center justify-center pt-1 bg-pink-500 items-center capitalize font-poppins text-white font-bold text-2xl'>List of items that you purchased most frequently</p>
+                            <table className="table-auto text-center">
+                                <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-pink-500">
+                                    <tr>
+                                        <th scope="col" className="px-8 py-4 capitalize">User Name</th>
+                                        <th scope="col" className="px-6 py-4 capitalize">Purchased Item</th>
+                                        <th scope="col" className="px-6 py-4 capitalize"> No of times Bought</th>
+                                        <th scope="col" className="px-6 py-4 capitalize">Total amount invlolved</th>
+                                    </tr>
+                                </thead>
+                                {exprecurring?.map((value, index) => {
+                                    return (
+                                        <tbody>
+                                            <tr key={index} className="border-b dark:border-neutral-500 bg-white">
+                                                <div className="flex space-x-1 flex-row">
+                                                    <img className='w-6 h-6 rounded-lg mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                    <td className="whitespace-nowrap px-2 py-4 flex items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                </div>
+
+                                                <td className="whitespace-nowrap uppercase items-center justify-center px-6 py-4">{value._id}</td>
+                                                <td className="whitespace-nowrap px-6 py-4 justify-center">{value.timesBought}</td>
+                                                <td className="whitespace-nowrap px-6 py-4 justify-center items-center">{value.totalAmount}</td>
+                                            </tr>
+                                        </tbody>
+                                    )
+                                })}
+                            </table>
+                        </div>                   
+                    </div>
+                </div>
+                <div className="bg-gray-900 max-w-lg mb-3 ml-2 mr-2 w-auto h-auto rounded-2xl p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                        <p className='text-center items-center justify-center font-bold text-gray-300'>Income vs Expenditure</p>
+                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
+                            <Pie
+                                data={doughnutdata}
+                                options={
+                                    {
+                                        responsive: false,
+                                        maintainAspectRatio: true,
+                                    }
+                                }
+                            />
+                        )}
+                    </div>
+            </div>
+
+
+
+
         </div>
     )
 }

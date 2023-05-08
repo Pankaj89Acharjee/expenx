@@ -378,6 +378,44 @@ app.post("/api/getLastMonthExp", async (req, res) => {
     }
 })
 
+
+app.post("/api/findExpenseRecurrence", async (req, res) => {
+    Expense.aggregate([
+        { $match: { userid: req.body.userid } }, // filter by userid
+        { $group: { _id: "$categories", timesBought: { $sum: 1 }, totalAmount: { $sum: "$amount" } } }, //group by productName and count the occurrences. When you use the $group stage in the aggregation pipeline, you need to specify an _id field to group by. This field can be any valid expression, including a field name or a computed value.
+        { $match: { timesBought: { $gt: 1 } } }, // filter by products that were bought more than once (here category is checked how many times it was repeated in purchase)
+        { $sort: { timesBought: -1 } } // sort by timesBought in descending order        
+    ], function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json({ statusCode: 0, error: err.message })
+        } else {
+            console.log(result)
+            res.status(200).json({ statusCode: 1, data: result })
+        }
+    })
+})
+
+
+app.post("/api/findIncomeRecurrence", async (req, res) => {
+    Income.aggregate([
+        { $match: { userid: req.body.userid } },
+        { $group: { _id: "$incomefrom", incomeTimes: { $sum: 1 }, totalIncome: { $sum: "$amount" } } },
+        { $match: { incomeTimes: { $gt: 1 } } },
+        { $sort: { incomeTimes: -1 } }
+    ], function (err, result) {
+        if (err) {
+            console.log(err)
+            res.status(500).json({ statusCode: 0, error: err.message })
+        } else {
+            console.log(result)
+            res.status(200).json({ statusCode: 1, data: result })
+        }
+    })
+})
+
+
+
 app.post("/api/viewchart", async (req, res) => {
     const { frequency, customdate } = req.body;
     try {
