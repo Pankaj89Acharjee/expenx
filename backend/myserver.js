@@ -248,7 +248,7 @@ app.post("/api/getincome", async (req, res) => {
             incomeDate: incomeDate.slice(0, 3)
         });
 
-        console.log("Salaty income is", salary);
+        console.log("Salary income is", salary);
     } catch (error) {
         console.log("Error in finding income");
         return res.status(404).json({ message: error.message })

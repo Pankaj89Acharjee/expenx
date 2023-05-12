@@ -19,7 +19,7 @@ import { message, Popconfirm } from 'antd';
 import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import Navbar from './Navbar'
-import bgstickerexp from '../assets/darklogo.png'
+import bgstickerexp from '../assets/logoimg.png'
 import logo3 from '../assets/Logo Stocks.png'
 import DashboardScreen from '../components/DashboardScreen'
 

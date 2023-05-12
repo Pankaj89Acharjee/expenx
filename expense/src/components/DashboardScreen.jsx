@@ -28,6 +28,7 @@ const DashboardScreen = () => {
     const [sortedData, setSortedData] = useState([]);
     const [exprecurring, setExprecurring] = useState([]);
     const [exprecchart, setExprecchart] = useState([]);
+    const [numrows, setNumrows] = useState(5);
 
     const getIncomeData = async () => {
         const token = localStorage.getItem('token');
@@ -165,136 +166,137 @@ const DashboardScreen = () => {
     })
 
 
-const fetchRrecurringExp = async () => {
-    const token = localStorage.getItem('token');
-    const decodetoken = jwtDecode(token);
-    const userId = decodetoken.id;
-    const fetchData = await axios.post("http://localhost:5050/api/findExpenseRecurrence", {userid: userId})
-    if(fetchData.status === 200) {
-        console.log("recurring exp data", fetchData.data.data);
-        setExprecurring(fetchData.data.data);
+    const fetchRrecurringExp = async () => {
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        const fetchData = await axios.post("http://localhost:5050/api/findExpenseRecurrence", { userid: userId })
+        if (fetchData.status === 200) {
+            console.log("recurring exp data", fetchData.data.data);
+            setExprecurring(fetchData.data.data);
 
-    } else {
-        message.error(fetchData.data.message);
+        } else {
+            message.error(fetchData.data.message);
+        }
     }
-}
 
 
-//For recurring expenditure
-useEffect(() => {
-    setTimeout(() => {
-        fetchRrecurringExp();        
-    }, 1500)
-}, [])
+    //For recurring expenditure
+    useEffect(() => {
+        setTimeout(() => {
+            fetchRrecurringExp();
+        }, 1500)
+    }, [])
 
 
-
+    //bg-gradient-to-tr from-red-300 to-yellow-200 rounded-lg
 
     return (
-        <div className='m-2 max-w-fit container bg-gradient-to-tr from-red-300 to-yellow-200 rounded-lg'>
-            <div className="flex flex-row justify-start items-center">
-                <div className='flex flex-col items-center flex-wrap'>
-                    <div className='flex flex-col flex-wrap items-center justify-between '>
-                        {/* This is card section */}
-                        <div className="flex flex-row w-full justify-center items-center py-4">
-                            <div className="sm:px-2 sm:ml-2 lg:grid-cols-2 gap-5 space-y-4 md:space-y-0 grid md:w-full md:m-3 md:grid-cols-1">
-                                <div className="max-w-xl min-w-400 flex flex-col bg-white px-6 pt-6 rounded-2xl shadow-lg transform hover:scale-105 transition duration-500">
-                                    <h3 className="mb-3 text-xm justify-center items-center text-center font-poppins rounded-2xl text-white bg-indigo-600">Personal Profile Summary</h3>
-                                    <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                    <div className="flex relative justify-center items-center text-center">
-                                        <img className="w-24 h-24 rounded-full mt-2" src={`http://localhost:5050/${image}`} alt="profileImg" />
-                                        {/* <p className="absolute top-0 bg-green-300 text-gray-800 font-semibold py-1 px-3 rounded-br-lg rounded-tl-lg">Active</p> */}
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <div className="my-2 flex flex-col max-w-lg min-w-400">
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <AiOutlineUser className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Name</p>
-                                                    <h3 className='justify-start items-center text-xs text-gray-500'>{getuser.name ? getuser.name : 'Pankaj Kr Acharjee'}</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <FcWorkflow className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Profession</p>
-                                                    <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{getuser.designation ? getuser.designation : 'Social Worker'}</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <FaSchool className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Organisation name</p>
-                                                    <h3 className='justify-center items-center font-normal text-xs text-gray-500'>ABC Pvt Ltd</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <FiBook className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Qualification</p>
-                                                    <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{getuser.graduation ? getuser.graduation : 'MCA'}</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <FiDollarSign className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Annual Salary</p>
-                                                    <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{annualIncome ? annualIncome : '1 Lakh'}</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
-                                            <div>
-                                                <div className="flex space-x-1 items-center">
-                                                    <span className='items-center' />
-                                                    <FiPhone className="rotate-0" color="red" fontSize={30} />
-                                                    <p className='justify-center mr-5 px-2 items-center font-serif text-xs text-gray-800'>Contact No</p>
-                                                    <h3 className='justify-end items-center font-normal text-xs text-gray-500'>{getuser.mobile ? getuser.mobile : 'xxxx89'}</h3>
-                                                </div>
-                                            </div>
-                                            <hr class="h-px mb-1 border-0 dark:bg-green-300"></hr>
+        <>
+            <div className='m-2 max-w-fit container'>
+                <div className="flex flex-row justify-start items-center">
+                    <div className='flex flex-col items-center flex-wrap'>
+                        <div className='flex flex-col flex-wrap items-center justify-between '>
+                            {/* This is card section */}
+                            <div className="flex flex-row w-full justify-center items-center py-4">
+                                <div className="sm:px-2 sm:ml-2 lg:grid-cols-2 gap-5 space-y-4 md:space-y-0 grid md:w-full md:m-3 md:grid-cols-1">
+                                    <div className="max-w-xl min-w-400 flex flex-col bg-white px-6 pt-6 rounded-2xl shadow-lg transform hover:scale-105 transition duration-500">
+                                        <h3 className="mb-3 text-xm justify-center items-center text-center font-poppins rounded-2xl text-white bg-indigo-600">Personal Profile Summary</h3>
+                                        <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                        <div className="flex relative justify-center items-center text-center">
+                                            <img className="w-24 h-24 rounded-full mt-2" src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                            {/* <p className="absolute top-0 bg-green-300 text-gray-800 font-semibold py-1 px-3 rounded-br-lg rounded-tl-lg">Active</p> */}
                                         </div>
-                                    </div>
-                                    <div className='items-center justify-center flex'>
-                                        <button className="mt-4 text-sm w-1/5 text-white bgcustomcolor3 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg">View More</button>
-                                    </div>
-                                </div> {/* End of profile card section */}
+                                        <div className="flex flex-col">
+                                            <div className="my-2 flex flex-col max-w-lg min-w-400">
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <AiOutlineUser className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Name</p>
+                                                        <h3 className='justify-start items-center text-xs text-gray-500'>{getuser.name ? getuser.name : 'Pankaj Kr Acharjee'}</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <FcWorkflow className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Profession</p>
+                                                        <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{getuser.designation ? getuser.designation : 'Social Worker'}</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <FaSchool className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Organisation name</p>
+                                                        <h3 className='justify-center items-center font-normal text-xs text-gray-500'>ABC Pvt Ltd</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <FiBook className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Qualification</p>
+                                                        <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{getuser.graduation ? getuser.graduation : 'MCA'}</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <FiDollarSign className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-normal text-xs text-gray-800'>Annual Salary</p>
+                                                        <h3 className='justify-center items-center font-normal text-xs text-gray-500'>{annualIncome ? annualIncome : '1 Lakh'}</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                                <div>
+                                                    <div className="flex space-x-1 items-center">
+                                                        <span className='items-center' />
+                                                        <FiPhone className="rotate-0" color="red" fontSize={30} />
+                                                        <p className='justify-center mr-5 px-2 items-center font-serif text-xs text-gray-800'>Contact No</p>
+                                                        <h3 className='justify-end items-center font-normal text-xs text-gray-500'>{getuser.mobile ? getuser.mobile : 'xxxx89'}</h3>
+                                                    </div>
+                                                </div>
+                                                <hr className="h-px mb-1 border-0 dark:bg-green-300"></hr>
+                                            </div>
+                                        </div>
+                                        <div className='items-center justify-center flex'>
+                                            <button className="mt-4 text-sm w-1/5 text-white bgcustomcolor3 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg">View More</button>
+                                        </div>
+                                    </div> {/* End of profile card section */}
 
 
 
-                                {/* This section is for table */}
-                                <div className="flex flex-col md:flex md:flex-col">
-                                    <div className="flex flex-row items-center justify-center rounded-2xl transform hover:scale-105 transition duration-500">
-                                        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                            <div className="inline-block sm:px-6 lg:px-8 min-w-672 max-w-2xl">
-                                                <div className="overflow-hidden rounded-lg">
-                                                    <table className="min-w-full text-center text-sm font-light rounded-4xl">
-                                                        <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-sky-400">
-                                                            <tr>
-                                                                <th scope="col" className="px-12 py-4 "><img className='w-8 h-8 rounded-full' src={expPhoto} alt="logo" /></th>
-                                                                <th scope="col" className="px-6 py-4">Purchased Item</th>
-                                                                <th scope="col" className="px-6 py-4">Spending Date</th>
-                                                                <th scope="col" className="px-6 py-4">Amount</th>
-                                                            </tr>
-                                                        </thead>
+                                    {/* This section is for table */}
+                                    <div className="flex flex-col md:flex md:flex-col">
+                                        <div className="flex flex-row items-center justify-center rounded-2xl transform hover:scale-105 transition duration-500">
+                                            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                <div className="inline-block sm:px-6 lg:px-8 min-w-672 max-w-2xl">
+                                                    <div className="overflow-hidden rounded-lg">
+                                                        <table className="min-w-full text-center text-sm font-light rounded-4xl">
+                                                            <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-sky-400">
+                                                                <tr>
+                                                                    <th scope="col" className="px-12 py-4 "><img className='w-8 h-8 rounded-full' src={expPhoto} alt="logo" /></th>
+                                                                    <th scope="col" className="px-6 py-4">Purchased Item</th>
+                                                                    <th scope="col" className="px-6 py-4">Spending Date</th>
+                                                                    <th scope="col" className="px-6 py-4">Amount</th>
+                                                                </tr>
+                                                            </thead>
 
-                                                        <tbody>
-                                                            <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                {/* {!totalexp ? '' : (
+                                                            <tbody>
+                                                                <tr className="border-b dark:border-neutral-500 bg-white">
+                                                                    {/* {!totalexp ? '' : (
                                                                 <td className="whitespace-nowrap px-6 py-4 text-red-500 font-extrabold text-lg">
                                                                     {totalexp}
                                                                 </td>
                                                             )} */}
 
-                                                                {/* {!sortamt ? '' : (
+                                                                    {/* {!sortamt ? '' : (
                                                                 <>
                                                                     <td className="whitespace-nowrap px-6 py-4">{[0]}</td>
                                                                     <td className="whitespace-nowrap px-6 py-4">{[0]}</td>
@@ -302,357 +304,385 @@ useEffect(() => {
                                                                 </>
                                                             )} */}
 
-                                                                <td className="whitespace-nowrap px-10 py-4"><img className='w-6 h-6 rounded-lg' src={logo2} alt="logo" /></td>
-                                                                <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                            </tr>
-                                                            <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={expPhoto} alt="logo" /></td>
-                                                                <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                            </tr>
-                                                            <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={logo3} alt="logo" /></td>
-                                                                <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                                    <td className="whitespace-nowrap px-10 py-4"><img className='w-6 h-6 rounded-lg' src={logo2} alt="logo" /></td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
+                                                                </tr>
+                                                                <tr className="border-b dark:border-neutral-500 bg-white">
+                                                                    <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={expPhoto} alt="logo" /></td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
+                                                                </tr>
+                                                                <tr className="border-b dark:border-neutral-500 bg-white">
+                                                                    <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={logo3} alt="logo" /></td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
+                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* 2nd table for Income */}
-                                    <div className="flex flex-row items-center justify-center rounded-2xl mt-5 transform hover:scale-105 transition duration-500">
-                                        <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                            <div className="inline-block min-w-672 max-w-2xl py-6 sm:px-6 lg:px-8">
-                                                <div className="overflow-hidden rounded-lg">
-                                                    <table className="min-w-full text-center text-sm font-light rounded-4xl">
-                                                        <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-pink-500">
-                                                            <tr>
-                                                                <th scope="col" className="px-8 py-4 ">User Name</th>
-                                                                <th scope="col" className="px-6 py-4">Income Source</th>
-                                                                <th scope="col" className="px-6 py-4">Incoming Date</th>
-                                                                <th scope="col" className="px-6 py-4">Amount</th>
-                                                            </tr>
-                                                        </thead>
+                                        {/* 2nd table for Income */}
+                                        <div className="flex flex-row items-center justify-center rounded-2xl mt-5 transform hover:scale-105 transition duration-500">
+                                            <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                <div className="inline-block min-w-672 max-w-2xl py-6 sm:px-6 lg:px-8">
+                                                    <div className="overflow-hidden rounded-lg">
+                                                        <table className="min-w-full text-center text-sm font-light rounded-4xl">
+                                                            <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-pink-500">
+                                                                <tr>
+                                                                    <th scope="col" className="px-8 py-4 ">User Name</th>
+                                                                    <th scope="col" className="px-6 py-4">Income Source</th>
+                                                                    <th scope="col" className="px-6 py-4">Incoming Date</th>
+                                                                    <th scope="col" className="px-6 py-4">Amount</th>
+                                                                </tr>
+                                                            </thead>
 
-                                                        {sortedData.map((value, index) => {
-                                                            return (
-                                                                <tbody>
-                                                                    <tr key={index} className="border-b dark:border-neutral-500 bg-white">
-                                                                        <div className="flex space-x-1 flex-row">
-                                                                            <img className='w-6 h-6 rounded-lg mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
-                                                                            <td className="whitespace-nowrap px-2 py-4 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
-                                                                        </div>
+                                                            {sortedData.map((value, index) => {
+                                                                return (
+                                                                    <tbody>
+                                                                        <tr key={index} className="border-b dark:border-neutral-500 bg-white">
+                                                                            <div className="flex space-x-1 flex-row">
+                                                                                <img className='w-6 h-6 rounded-lg mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                                                <td className="whitespace-nowrap px-2 py-4 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                                            </div>
 
-                                                                        <td className="whitespace-nowrap uppercase items-center justify-center px-6 py-4">{value.incomefrom}</td>
-                                                                        <td className="whitespace-nowrap px-6 py-4">{`${(value.dateselect).substring(0, 10)}`}</td>
-                                                                        <td className="whitespace-nowrap px-6 py-4">{value.amount}</td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            )
-                                                        })}
-                                                    </table>
+                                                                            <td className="whitespace-nowrap uppercase items-center justify-center px-6 py-4">{value.incomefrom}</td>
+                                                                            <td className="whitespace-nowrap px-6 py-4">{`${(value.dateselect).substring(0, 10)}`}</td>
+                                                                            <td className="whitespace-nowrap px-6 py-4">{value.amount}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                )
+                                                            })}
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+                                    </div>    {/* This is end of all tables container */}
+                                </div>
+                            </div>
+                            {/* End of card section */}
+                        </div>
+
+
+                        {/* This is Chart section for Income  */}
+                        <div className='lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col justify-between mb-5 mt-3 rounded-lg md:ml-5 md:mb-3 md:justify-center'>
+                            <div className='mr-3 transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
+                                {chartData?.length === 0 || !chartData ? '' : (
+                                    <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg'>
+                                        <Bar
+                                            data={chartData}
+                                            options={{
+                                                title: {
+                                                    display: true,
+                                                    text: 'Salary',
+                                                    fontSize: 2
+                                                },
+                                                legend: {
+                                                    display: true,
+                                                    position: 'left',
+                                                    responsive: true,
+                                                    maintainAspectRatio: true,
+                                                }
+                                            }}
+                                        />
                                     </div>
-
-
-
-                                </div>    {/* This is end of all tables container */}
+                                )}
+                            </div>
+                            <div className='mr-3 transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
+                                {/* This is Chart section for Income  */}
+                                {sortamt?.length === 0 || !sortamt ? '' : (
+                                    <div className='max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg' style={{ backgroundColor: '#40ff00' }}>
+                                        <Line
+                                            data={sortamt}
+                                            options={{
+                                                resposive: true,
+                                                maintainAspectRatio: true,
+                                                scales: {
+                                                    y: {
+                                                        grid: {
+                                                            color: '#ffffff'
+                                                        },
+                                                        ticks: {
+                                                            beginAtZero: true,
+                                                            color: '#000000'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        grid: {
+                                                            color: '#ffffff'
+                                                        },
+                                                        ticks: {
+                                                            beginAtZero: true,
+                                                            color: '#000000'
+                                                        }
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                            <div className='transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
+                                {/* This is Chart section for Income  */}
+                                {incexpdata?.length === 0 || !incexpdata ? '' : (
+                                    <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg text-center border-orange-400'>
+                                        <Bar
+                                            data={incexpdata}
+                                            options={{
+                                                title: {
+                                                    display: true,
+                                                    text: 'Income Vs Expense',
+                                                    fontSize: 2
+                                                },
+                                                legend: {
+                                                    display: true,
+                                                    position: 'left',
+                                                    responsive: true,
+                                                    maintainAspectRatio: true,
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        {/* End of card section */}
-                    </div>
 
 
-                    {/* This is Chart section for Income  */}
-                    <div className='lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col justify-between mb-5 mt-3 rounded-lg md:ml-5 md:mb-3 md:justify-center'>
-                        <div className='mr-3 transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
-                            {chartData?.length === 0 || !chartData ? '' : (
-                                <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg'>
-                                    <Bar
-                                        data={chartData}
-                                        options={{
-                                            title: {
-                                                display: true,
-                                                text: 'Salary',
-                                                fontSize: 2
-                                            },
-                                            legend: {
-                                                display: true,
-                                                position: 'left',
-                                                responsive: true,
-                                                maintainAspectRatio: true,
-                                            }
-                                        }}
-                                    />
+                        {/* This is cards section  */}
+                        <div className='md:flex md:flex-col justify-between mb-5 mt-3 rounded-xl md:ml-5 md:mb-3 md:justify-center'>
+                            <div className='mr-3 lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col md:m-2 sm:m-2 xm:m-2 m-2'>
+                                <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                    <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                        <div className="group relative block bg-black h-22">
+                                            <img
+                                                alt="firstcard"
+                                                src={cardImgA}
+                                                className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                            />
+                                            <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                                <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                    Total Spending
+                                                </p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                    <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                    <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                    <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            )}
+
+                                <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                    <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                        <div className="group relative block bg-black h-22">
+                                            <img
+                                                alt="firstcard"
+                                                src={cardImgA}
+                                                className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                            />
+                                            <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                                <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                    Total Income
+                                                </p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                    <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                    <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                    <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                    <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                        <div className="group relative block bg-black h-22">
+                                            <img
+                                                alt="firstcard"
+                                                src={cardImgA}
+                                                className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                            />
+                                            <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                                <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                    Last Income
+                                                </p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                    <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                    <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                    <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
+                                    <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
+                                        <div className="group relative block bg-black h-22">
+                                            <img
+                                                alt="firstcard"
+                                                src={cardImgA}
+                                                className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
+                                            />
+                                            <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
+                                                <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
+                                                    Last Spending
+                                                </p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <div className='absolute mr-2 pb-2 bottom-0 right-0'>
+                                                    <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
+                                                    <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
+                                                    <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className='mr-3 transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
-                            {/* This is Chart section for Income  */}
+                    </div>
+                </div>
+
+                {/* This is enlarged charts section */}
+                <div className='container mx-auto flex flex-wrap'>
+                    <div className='chart-column w-full lg:w-3/4 px-2'>
+                        <div className='chart-container p-4'>
                             {sortamt?.length === 0 || !sortamt ? '' : (
-                                <div className='max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg' style={{ backgroundColor: '#40ff00' }}>
+                                <div className='chartBackground rounded-2xl shadow-lg'>
                                     <Line
                                         data={sortamt}
                                         options={{
-                                            resposive: true,
+                                            responsive: true,
                                             maintainAspectRatio: true,
                                             scales: {
                                                 y: {
                                                     grid: {
+                                                        drawBorder: true,
                                                         color: '#ffffff'
                                                     },
                                                     ticks: {
                                                         beginAtZero: true,
-                                                        color: '#000000'
+                                                        color: '#ffffff',
+                                                        fontSize: 12
                                                     }
                                                 },
                                                 x: {
                                                     grid: {
+                                                        drawBorder: true,
                                                         color: '#ffffff'
                                                     },
                                                     ticks: {
                                                         beginAtZero: true,
-                                                        color: '#000000'
+                                                        color: '#ffffff',
+                                                        fontSize: 12
                                                     }
-                                                }
+                                                },
                                             }
                                         }}
+                                    // width = {20}
+                                    // height={200}
                                     />
-                                </div>
-                            )}
-                        </div>
-                        <div className='transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
-                            {/* This is Chart section for Income  */}
-                            {incexpdata?.length === 0 || !incexpdata ? '' : (
-                                <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg text-center border-orange-400'>
-                                    <Bar
-                                        data={incexpdata}
-                                        options={{
-                                            title: {
-                                                display: true,
-                                                text: 'Income Vs Expense',
-                                                fontSize: 2
-                                            },
-                                            legend: {
-                                                display: true,
-                                                position: 'left',
-                                                responsive: true,
-                                                maintainAspectRatio: true,
-                                            }
-                                        }}
-                                    />
+                                    <span><p className='p-1 mb-2 text-center capitalize text-white font-bold'>Your expenditure trends since starting</p></span>
                                 </div>
                             )}
                         </div>
                     </div>
-
-
-                    {/* This is cards section  */}
-                    <div className='md:flex md:flex-col justify-between mb-5 mt-3 rounded-xl md:ml-5 md:mb-3 md:justify-center'>
-                        <div className='mr-3 lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col md:m-2 sm:m-2 xm:m-2 m-2'>
-                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
-                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
-                                    <div className="group relative block bg-black h-22">
-                                        <img
-                                            alt="firstcard"
-                                            src={cardImgA}
-                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
-                                        />
-                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
-                                                Total Spending
-                                            </p>
-                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
-                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
-                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
-                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
-                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
-                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
-                                    <div className="group relative block bg-black h-22">
-                                        <img
-                                            alt="firstcard"
-                                            src={cardImgA}
-                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
-                                        />
-                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
-                                                Total Income
-                                            </p>
-                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
-                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
-                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
-                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
-                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
-                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
-                                    <div className="group relative block bg-black h-22">
-                                        <img
-                                            alt="firstcard"
-                                            src={cardImgA}
-                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
-                                        />
-                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
-                                                Last Income
-                                            </p>
-                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
-                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
-                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
-                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
-                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='max-w-sm min-w-sm transform hover:scale-105 transition duration-500'>
-                                <div className='w-lg mx-4 my-4 rounded-lg shadow-md overflow-hidden'>
-                                    <div className="group relative block bg-black h-22">
-                                        <img
-                                            alt="firstcard"
-                                            src={cardImgA}
-                                            className="absolute inset-0 h-10 w-10 mt-5 ml-2 mr-3 rounded-full object-cover opacity-75 transition-opacity group-hover:opacity-50"
-                                        />
-                                        <div className="relative p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                                            <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
-                                                Last Spending
-                                            </p>
-                                            <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
-                                            <div className='absolute mr-2 pb-2 bottom-0 right-0'>
-                                                <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
-                                                <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
-                                                <h5 className='text-sm text-right text-gray-400'>Since last month</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* This is enlarged charts section */}
-            <div className='md:flex md:flex-col justify-between mb-5 mt-3 rounded-xl md:ml-5 md:mb-3 md:justify-center md:items-center'>
-                <div className='mr-3 lg:flex lg:flex-row lg:flex-wrap md:flex md:flex-col md:m-2 sm:m-2 xm:m-2 m-2'>
-                    {/* This is Chart section for Income  */}
-                    {sortamt?.length === 0 || !sortamt ? '' : (
-                        <div className='chartBackground max-w-2xl w-full md:w-3/4 justify-center items-center mr-5 -pr-4 h-auto rounded-2xl shadow-lg'>
-                            <Line
-                                data={sortamt}
-                                options={{
-                                    responsive: true,
-                                    maintainAspectRatio: true,
-                                    scales: {
-                                        y: {
-                                            grid: {
-                                                drawBorder: true,
-                                                color: '#ffffff'
-                                            },
-                                            ticks: {
-                                                beginAtZero: true,
-                                                color: '#ffffff',
-                                                fontSize: 12
-                                            }
-                                        },
-                                        x: {
-                                            grid: {
-                                                drawBorder: true,
-                                                color: '#ffffff'
-                                            },
-                                            ticks: {
-                                                beginAtZero: true,
-                                                color: '#ffffff',
-                                                fontSize: 12
-                                            }
-                                        },
-                                    }
-                                }}
-                            // width = {20}
-                            // height={200}
-                            />
-                            <span><p className='p-1 text-center capitalize text-white font-bold'>Your expenditure trends since starting</p></span>
-                        </div>
-                    )}
-
-                    <div className="bg-gray-900 max-w-lg w-auto rounded-2xl p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                        <p className='text-center items-center justify-center font-bold text-gray-300'>Income vs Expenditure</p>
+                    <div className="rounded-md chart-column items-center w-full lg:w-1/4 px-2">
+                        <h1 className='text-center items-center justify-center font-bold p-2 text-gray-700'>Income vs Expenditure</h1>
                         {doughnutdata?.length === 0 || !doughnutdata ? '' : (
-                            <Doughnut
-                                data={doughnutdata}
-                                options={
-                                    {
-                                        responsive: true,
-                                        maintainAspectRatio: true,
+                            <div className='chart-container bg-gray-700 p-4 rounded-lg shadow-md'>
+                                <Doughnut
+                                    data={doughnutdata}
+                                    options={
+                                        {
+                                            responsive: true,
+                                            maintainAspectRatio: true,
+                                        }
                                     }
-                                }
-                            />
+                                />
+                            </div>
                         )}
+                        <h1 className='text-center text-xs items-center justify-center p-2 text-gray-700'>Compare your income and expenditure.</h1>
+                        <div className='inline-flex justify-center'>
+                            <h1 className='text-center text-xs items-center justify-center mr-1  text-white inline-block bg-green-400 rounded-sm'>Your Income: {annualIncome}</h1>
+                            <h1 className='text-center text-xs items-center justify-center  text-white inline-block bg-red-600 rounded-sm'>Your Expense:  {annualExpense}</h1>
+                        </div>
+
                     </div>
                 </div>
-            </div>
 
-            {/* For table section of recurrence data */}
-            <div className='hidden lg:block flex-row mt-2 mb-3'>
-                <div className='flex justify-center mb-5 items-center rounded-xl'>
-                    <div className='flex flex-row overflow-hidden rounded-lg'>
-                        <div className='overflow-hidden rounded-xl mb-3 ml-2 mr-1'>
-                            <p className='text-center justify-center pt-1 bg-pink-500 items-center capitalize font-poppins text-white font-bold text-2xl'>List of items that you purchased most frequently</p>
-                            <table className="table-auto text-center">
-                                <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-pink-500">
-                                    <tr>
-                                        <th scope="col" className="px-8 py-4 capitalize">User Name</th>
-                                        <th scope="col" className="px-6 py-4 capitalize">Purchased Item</th>
-                                        <th scope="col" className="px-6 py-4 capitalize"> No of times Bought</th>
-                                        <th scope="col" className="px-6 py-4 capitalize">Total amount invlolved</th>
-                                    </tr>
-                                </thead>
-                                {exprecurring?.map((value, index) => {
-                                    return (
-                                        <tbody>
-                                            <tr key={index} className="border-b dark:border-neutral-500 bg-white">
-                                                <div className="flex space-x-1 flex-row">
-                                                    <img className='w-6 h-6 rounded-lg mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
-                                                    <td className="whitespace-nowrap px-2 py-4 flex items-center justify-center">{getuser.name ? getuser.name : ''}</td>
-                                                </div>
+                {/* For table section of recurrence data */}
+                <div className='container flex justify-center mx-auto'>
+                    <div className='flex flex-col bg-gray-200'>
+                        <div className='w-full hidden lg:block'>
+                            <div className='p-12 border border-gray-300 shadow-gray-300 shadow-lg'>
+                                <h1 className='pb-3 text-lg font-bold text-gray-600'>Frequently bought items</h1>
+                                <table className="table-auto text-center divide-y divide-gray-300">
+                                    <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-gray-100">
+                                        <tr>
+                                            <th scope="col" className="px-8 py-2 capitalize text-xs">Sl No</th>
+                                            <th scope="col" className="px-8 py-2 capitalize text-xs">User Name</th>
+                                            <th scope="col" className="px-6 py-2 capitalize text-xs">Purchased Item</th>
+                                            <th scope="col" className="px-6 py-2 capitalize text-xs"> No of times Bought</th>
+                                            <th scope="col" className="px-6 py-2 capitalize text-xs">Total amount invlolved</th>
+                                        </tr>
+                                    </thead>
+                                    {exprecurring?.slice(0, numrows).map((value, index) => {
+                                        return (
+                                            <tbody>
+                                                <tr key={index} className="border-b dark:border-neutral-500 bg-white">
+                                                    <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center items-center">{index + 1}</td>
+                                                    <div className="flex space-x-1 flex-row">
+                                                        <img className='w-6 h-6 rounded-full mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                        <td className="whitespace-nowrap px-2 py-4 flex text-xs text-gray-600 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                    </div>
 
-                                                <td className="whitespace-nowrap uppercase items-center justify-center px-6 py-4">{value._id}</td>
-                                                <td className="whitespace-nowrap px-6 py-4 justify-center">{value.timesBought}</td>
-                                                <td className="whitespace-nowrap px-6 py-4 justify-center items-center">{value.totalAmount}</td>
-                                            </tr>
-                                        </tbody>
-                                    )
-                                })}
-                            </table>
-                        </div>                   
+                                                    <td className="whitespace-nowrap  text-xs text-gray-600 items-center justify-center px-6 py-4">{value._id}</td>
+                                                    <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center">{value.timesBought} times</td>
+                                                    <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center items-center">₹ {value.totalAmount}</td>
+                                                </tr>
+                                            </tbody>
+                                        )
+                                    })}
+                                </table>
+                                {numrows < exprecurring.length ? (
+                                    <div className='flex flex-row-reverse pt-3'>
+                                        <button className="mt-4 text-sm w-1/5 text-white bgcustomcolor3 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg"
+                                            onClick={() => setNumrows(exprecurring.length)}
+                                        >View More</button>
+                                    </div>
+                                ) : (
+                                    <div className='flex flex-row-reverse pt-3'>
+                                        <button className="mt-4 text-sm w-1/5 text-white bg-amber-400 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg"
+                                            onClick={() => setNumrows(5)}
+                                        >Hide</button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="bg-gray-900 max-w-lg mb-3 ml-2 mr-2 w-auto h-auto rounded-2xl p-4 sm:p-6 lg:p-8 opacity-95 transition-opacity group-hover:opacity-70">
-                        <p className='text-center items-center justify-center font-bold text-gray-300'>Income vs Expenditure</p>
+            </div >
+
+            <div class="container mx-auto flex flex-wrap mt-6">
+                <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
+                    <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        {/* <!-- Chart 1 goes here --> */}
                         {doughnutdata?.length === 0 || !doughnutdata ? '' : (
                             <Pie
                                 data={doughnutdata}
@@ -665,12 +695,175 @@ useEffect(() => {
                             />
                         )}
                     </div>
+                </div>
+                <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
+                    <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        {/* <!-- Chart 2 goes here --> */}
+                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
+                            <Pie
+                                data={doughnutdata}
+                                options={
+                                    {
+                                        responsive: false,
+                                        maintainAspectRatio: true,
+                                    }
+                                }
+                            />
+                        )}
+                    </div>
+                </div>
+                <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
+                    <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        {/* <!-- Chart 3 goes here --> */}
+                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
+                            <Pie
+                                data={doughnutdata}
+                                options={
+                                    {
+                                        responsive: false,
+                                        maintainAspectRatio: true,
+                                    }
+                                }
+                            />
+                        )}
+                    </div>
+                </div>
             </div>
 
 
+            <div className="container flex justify-center mx-auto">
+                <div className="flex flex-col">
+                    <div className="w-full">
+                        <div className="p-12 border-b border-gray-200 shadow">
+                            <table className="divide-y divide-gray-300" id="dataTable">
+                                <thead className="bg-gray-100">
+                                    <tr>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            ID
+                                        </th>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            Name
+                                        </th>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            Email
+                                        </th>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            Created_at
+                                        </th>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            Edit
+                                        </th>
+                                        <th className="px-6 py-2 text-xs text-gray-500">
+                                            Delete
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-500">
+                                    <tr className="whitespace-nowrap">
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            1
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-900">
+                                                Jon doe
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-500">[email protected]</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            2021-1-12
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
+                                        </td>
+                                    </tr>
+                                    <tr className="bg-gray-50 whitespace-nowrap">
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            2
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-900">
+                                                Jon doe 2
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-500">[email protected]</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            2021-1-12
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#" className="px-4 py-1 text-sm text-red-400 rounded-full">Delete</a>
+                                        </td>
+                                    </tr>
+                                    <tr className="whitespace-nowrap">
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            3
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-900">
+                                                Jon doe 3
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-500">[email protected]</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            2021-1-12
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
+                                        </td>
+                                    </tr>
 
 
-        </div>
+                                    <tr className="bg-gray-50 whitespace-nowrap">
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            4
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-900">
+                                                Jon doe 4
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <div className="text-sm text-gray-500">[email protected]</div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
+                                            2021-1-12
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#"
+                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
+                                        </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <a href="#" className="px-4 py-1 text-sm text-red-400 rounded-full">Delete</a>
+                                        </td>
+                                    </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
     )
 }
 
