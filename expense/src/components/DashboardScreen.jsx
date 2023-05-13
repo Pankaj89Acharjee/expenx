@@ -27,8 +27,15 @@ const DashboardScreen = () => {
     const [image, setImage] = useState('');
     const [sortedData, setSortedData] = useState([]);
     const [exprecurring, setExprecurring] = useState([]);
-    const [exprecchart, setExprecchart] = useState([]);
+    const [savingschart, setSavingschart] = useState();
     const [numrows, setNumrows] = useState(5);
+    const [lastmonthIncome, setLastmonthIncome] = useState([]);
+    const [lastmonthIncomeSource, setLastmonthIncomeSource] = useState([]);
+    const [lastmonthexp, setLastmonthexp] = useState();
+    const [lastmonthtiem, setLastmonthitem] = useState();
+    const [incomechart, setIncomechart] = useState([]);
+    const [tableExpData, setTableExpData] = useState([]);
+
 
     const getIncomeData = async () => {
         const token = localStorage.getItem('token');
@@ -82,8 +89,40 @@ const DashboardScreen = () => {
 
     }
 
+
+    const lastMonthIncomeData = async () => {
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        const fetchIncomeData = await axios.post("http://localhost:5050/api/getLastMonthIncome", { userid: userId, frequency: 30 })
+        if (fetchIncomeData.status === 200) {
+            setLastmonthIncome(fetchIncomeData.data.sortAmount);
+            setLastmonthIncomeSource(fetchIncomeData.data.sortItems);
+        } else {
+            message.error(fetchIncomeData.data.message);
+        }
+    }
+
+    const lastMonthExpData = async () => {
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        const fetchData = await axios.post('http://localhost:5050/api/getLastMonthExp', { userid: userId, frequency: 30 });
+        if (fetchData.status === 200) {
+            console.log("fetchData.data.totalExp", fetchData.data.totalExp)
+            setLastmonthexp(fetchData.data.totalExp);
+            setLastmonthitem(fetchData.data.sortItems);
+        } else {
+            message.error(fetchData.data.message);
+        }
+        console.log("TfetchData", fetchData.data)
+    }
+
+
     useEffect(() => {
         getIncomeData();
+        lastMonthIncomeData();
+        lastMonthExpData();
     }, 2000, [])
 
     useEffect(() => {
@@ -94,9 +133,11 @@ const DashboardScreen = () => {
             const fetchData = await axios.post('http://localhost:5050/api/getTotalAmount', { userid: userId, frequency: 365 });
             if (fetchData.status === 200) {
                 setAnnualExpense(fetchData.data.data)
-                //console.log("Annual Expense", fetchData.data.fiveSortAmount)
+                setTableExpData(fetchData.data.threeSortAmount)
+                console.log("Annual Expense", fetchData.data.threeSortAmount)
                 let sortedAmounts = fetchData.data.fiveSortAmount
                 let sortedItems = fetchData.data.fiveSortItems
+
                 setSortamt({
                     labels: sortedItems,
                     datasets: [
@@ -140,6 +181,43 @@ const DashboardScreen = () => {
                         data: [annualIncome, annualExpense]
                     }
                 ]
+            })
+
+            const savings = (annualIncome - annualExpense);
+            setSavingschart({
+                labels: ["Income", "Expense", "Savings"],
+                datasets: [
+                    {
+                        label: 'Savings Chart',
+                        backgroundColor: [
+                            '#FA441D', '#F7FA1D', '#45FA1D'
+                        ],
+                        borderColor: [
+                            '#FA441D', '#F7FA1D', '#45FA1D'
+                        ],
+                        borderWidth: 0,
+                        data: [annualIncome, annualExpense, savings]
+                    }
+                ]
+            })
+
+            const lastMonthSave = lastmonthIncome - lastmonthexp
+            setIncomechart({
+                labels: ["Income", "Expense", "Savings"],
+                datasets: [{
+                    label: 'Last Month Data',
+                    backgroundColor: [
+                        '#FA441D', '#F7FA1D', '#45FA1D'
+                    ],
+                    borderColor: [
+                        '#FA441D', '#F7FA1D', '#45FA1D'
+                    ],
+                    borderWidth: 0,
+                    data: [lastmonthIncome, lastmonthexp, lastMonthSave]
+                }
+                ]
+
+
             })
 
             setDoughnutdata({
@@ -276,52 +354,35 @@ const DashboardScreen = () => {
                                     <div className="flex flex-col md:flex md:flex-col">
                                         <div className="flex flex-row items-center justify-center rounded-2xl transform hover:scale-105 transition duration-500">
                                             <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                                <div className="inline-block sm:px-6 lg:px-8 min-w-672 max-w-2xl">
+                                                <div className="inline-block sm:px-6 lg:px-8 min-w-672 max-w-2xl ">
+                                                <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Expense Statistics</h1>
                                                     <div className="overflow-hidden rounded-lg">
                                                         <table className="min-w-full text-center text-sm font-light rounded-4xl">
                                                             <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-sky-400">
                                                                 <tr>
-                                                                    <th scope="col" className="px-12 py-4 "><img className='w-8 h-8 rounded-full' src={expPhoto} alt="logo" /></th>
-                                                                    <th scope="col" className="px-6 py-4">Purchased Item</th>
-                                                                    <th scope="col" className="px-6 py-4">Spending Date</th>
-                                                                    <th scope="col" className="px-6 py-4">Amount</th>
+                                                                    <th scope="col" className="px-12 py-2 "><img className='w-8 h-8 rounded-full' src={expPhoto} alt="logo" /></th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Purchased Item</th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Spending Date</th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Amount</th>
                                                                 </tr>
                                                             </thead>
+                                                            {tableExpData.map((value, index) => {
+                                                                return (
+                                                                    <tbody>
+                                                                        <tr key={index} className="border-b dark:border-neutral-500 bg-white">
 
-                                                            <tbody>
-                                                                <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                    {/* {!totalexp ? '' : (
-                                                                <td className="whitespace-nowrap px-6 py-4 text-red-500 font-extrabold text-lg">
-                                                                    {totalexp}
-                                                                </td>
-                                                            )} */}
+                                                                            <div className="flex space-x-1 flex-row">
+                                                                                <img className='w-6 h-6 rounded-full mt-2 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                                                <td className="whitespace-nowrap capitalize text-sm px-2 py-2 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                                            </div>
+                                                                            <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{value.exppurpose}</td>
+                                                                            <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{`${(value.dateofexp).substring(0, 10)}`}</td>
+                                                                            <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{value.amount}</td>
+                                                                        </tr>                                                                      
+                                                                    </tbody>
+                                                                )
+                                                            })}
 
-                                                                    {/* {!sortamt ? '' : (
-                                                                <>
-                                                                    <td className="whitespace-nowrap px-6 py-4">{[0]}</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">{[0]}</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">{[0]}</td>
-                                                                </>
-                                                            )} */}
-
-                                                                    <td className="whitespace-nowrap px-10 py-4"><img className='w-6 h-6 rounded-lg' src={logo2} alt="logo" /></td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                                </tr>
-                                                                <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                    <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={expPhoto} alt="logo" /></td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                                </tr>
-                                                                <tr className="border-b dark:border-neutral-500 bg-white">
-                                                                    <td className="whitespace-nowrap px-12 py-4"><img className='w-6 h-6 rounded-lg' src={logo3} alt="logo" /></td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">Ticket Booking</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">12-03-2023</td>
-                                                                    <td className="whitespace-nowrap px-6 py-4">250</td>
-                                                                </tr>
-                                                            </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -332,29 +393,30 @@ const DashboardScreen = () => {
                                         <div className="flex flex-row items-center justify-center rounded-2xl mt-5 transform hover:scale-105 transition duration-500">
                                             <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                 <div className="inline-block min-w-672 max-w-2xl py-6 sm:px-6 lg:px-8">
+                                                <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Income Statistics</h1>
                                                     <div className="overflow-hidden rounded-lg">
-                                                        <table className="min-w-full text-center text-sm font-light rounded-4xl">
-                                                            <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-pink-500">
+                                                        <table className="min-w-full border-gray-400 text-center text-sm font-light rounded-4xl">
+                                                            <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 py-2 bg-pink-500">
                                                                 <tr>
-                                                                    <th scope="col" className="px-8 py-4 ">User Name</th>
-                                                                    <th scope="col" className="px-6 py-4">Income Source</th>
-                                                                    <th scope="col" className="px-6 py-4">Incoming Date</th>
-                                                                    <th scope="col" className="px-6 py-4">Amount</th>
+                                                                    <th scope="col" className="px-8 capitalize text-xs py-2 ">User Name</th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Income Source</th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Incoming Date</th>
+                                                                    <th scope="col" className="px-6 capitalize text-xs py-2">Amount</th>
                                                                 </tr>
                                                             </thead>
 
                                                             {sortedData.map((value, index) => {
                                                                 return (
-                                                                    <tbody>
+                                                                    <tbody>                                                                        
                                                                         <tr key={index} className="border-b dark:border-neutral-500 bg-white">
                                                                             <div className="flex space-x-1 flex-row">
-                                                                                <img className='w-6 h-6 rounded-lg mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
-                                                                                <td className="whitespace-nowrap px-2 py-4 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                                                <img className='w-6 h-6 rounded-full mt-2 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                                                <td className="whitespace-nowrap capitalize text-sm px-2 py-2 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
                                                                             </div>
 
-                                                                            <td className="whitespace-nowrap uppercase items-center justify-center px-6 py-4">{value.incomefrom}</td>
-                                                                            <td className="whitespace-nowrap px-6 py-4">{`${(value.dateselect).substring(0, 10)}`}</td>
-                                                                            <td className="whitespace-nowrap px-6 py-4">{value.amount}</td>
+                                                                            <td className="whitespace-nowrap capitalize text-xs items-center justify-center px-6 py-2">{value.incomefrom}</td>
+                                                                            <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{`${(value.dateselect).substring(0, 10)}`}</td>
+                                                                            <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{value.amount}</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 )
@@ -628,10 +690,10 @@ const DashboardScreen = () => {
 
                 {/* For table section of recurrence data */}
                 <div className='container flex justify-center mx-auto'>
-                    <div className='flex flex-col bg-gray-200'>
+                    <div className='flex flex-col bg-gray-800 rounded-md'>
                         <div className='w-full hidden lg:block'>
                             <div className='p-12 border border-gray-300 shadow-gray-300 shadow-lg'>
-                                <h1 className='pb-3 text-lg font-bold text-gray-600'>Frequently bought items</h1>
+                                <h1 className='pb-3 text-lg font-bold text-white'>Frequently bought items</h1>
                                 <table className="table-auto text-center divide-y divide-gray-300">
                                     <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-gray-100">
                                         <tr>
@@ -679,9 +741,12 @@ const DashboardScreen = () => {
                 </div>
             </div >
 
+
+            {/* 3 Charts */}
             <div class="container mx-auto flex flex-wrap mt-6">
                 <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
                     <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        <h1 className='font-semibold'>Annual Income and Expense</h1>
                         {/* <!-- Chart 1 goes here --> */}
                         {doughnutdata?.length === 0 || !doughnutdata ? '' : (
                             <Pie
@@ -698,10 +763,11 @@ const DashboardScreen = () => {
                 </div>
                 <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
                     <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        <h1 className='font-semibold'>Annual Saving Statistics</h1>
                         {/* <!-- Chart 2 goes here --> */}
-                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
+                        {savingschart?.length === 0 || !savingschart ? '' : (
                             <Pie
-                                data={doughnutdata}
+                                data={savingschart}
                                 options={
                                     {
                                         responsive: false,
@@ -714,16 +780,46 @@ const DashboardScreen = () => {
                 </div>
                 <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
                     <div class="chart-container bg-white shadow-md rounded-lg p-4">
+                        <h1 className='font-semibold'>Last Month Statistics</h1>
                         {/* <!-- Chart 3 goes here --> */}
-                        {doughnutdata?.length === 0 || !doughnutdata ? '' : (
-                            <Pie
-                                data={doughnutdata}
+                        {incomechart?.length === 0 || !incomechart ? '' : (
+                            <Bar
+                                data={incomechart}
                                 options={
                                     {
-                                        responsive: false,
-                                        maintainAspectRatio: true,
-                                    }
-                                }
+                                        title: {
+                                            display: true,
+                                            fontSize: 2
+                                        },
+                                        legend: {
+                                            responsive: false,
+                                            maintainAspectRatio: true,
+                                        },
+                                        scales: {
+                                            y: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#11D9F9'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: '#F91D6D',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#11D9F9'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: '#F91D6D',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                        }
+                                    }}
                             />
                         )}
                     </div>

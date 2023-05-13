@@ -326,7 +326,7 @@ app.post("/api/getTotalAmount", async (req, res) => {
 
         if (result.length !== 0 || result !== undefined) {
             let totalExp = result.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0)
-            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), fiveSortAmount: amountArray.slice(0, 14), fiveSortItems: itemsArray.slice(0, 14), sortItems: itemsArray.slice(0, 3) });
+            res.status(200).json({ data: totalExp, sortAmount: amountArray.slice(0, 3), threeSortAmount: result.slice(0, 3), fiveSortAmount: amountArray.slice(0, 14), fiveSortItems: itemsArray.slice(0, 14), sortItems: itemsArray.slice(0, 3) });
         } else {
             console.log("Found no such expenditure");
             return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
@@ -357,6 +357,7 @@ app.post("/api/getLastMonthExp", async (req, res) => {
         //For sorting the amount and items
         var arrayAmount = [];
         var arrayItems = [];
+
         result.map((value, index) => {
             arrayAmount[index] = value.amount
             arrayItems[index] = value.exppurpose
@@ -364,10 +365,11 @@ app.post("/api/getLastMonthExp", async (req, res) => {
 
         const sortedAmountLastMonth = arrayAmount[0]
         const sortedItemsLastMonth = arrayItems[0];
+        const totalIncomeAmount = singleExpense.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0);
 
 
         if (result.length !== 0 || result !== undefined) {
-            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedItemsLastMonth });
+            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedItemsLastMonth, totalExp: totalIncomeAmount });
         } else {
             console.log("Found no such expenditure");
             return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
@@ -377,6 +379,50 @@ app.post("/api/getLastMonthExp", async (req, res) => {
         return res.status(500).json(error.message);
     }
 })
+
+
+//For getting last month income
+app.post("/api/getLastMonthIncome", async (req, res) => {
+    try {
+        const { frequency } = req.body;
+        //console.log("Frequency from req body", frequency);
+        const singleExpense = await Income.find({
+            dateselect: {
+                $gt: moment().subtract(Number(frequency), 'd').toDate()
+            },
+            userid: req.body.userid,
+        })
+
+        const result = singleExpense.sort((a, b) => {
+            return b.amount - a.amount
+        });
+
+        //For sorting the amount and items
+        var arrayAmount = [];
+        var arrayItems = [];
+        result.map((value, index) => {
+            arrayAmount[index] = value.amount
+            arrayItems[index] = value.incomefrom
+        })
+
+        const sortedAmountLastMonth = arrayAmount[0]
+        const sortedIncomeLastMonth = arrayItems[0];
+
+
+        if (result.length !== 0 || result !== undefined) {
+            console.log("sortedAmountLastMonth", sortedAmountLastMonth);
+            console.log("sortedIncomeLastMonth", sortedIncomeLastMonth);
+            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedIncomeLastMonth });
+        } else {
+            console.log("Found no such income");
+            return res.status(500).json({ statusCode: 0, message: "Found no such income" });
+        }
+    } catch (error) {
+        console.log("Error in finding income", error);
+        return res.status(500).json(error.message);
+    }
+})
+
 
 
 app.post("/api/findExpenseRecurrence", async (req, res) => {
@@ -390,7 +436,6 @@ app.post("/api/findExpenseRecurrence", async (req, res) => {
             console.log(err)
             res.status(500).json({ statusCode: 0, error: err.message })
         } else {
-            console.log(result)
             res.status(200).json({ statusCode: 1, data: result })
         }
     })
