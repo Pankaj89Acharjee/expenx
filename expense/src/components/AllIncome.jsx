@@ -17,6 +17,7 @@ const AllIncome = () => {
     const [oneusername, setOneusername] = useState(null);
     const [frequency, setFrequency] = useState('365');
     const [selectedDate, setSelectedDate] = useState([]);
+    const [totalIncome, setTotalIncome] = useState('');
 
     const gotoExpScreen = () => {
         window.location.href = '/category/charts'
@@ -36,7 +37,9 @@ const AllIncome = () => {
         const userId = decodetoken.id;
         //console.log("Value of user in All Income", userId);
         const response = await axios.post("http://localhost:5050/api/getincome", { userid: userId, frequency: frequency, selectedDate: selectedDate });
-        setUserexp(response.data);
+        console.log("RESPONSE", response)
+        setUserexp(response.data.data);
+        setTotalIncome(response.annualSalary);
         setLoading(false);
     }
 
@@ -50,18 +53,15 @@ const AllIncome = () => {
             const userId = decodetoken.id;
             const userName = decodetoken.name
             setOneusername(userName);
-            //console.log("Value of user in All Expenditure", userId);
             const response = await axios.post("http://localhost:5050/api/getincome", { userid: userId, frequency: frequency, selectedDate: selectedDate });
-            setUserexp(response.data);
-            const dataInc = response.data;
-            //console.log("expense data", response.data)           
+            setUserexp(response.data.data);
+            setTotalIncome(response.data.annualSalary);
             setLoading(false);
         }, 1000);
     }, [frequency, selectedDate])
 
-    //array.reduce is used to calculate sum or total shorten collective result
-    console.log((userexp.reduce((a, v) => a = a + v.amount, 0)))
-    var totalExpenseAmount = userexp.reduce((a, v) => a = a + v.amount, 0);
+
+    //console.log("Annual salary", totalIncome)
 
     if (loading) {
         return <Spinner message="Loading!" />
@@ -86,7 +86,7 @@ const AllIncome = () => {
         <div>
             <div className="lg:w-full flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
                 <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                    <h1 className='text-xl'>Total Income: {totalExpenseAmount}</h1>
+                    <h1 className='text-xl'>Total Income: {totalIncome}</h1>
                     <h4 className="text-2xl text-center font-bold mb-6">Hi! {oneusername}</h4>
                     <h2 className='items-center uppercase text-gray-700 text-center text-4xl font-bold'>Details of your income</h2>
                     <p className="text-sm mt-5">
@@ -191,7 +191,7 @@ const AllIncome = () => {
                                     </thead>
 
 
-                                    {userexp?.slice(0, userexp.length).map((x, index) => {
+                                    {userexp?.map((x, index) => {
                                         return (
                                             <tbody key={index} className="divide-y divide-gray-200">
                                                 <tr>

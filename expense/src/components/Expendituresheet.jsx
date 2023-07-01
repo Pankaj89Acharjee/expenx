@@ -6,7 +6,7 @@ import axios from 'axios'
 import jwtDecode from 'jwt-decode';
 import { category } from '../data/categorydata'
 import logo from '../assets/logoexp.jpeg'
-import { Modal} from 'antd';
+import { Modal } from 'antd';
 
 const Expendituresheet = () => {
 
@@ -17,6 +17,7 @@ const Expendituresheet = () => {
     const [dateDefault, setDateDefault] = useState(defaultDate);
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState(null);
+    const [showForm, setShowForm] = useState(false);
 
     var responseMessage;
 
@@ -67,7 +68,14 @@ const Expendituresheet = () => {
         });
     };
 
-   
+    const handleAddNewClick = () => {
+        setShowForm(true);
+    };
+
+    const handleCancelClick = () => {
+        setShowForm(false);
+    };
+
 
     if (loading) {
         return <Spinner message="Loading!" />
@@ -76,7 +84,96 @@ const Expendituresheet = () => {
     return (
         <div>
             {/* This is the new section. Now implement this one*/}
-            <section className="h-full rounded md:h-full md:w-auto">
+            <div className='flex flex-row-reverse mt-10 mr-10'>
+                <button
+                    onClick={handleAddNewClick}
+                    className="bg-gray-900 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >Add New
+                </button>
+            </div>
+
+            {!showForm ? '' : (
+                <section>
+                    <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
+                        <div className="bg-white p-12 rounded-md shadow-lg min-w-md max-w-lg mx-auto transition-all transform translate-y-10 translate-x-10">
+                            {/* Your form content goes here */}
+                            <form>
+                                <div className="mb-4">
+                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Spent On</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        placeholder="Enter your name"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Amount Spent</label>
+                                    <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        placeholder="Enter your name"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Amount Spent</label>
+                                    <select className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+                                        name="categories"
+                                        onChange={(e) => setCategories(e.target.value)}
+                                        required
+                                    >
+                                        <option>Select...</option>
+                                        {
+                                            category.map((data, index) => {
+                                                return <option key={index} value={data.cat}>{data.cat}</option>
+                                            })
+                                        }
+                                    </select>
+                                </div>
+
+                                <div className="mb-4">
+                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Date of Spending</label>
+                                    <input
+                                        type="date"
+                                        id="name"
+                                        name="name"
+                                        placeholder="Enter your name"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                    />
+                                </div>
+                                {/* Add more form fields as needed */}
+
+                                <div className='flex justify-end'>
+                                    <button
+                                        type='submit'
+                                        className="bg-green-500 hover:bg-green-600 rounded-lg p-2 text-white font-bold py-px-rounded focus:outline-none focus:shadow-outline mr-2"
+                                    >
+                                        Save
+                                    </button>
+
+                                    <button
+                                        onClick={handleCancelClick}
+                                        className="bg-red-500 hover:bg-red-600 rounded-lg p-2 text-white font-bold py-px-rounded focus:outline-none focus:shadow-outline"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+
+
+
+
+            {/* <section className="h-full rounded md:h-full md:w-auto">
                 <div className="container py-12 px-6 h-full md:h-auto">
                     <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
                         <div className="xl:w-11/12 md:w-8/12">
@@ -196,7 +293,9 @@ const Expendituresheet = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+              
+
+            </section> */}
         </div>
     )
 

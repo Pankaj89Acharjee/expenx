@@ -27,6 +27,7 @@ const DashboardScreen = () => {
     const [image, setImage] = useState('');
     const [sortedData, setSortedData] = useState([]);
     const [exprecurring, setExprecurring] = useState([]);
+    const [incomerecurring, setIncomerecurring] = useState([]);
     const [savingschart, setSavingschart] = useState();
     const [numrows, setNumrows] = useState(5);
     const [lastmonthIncome, setLastmonthIncome] = useState([]);
@@ -259,10 +260,25 @@ const DashboardScreen = () => {
     }
 
 
-    //For recurring expenditure
+    const fetchRrecurringIncome = async () => {
+        const token = localStorage.getItem('token');
+        const decodetoken = jwtDecode(token);
+        const userId = decodetoken.id;
+        const fetchData = await axios.post("http://localhost:5050/api/findIncomeRecurrence", { userid: userId })
+        if (fetchData.status === 200) {
+            console.log("recurring income data", fetchData.data.data);
+            setIncomerecurring(fetchData.data.data);
+
+        } else {
+            message.error(fetchData.data.message);
+        }
+    }
+
+    //For recurring expenditure and income
     useEffect(() => {
         setTimeout(() => {
             fetchRrecurringExp();
+            fetchRrecurringIncome();
         }, 1500)
     }, [])
 
@@ -355,7 +371,7 @@ const DashboardScreen = () => {
                                         <div className="flex flex-row items-center justify-center rounded-2xl transform hover:scale-105 transition duration-500">
                                             <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                 <div className="inline-block sm:px-6 lg:px-8 min-w-672 max-w-2xl ">
-                                                <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Expense Statistics</h1>
+                                                    <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Expense Statistics</h1>
                                                     <div className="overflow-hidden rounded-lg">
                                                         <table className="min-w-full text-center text-sm font-light rounded-4xl">
                                                             <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 bg-sky-400">
@@ -378,7 +394,7 @@ const DashboardScreen = () => {
                                                                             <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{value.exppurpose}</td>
                                                                             <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{`${(value.dateofexp).substring(0, 10)}`}</td>
                                                                             <td className="whitespace-nowrap capitalize text-xs px-6 py-2">{value.amount}</td>
-                                                                        </tr>                                                                      
+                                                                        </tr>
                                                                     </tbody>
                                                                 )
                                                             })}
@@ -393,7 +409,7 @@ const DashboardScreen = () => {
                                         <div className="flex flex-row items-center justify-center rounded-2xl mt-5 transform hover:scale-105 transition duration-500">
                                             <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                 <div className="inline-block min-w-672 max-w-2xl py-6 sm:px-6 lg:px-8">
-                                                <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Income Statistics</h1>
+                                                    <h1 className='text-center uppercase mb-3 font-semibold'>Last 3 Months Income Statistics</h1>
                                                     <div className="overflow-hidden rounded-lg">
                                                         <table className="min-w-full border-gray-400 text-center text-sm font-light rounded-4xl">
                                                             <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 py-2 bg-pink-500">
@@ -407,7 +423,7 @@ const DashboardScreen = () => {
 
                                                             {sortedData.map((value, index) => {
                                                                 return (
-                                                                    <tbody>                                                                        
+                                                                    <tbody>
                                                                         <tr key={index} className="border-b dark:border-neutral-500 bg-white">
                                                                             <div className="flex space-x-1 flex-row">
                                                                                 <img className='w-6 h-6 rounded-full mt-2 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
@@ -697,11 +713,11 @@ const DashboardScreen = () => {
                                 <table className="table-auto text-center divide-y divide-gray-300">
                                     <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-gray-100">
                                         <tr>
-                                            <th scope="col" className="px-8 py-2 capitalize text-xs">Sl No</th>
-                                            <th scope="col" className="px-8 py-2 capitalize text-xs">User Name</th>
-                                            <th scope="col" className="px-6 py-2 capitalize text-xs">Purchased Item</th>
-                                            <th scope="col" className="px-6 py-2 capitalize text-xs"> No of times Bought</th>
-                                            <th scope="col" className="px-6 py-2 capitalize text-xs">Total amount invlolved</th>
+                                            <th scope="col" className="px-8 py-2 uppercase text-xs">Sl No</th>
+                                            <th scope="col" className="px-8 py-2 uppercase text-xs">User Name</th>
+                                            <th scope="col" className="px-6 py-2 uppercase text-xs">Purchased Item</th>
+                                            <th scope="col" className="px-6 py-2 uppercase text-xs"> No of times Bought</th>
+                                            <th scope="col" className="px-6 py-2 uppercase text-xs">Total amount invlolved</th>
                                         </tr>
                                     </thead>
                                     {exprecurring?.slice(0, numrows).map((value, index) => {
@@ -782,7 +798,7 @@ const DashboardScreen = () => {
                     <div class="chart-container bg-white shadow-md rounded-lg p-4">
                         <h1 className='font-semibold'>Last Month Statistics</h1>
                         {/* <!-- Chart 3 goes here --> */}
-                        {incomechart?.length === 0 || !incomechart ? '' : (
+                        {incomechart?.length === 0 || !incomechart ? 'No Data' : (
                             <Bar
                                 data={incomechart}
                                 options={
@@ -827,138 +843,58 @@ const DashboardScreen = () => {
             </div>
 
 
-            <div className="container flex justify-center mx-auto">
-                <div className="flex flex-col">
-                    <div className="w-full">
-                        <div className="p-12 border-b border-gray-200 shadow">
-                            <table className="divide-y divide-gray-300" id="dataTable">
-                                <thead className="bg-gray-100">
+            {/* For table section of recurrence income */}
+            <div className='container flex justify-center mx-auto mt-5'>
+                <div className='flex flex-col bg-gray-800 rounded-md'>
+                    <div className='w-full hidden lg:block'>
+                        <div className='p-12 border border-gray-300 shadow-gray-300 shadow-lg'>
+                            <h1 className='pb-3 text-lg font-bold text-white'>Income Statistics</h1>
+                            <table className="table-auto text-center divide-y divide-gray-300">
+                                <thead className="border-b border-neutral-700 text-gray-800 dark:border-neutral-600 rounded-xl bg-gray-100">
                                     <tr>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            ID
-                                        </th>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            Name
-                                        </th>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            Email
-                                        </th>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            Created_at
-                                        </th>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            Edit
-                                        </th>
-                                        <th className="px-6 py-2 text-xs text-gray-500">
-                                            Delete
-                                        </th>
+                                        <th scope="col" className="px-8 py-2 uppercase text-xs">Sl No</th>
+                                        <th scope="col" className="px-8 py-2 uppercase text-xs">User Name</th>
+                                        <th scope="col" className="px-6 py-2 uppercase text-xs">Source of Income</th>
+                                        <th scope="col" className="px-6 py-2 uppercase text-xs"> Frequency of Income</th>
+                                        <th scope="col" className="px-6 py-2 uppercase text-xs">Total Income Amount</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-500">
-                                    <tr className="whitespace-nowrap">
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            1
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-900">
-                                                Jon doe
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-500">[email protected]</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            2021-1-12
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
-                                        </td>
-                                    </tr>
-                                    <tr className="bg-gray-50 whitespace-nowrap">
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            2
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-900">
-                                                Jon doe 2
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-500">[email protected]</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            2021-1-12
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#" className="px-4 py-1 text-sm text-red-400 rounded-full">Delete</a>
-                                        </td>
-                                    </tr>
-                                    <tr className="whitespace-nowrap">
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            3
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-900">
-                                                Jon doe 3
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-500">[email protected]</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            2021-1-12
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-red-400 bg-red-200 rounded-full">Delete</a>
-                                        </td>
-                                    </tr>
+                                {incomerecurring?.slice(0, numrows).map((value, index) => {
+                                    return (
+                                        <tbody>
+                                            <tr key={index} className="border-b dark:border-neutral-500 bg-white">
+                                                <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center items-center">{index + 1}</td>
+                                                <div className="flex space-x-1 flex-row">
+                                                    <img className='w-6 h-6 rounded-full mt-4 ml-3' src={`http://localhost:5050/${image}`} alt="profileImg" />
+                                                    <td className="whitespace-nowrap px-2 py-4 flex text-xs text-gray-600 items-center justify-center">{getuser.name ? getuser.name : ''}</td>
+                                                </div>
 
-
-                                    <tr className="bg-gray-50 whitespace-nowrap">
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            4
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-900">
-                                                Jon doe 4
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="text-sm text-gray-500">[email protected]</div>
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-center text-gray-500">
-                                            2021-1-12
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#"
-                                                className="px-4 py-1 text-sm text-blue-600 bg-blue-200 rounded-full">Edit</a>
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <a href="#" className="px-4 py-1 text-sm text-red-400 rounded-full">Delete</a>
-                                        </td>
-                                    </tr>
-
-
-                                </tbody>
+                                                <td className="whitespace-nowrap  text-xs text-gray-600 items-center justify-center px-6 py-4">{value._id}</td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center">{value.incomeTimes} times</td>
+                                                <td className="whitespace-nowrap px-6 py-4 text-xs text-gray-600 justify-center items-center">₹ {value.totalIncome}</td>
+                                            </tr>
+                                        </tbody>
+                                    )
+                                })}
                             </table>
+                            {numrows < exprecurring.length ? (
+                                <div className='flex flex-row-reverse pt-3'>
+                                    <button className="mt-4 text-sm w-1/5 text-white bgcustomcolor3 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg"
+                                        onClick={() => setNumrows(exprecurring.length)}
+                                    >View More</button>
+                                </div>
+                            ) : (
+                                <div className='flex flex-row-reverse pt-3'>
+                                    <button className="mt-4 text-sm w-1/5 text-white bg-amber-400 hover:translate-x-2 hover:decoration-sky-400 hover:duration-500 items-center text-center justify-center py-2 rounded-br-xl rounded-tl-xl shadow-lg"
+                                        onClick={() => setNumrows(5)}
+                                    >Hide</button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
         </>
     )
 }

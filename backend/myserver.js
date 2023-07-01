@@ -207,8 +207,8 @@ app.get("/api/getuser", async (req, res) => {
 })
 
 app.post("/api/getincome", async (req, res) => {
+    const { frequency, selectedDate } = req.body;
     try {
-        const { frequency, selectedDate } = req.body;
         const allIncome = await Income.find({
             ...(frequency !== "custom" ? {
                 dateselect: {
@@ -453,7 +453,6 @@ app.post("/api/findIncomeRecurrence", async (req, res) => {
             console.log(err)
             res.status(500).json({ statusCode: 0, error: err.message })
         } else {
-            console.log(result)
             res.status(200).json({ statusCode: 1, data: result })
         }
     })
@@ -615,3 +614,7 @@ app.post("/category/chatgpt", async (req, res) => {
         console.log("Error in Chat GPT");
     }
 })
+
+
+
+
