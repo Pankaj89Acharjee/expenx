@@ -97,15 +97,17 @@ const Expendituresheet = () => {
                     <div className="fixed inset-0 flex items-center justify-center bg-gray-400 bg-opacity-50">
                         <div className="bg-white p-12 rounded-md shadow-lg min-w-md max-w-lg mx-auto transition-all transform translate-y-10 translate-x-10">
                             {/* Your form content goes here */}
-                            <form>
+                            <form onSubmit={registerExpenditure}>
                                 <div className="mb-4">
-                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Spent On</label>
+                                    <label for="purpose" className="block text-gray-700 font-bold mb-2">Spent On</label>
                                     <input
                                         type="text"
                                         id="name"
-                                        name="name"
-                                        placeholder="Enter your name"
+                                        name="exppurpose"
+                                        placeholder="Item spent on"
                                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                        value={exppurpose}
+                                        onChange={(e) => setExppurpose(e.target.value)}
                                     />
                                 </div>
 
@@ -113,15 +115,17 @@ const Expendituresheet = () => {
                                     <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Amount Spent</label>
                                     <input
                                         type="text"
-                                        id="name"
-                                        name="name"
-                                        placeholder="Enter your name"
+                                        id="amount"
+                                        name="amount"
+                                        placeholder="Enter amount"
                                         className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
                                     />
                                 </div>
 
                                 <div className="mb-4">
-                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Amount Spent</label>
+                                    <label htmlFor="categories" className="block text-gray-700 font-bold mb-2">Category</label>
                                     <select className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                         name="categories"
                                         onChange={(e) => setCategories(e.target.value)}
@@ -137,13 +141,22 @@ const Expendituresheet = () => {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label htmlFor="name" className="block text-gray-700 font-bold mb-2">Date of Spending</label>
-                                    <input
-                                        type="date"
-                                        id="name"
-                                        name="name"
-                                        placeholder="Enter your name"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-indigo-500"
+                                    <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
+                                    <DatePicker
+                                        id='dateofexp'
+                                        type="text"
+                                        selected={dateofexp}
+                                        onChange={date => setDateofexp(date)}
+                                        dateFormat='yyyy-mm-dd'
+                                        formatStyle="large"
+                                        //minDate={new Date()}
+                                        maxDate={new Date()}
+                                        showYearDropdown
+                                        scrollableMonthYearDropdown
+                                        yearDropdownItemNumber={25}
+                                        value={dateDefault}
+                                        onChangeRaw={setDateDefault}
+                                        className="border border-solid form-control px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
                                     />
                                 </div>
                                 {/* Add more form fields as needed */}
@@ -168,134 +181,6 @@ const Expendituresheet = () => {
                     </div>
                 </section>
             )}
-
-
-
-
-
-            {/* <section className="h-full rounded md:h-full md:w-auto">
-                <div className="container py-12 px-6 h-full md:h-auto">
-                    <div className="flex justify-center items-center flex-wrap h-full g-6 text-gray-800">
-                        <div className="xl:w-11/12 md:w-8/12">
-                            <div className="block bg-gray-400 shadow-lg rounded-lg">
-                                <div className="lg:flex lg:flex-wrap g-0">
-                                    <div className="lg:w-6/12 px-4 md:px-0 sm:w-auto">
-                                        <div className="md:p-12 md:mx-6">
-                                            <div className="text-center">
-                                                <img
-                                                    className="mx-auto w-20 h-20 rounded-full md:w-15 md:h-10"
-                                                    src={logo}
-                                                    alt="logo"
-                                                />
-                                                <h4 className="text-xl text-yellow-700 font-semibold mt-1 mb-12 pb-1">NEW EXPENX REGISTRATION</h4>
-                                            </div>
-                                            <form onSubmit={registerExpenditure} >
-
-                                                <div className="mb-4">
-                                                    <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Purpose of expenditure</label>
-                                                    <input
-                                                        name="exppurpose"
-                                                        type="text"
-                                                        className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                                        placeholder="Expense made for"
-                                                        value={exppurpose}
-                                                        onChange={(e) => setExppurpose(e.target.value)}
-
-                                                    />
-                                                </div>
-
-                                                <div className="mb-4">
-                                                    <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Amount</label>
-                                                    <input
-                                                        name="amount"
-                                                        type="text"
-                                                        className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                                        placeholder="Amount in Rs"
-                                                        value={amount}
-                                                        onChange={(e) => setAmount(e.target.value)}
-                                                    />
-                                                </div>
-
-                                                <div className="mb-4">
-                                                    <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Category of expenditure</label>
-                                                    <select className="form-control block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                                        name="categories"
-                                                        onChange={(e) => setCategories(e.target.value)}
-                                                        required
-                                                    >
-                                                        <option>Select...</option>
-                                                        {
-                                                            category.map((data, index) => {
-                                                                return <option key={index} value={data.cat}>{data.cat}</option>
-                                                            })
-                                                        }
-                                                    </select>
-                                                </div>
-
-                                                <div className="mb-4">
-                                                    <label for="amount" className="block mb-2 text-md font-medium text-gray-900 dark:text-gray">Date of expenditure</label>
-                                                    <DatePicker
-                                                        id='dateofexp'
-                                                        type="text"
-                                                        selected={dateofexp}
-                                                        onChange={date => setDateofexp(date)}
-                                                        dateFormat='yyyy-mm-dd'
-                                                        formatStyle="large"
-                                                        //minDate={new Date()}
-                                                        maxDate={new Date()}
-                                                        showYearDropdown
-                                                        scrollableMonthYearDropdown
-                                                        yearDropdownItemNumber={25}
-                                                        value={dateDefault}
-                                                        onChangeRaw={setDateDefault}
-                                                        className="border border-solid form-control px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border-gray-300 rounded transition ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-                                                    />
-                                                </div>
-
-                                                <div className="text-center pt-1 mb-12 pb-1">
-                                                    <button
-                                                        className="bg-gradient-to-br from-orange-600 via-yellow-700 to-blue-600 inline-block bg-gray-400 px-6 py-2.5 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-gray-900 hover:shadow-xl focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg transition duration-150 ease-in-out w-full mb-3"
-                                                        type="submit"
-                                                        data-mdb-ripple="true"
-                                                        data-mdb-ripple-color="dark"
-                                                    >
-                                                        Register Expense
-                                                    </button>
-
-                                                </div>
-                                                <div className="flex items-center justify-between pb-6">
-                                                    <p className="mb-0 mr-2">Enthusiast about expenditure ?</p>
-                                                    <button
-                                                        type="button"
-                                                        className="inline-block px-6 py-2 border-2 border-red-600 text-red-600 font-medium text-xs leading-tight uppercase rounded hover:bg-red-800 hover:bg-opacity-5 focus:outline-none focus:ring-0 transition duration-150 ease-in-out"
-                                                        data-mdb-ripple="true"
-                                                        data-mdb-ripple-color="light"
-                                                    >
-                                                        View Your Expense Details
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                    <div className="lg:w-6/12 flex items-center lg:rounded-r-lg rounded-b-lg lg:rounded-bl-none bg-gradient-to-br from-yellow-400 via-green-200 to-purple-600">
-                                        <div className="text-gray-900 px-4 py-6 md:p-12 md:mx-6">
-                                            <h4 className="text-2xl text-center font-bold mb-6">Get best out of EXPENX</h4>
-                                            <p className="text-sm">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                                                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                                                consequat.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-              
-
-            </section> */}
         </div>
     )
 

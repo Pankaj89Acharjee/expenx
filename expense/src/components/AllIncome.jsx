@@ -273,7 +273,6 @@ const AllIncome = () => {
                                                     </td>
                                                 </tr>
                                             </tbody>
-
                                         )
                                     })}
 
