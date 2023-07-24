@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DatePicker from 'react-datepicker'
 import Spinner from './Spinner'
 import 'react-datepicker/dist/react-datepicker.css'
 import axios from 'axios'
 import jwtDecode from 'jwt-decode';
 import { category } from '../data/categorydata'
-import logo from '../assets/logoexp.jpeg'
-import { Modal } from 'antd';
+import addition from '../assets/addition.png'
+import { Modal, message } from 'antd';
+import { Chart as ChartJS, registerables, Filler } from 'chart.js';
+import { Bar, Doughnut, Pie, Scatter, Line } from 'react-chartjs-2';
+ChartJS.register(...registerables, Filler);
 
 const Expendituresheet = () => {
 
@@ -18,6 +21,11 @@ const Expendituresheet = () => {
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [exprecuurence, setExpreccurence] = useState();
+    const [halfYearItem, setHalfYearItem] = useState();
+    const [sortAmount, setSortamt] = useState();
+
+
 
     var responseMessage;
 
@@ -47,6 +55,72 @@ const Expendituresheet = () => {
             setLoading(false);
         }
     }
+
+
+    useEffect(() => {
+        const loadData = async () => {
+            const token = localStorage.getItem('token');
+            const decodetoken = jwtDecode(token);
+            const userId = decodetoken.id;
+            const fetchData = await axios.post('http://localhost:5050/api/getLastMonthExp', { userid: userId, frequency: 90, freqSixty: 60, freqThirty: 30 });
+            if (fetchData.status === 200) {
+                console.log("FETC DATA", fetchData.data.reccurExp)
+                let ninetyDays = fetchData.data.totalExp;
+                let sixtyDays = fetchData.data.sixtyExp;
+                let thirtyDays = fetchData.data.thirtyExp;
+                let ninetyMonth = fetchData.data.ninetyMonth;
+                let sixtyMonth = fetchData.data.sixtyMonth;
+                let thirtyMonth = fetchData.data.thirtyMonth;
+                let itemName = fetchData.data.reccurExp._id;
+                let price = fetchData.data.reccurExp.totalAmount;
+                let timesBought = fetchData.data.reccurExp.timesBought;
+
+
+                setSortamt({
+                    labels: [ninetyMonth, sixtyMonth, thirtyMonth],
+                    datasets: [
+                        {
+                            label: "Last three months expense",
+                            backgroundColor: [
+                                'rgba(1, 254, 237, 0.94)', 'rgba(252, 113, 74, 0.97)', 'rgba(53, 253, 126, 0.97)'],
+                            borderColor: [
+                                'rgb(75, 192, 192)', 'rgb(255, 99, 132)',
+                            ],
+                            borderWidth: 0,
+                            data: [ninetyDays, sixtyDays, thirtyDays]
+                        }
+                    ]
+                });
+
+
+                setExpreccurence({
+                    labels: [itemName],
+                    datasets: [
+                        {
+                            label: "Last Month Frequently Bought",
+                            backgroundColor: [
+                                'rgba(1, 254, 237, 0.94)', 'rgba(252, 113, 74, 0.97)', 'rgba(53, 253, 126, 0.97)'],
+                            borderColor: [
+                                'rgb(75, 192, 192)', 'rgb(255, 99, 132)',
+                            ],
+                            borderWidth: 0,
+                            data: [price, timesBought]
+                        }
+                    ]
+                })
+
+
+
+            } else {
+                message.error(fetchData.data.message);
+            }
+            //console.log("TfetchData", fetchData.data.totalData)
+        }
+        loadData();
+
+    }, [])
+
+
 
     //For Showing Successfull message after saving
     const success = () => {
@@ -84,11 +158,12 @@ const Expendituresheet = () => {
     return (
         <div>
             {/* This is the new section. Now implement this one*/}
-            <div className='flex flex-row-reverse mt-10 mr-10'>
+            <div className='flex mt-10 mr-10 relative items-center justify-end'>
+
                 <button
                     onClick={handleAddNewClick}
-                    className="bg-gray-900 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >Add New
+                    className="bg-gray-900 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded relative focus:outline-none focus:shadow-outline flex items-center"
+                > <span><img className='w-10 h-auto mr-2 object-cover' src={addition} /></span> Add New
                 </button>
             </div>
 
@@ -181,6 +256,108 @@ const Expendituresheet = () => {
                     </div>
                 </section>
             )}
+
+            <div className='container mx-auto flex flex-wrap mt-6'>
+                {/* 1st Chart */}
+                <div className='chart-column w-full lg:w-1/2 sm:w-1/2 px-2 items-center justify-center'>
+                    <div className='chart-container p-4 items-center justify-center pl-8 pr-1 ml-2 mr-4 mt-4 bg-gray-800 rounded-2xl'>
+                        {sortAmount?.length === 0 || !sortAmount ? '' : (
+                            <div className='rounded-2xl shadow-lg justify-center items-cente'>
+                                <Bar
+                                    data={sortAmount}
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            fontSize: 3
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                display: false,
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#11D9F8'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: 'rgba(38, 206, 253, 0.97)',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#8ED9F9'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: 'rgba(38, 206, 253, 0.97)',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                        }
+                                    }}
+                                />
+                                <span><p className='p-1 mb-2 text-center capitalize text-white font-bold'>Expenditure trends since last 3 months</p></span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+
+                {/* 2nd Chart */}
+                <div className='chart-column w-full lg:w-1/2 sm:w-1/2 px-2 items-center justify-center'>
+                    <div className='chart-container p-4 items-center justify-center pl-8 pr-1 ml-2 mr-4 mt-4 bg-gray-800 rounded-2xl'>
+                        {exprecuurence?.length === 0 || !exprecuurence ? '' : (
+                            <div className='rounded-2xl shadow-lg justify-center items-cente'>
+                                <Bar
+                                    data={exprecuurence}
+                                    options={{
+                                        title: {
+                                            display: true,
+                                            fontSize: 3
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                display: false,
+                                            }
+                                        },
+                                        scales: {
+                                            y: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#11D9F8'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: 'rgba(38, 206, 253, 0.97)',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                            x: {
+                                                grid: {
+                                                    drawBorder: true,
+                                                    color: '#8ED9F9'
+                                                },
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                    color: 'rgba(38, 206, 253, 0.97)',
+                                                    fontSize: 12
+                                                }
+                                            },
+                                        }
+                                    }}
+                                />
+                                <span><p className='p-1 mb-2 text-center capitalize text-white font-bold'>Last Month Spent Most</p></span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
         </div>
     )
 

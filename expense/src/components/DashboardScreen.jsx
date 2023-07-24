@@ -134,8 +134,7 @@ const DashboardScreen = () => {
             const fetchData = await axios.post('http://localhost:5050/api/getTotalAmount', { userid: userId, frequency: 365 });
             if (fetchData.status === 200) {
                 setAnnualExpense(fetchData.data.data)
-                setTableExpData(fetchData.data.threeSortAmount)
-                console.log("Annual Expense", fetchData.data.threeSortAmount)
+                setTableExpData(fetchData.data.threeSortAmount)                
                 let sortedAmounts = fetchData.data.fiveSortAmount
                 let sortedItems = fetchData.data.fiveSortItems
 
@@ -759,10 +758,10 @@ const DashboardScreen = () => {
 
 
             {/* 3 Charts */}
-            <div class="container mx-auto flex flex-wrap mt-6">
-                <div class="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
-                    <div class="chart-container bg-white shadow-md rounded-lg p-4">
-                        <h1 className='font-semibold'>Annual Income and Expense</h1>
+            <div className ="container mx-auto flex flex-wrap mt-6">
+                <div className ="chart-column w-full sm:w-1/2 lg:w-1/3 px-2">
+                    <div className ="chart-container bg-white shadow-md rounded-lg p-4">
+                        <h1 className ='font-semibold'>Annual Income and Expense</h1>
                         {/* <!-- Chart 1 goes here --> */}
                         {doughnutdata?.length === 0 || !doughnutdata ? '' : (
                             <Pie

@@ -309,6 +309,7 @@ app.post("/api/getTotalAmount", async (req, res) => {
             userid: req.body.userid,
         })
 
+
         //For sorting according to highest amount
         const result = singleExpense.sort((a, b) => {
             return b.amount - a.amount
@@ -341,18 +342,35 @@ app.post("/api/getTotalAmount", async (req, res) => {
 //For getting Total Expenditure
 app.post("/api/getLastMonthExp", async (req, res) => {
     try {
-        const { frequency } = req.body;
+        const { frequency, freqSixty, freqThirty } = req.body;
         //console.log("Frequency from req body", frequency);
+
         const singleExpense = await Expense.find({
             dateofexp: {
-                $gt: moment().subtract(Number(frequency), 'd').toDate()
+                $gt: moment().subtract(Number(frequency), 'd').toDate(),
             },
             userid: req.body.userid,
         })
 
+        const thirtyDays = await Expense.find({
+            dateofexp: {
+                $gt: moment().subtract(Number(freqThirty), 'd').toDate()
+            },
+            userid: req.body.userid,
+        })
+
+        const sixtyDays = await Expense.find({
+            dateofexp: {
+                $gt: moment().subtract(Number(freqSixty), 'd').toDate()
+            },
+            userid: req.body.userid,
+        })
+
+
         const result = singleExpense.sort((a, b) => {
             return b.amount - a.amount
         });
+
 
         //For sorting the amount and items
         var arrayAmount = [];
@@ -363,13 +381,64 @@ app.post("/api/getLastMonthExp", async (req, res) => {
             arrayItems[index] = value.exppurpose
         })
 
+
+        //For extracting month name
+        const monthName90 = singleExpense.reduce(((a, v) => {
+            const date = new Date(v.dateofexp);
+            const monthName = date.toLocaleString('en-US', { month: 'long' });
+            if (!a?.includes(monthName)) {
+                a?.push(monthName);
+            }
+            return a
+        }), []);
+
+        //console.log("The Month before 90 days is", monthName90[0])
+
+        const monthName60 = sixtyDays.reduce(((a, v) => {
+            const date = new Date(v.dateofexp);
+            const monthName = date.toLocaleString('en-US', { month: 'long' });
+            if (!a?.includes(monthName)) {
+                a?.push(monthName);
+            }
+            return a
+        }), []);
+        //console.log("The Month before sixty days is", monthName60[0])
+
+
+
+        const monthName30 = thirtyDays.reduce(((a, v) => {
+            const date = new Date(v.dateofexp);
+            const monthName = date.toLocaleString('en-US', { month: 'long' });
+            if (!a?.includes(monthName)) {
+                a?.push(monthName);
+            }
+            return a
+        }), []);
+        //console.log("The Month before thirty days is", monthName30[0])
+
+
+        //--------------------**************________--------------------
+        //For Finding last month expenditure reccurence
+       
+        // Calculate the start date of the last month using Moment.js
+        const lastMonthStartDate = moment().subtract(1, 'months').startOf('month').toDate();
+
+        const recurringExp = await Expense.aggregate([
+            { $match: { userid: req.body.userid, dateofexp: { $gte: lastMonthStartDate } } }, // Filter by userid and dateofexp within the last month
+            { $group: { _id: "$categories", timesBought: { $sum: 1 }, totalAmount: { $sum: "$amount" } } }, // Group by categories and count occurrences
+            { $match: { timesBought: { $gt: 1 } } }, // Filter by products that were bought more than once (here category is checked how many times it was repeated in purchase)
+            { $sort: { timesBought: -1 } } // Sort by timesBought in descending order
+        ]);
+
+        
         const sortedAmountLastMonth = arrayAmount[0]
         const sortedItemsLastMonth = arrayItems[0];
         const totalIncomeAmount = singleExpense.reduce((accumulator, value) => accumulator = (accumulator + value.amount), 0);
-
+        const thirtyDaysTotal = thirtyDays.reduce((accumulator, value) => (accumulator = accumulator + value.amount), 0)
+        const sixtyDaysTotal = sixtyDays.reduce((accumulator, value) => (accumulator = accumulator + value.amount), 0)
 
         if (result.length !== 0 || result !== undefined) {
-            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedItemsLastMonth, totalExp: totalIncomeAmount });
+            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedItemsLastMonth, totalExp: totalIncomeAmount, sixtyExp: sixtyDaysTotal, thirtyExp: thirtyDaysTotal, ninetyMonth: monthName90[0], sixtyMonth: monthName60[0], thirtyMonth: monthName30[0], reccurExp: recurringExp[0] });
         } else {
             console.log("Found no such expenditure");
             return res.status(500).json({ statusCode: 0, message: "Found no such expenditure" });
