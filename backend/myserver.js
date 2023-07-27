@@ -454,7 +454,7 @@ app.post("/api/getLastMonthExp", async (req, res) => {
 app.post("/api/getLastMonthIncome", async (req, res) => {
     try {
         const { frequency } = req.body;
-        //console.log("Frequency from req body", frequency);
+        console.log("Frequency from req body", frequency);
         const singleExpense = await Income.find({
             dateselect: {
                 $gt: moment().subtract(Number(frequency), 'd').toDate()
@@ -478,9 +478,9 @@ app.post("/api/getLastMonthIncome", async (req, res) => {
         const sortedIncomeLastMonth = arrayItems[0];
 
 
-        if (result.length !== 0 || result !== undefined) {
-            console.log("sortedAmountLastMonth", sortedAmountLastMonth);
-            console.log("sortedIncomeLastMonth", sortedIncomeLastMonth);
+        if (result.length !== 0 || result[0] !== undefined) {
+            //console.log("sortedAmountLastMonth", result);
+            //console.log("sortedIncomeLastMonth", sortedIncomeLastMonth);
             res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedIncomeLastMonth });
         } else {
             console.log("Found no such income");

@@ -64,7 +64,7 @@ const Expendituresheet = () => {
             const userId = decodetoken.id;
             const fetchData = await axios.post('http://localhost:5050/api/getLastMonthExp', { userid: userId, frequency: 90, freqSixty: 60, freqThirty: 30 });
             if (fetchData.status === 200) {
-                console.log("FETC DATA", fetchData.data.reccurExp)
+                //console.log("FETC DATA", fetchData.data.reccurExp)
                 let ninetyDays = fetchData.data.totalExp;
                 let sixtyDays = fetchData.data.sixtyExp;
                 let thirtyDays = fetchData.data.thirtyExp;

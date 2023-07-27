@@ -10,7 +10,7 @@ const Expsuccessscreen = () => {
     
     return (
         <div>
-            <div className="bg-green-300 rounded-lg py-5 px-6 mb-4 text-center font-bold text-green-700 mb-3">
+            <div className="bg-green-300 rounded-lg py-5 px-6 text-center font-bold text-green-700 mb-3">
                 <h2>Expenditure Data Saved Successful!</h2>
             </div>
             <div className='flex flex-inline box position-relative w-full items-center justify-center'>

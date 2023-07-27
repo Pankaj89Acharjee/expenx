@@ -510,7 +510,7 @@ const DashboardScreen = () => {
                                 )}
                             </div>
                             <div className='transform hover:scale-105 transition duration-500 md:m-2 sm:m-2 xm:m-2 m-2'>
-                                {/* This is Chart section for Income  */}
+                                {/* This is Chart section for Income Vs Expenditure  */}
                                 {incexpdata?.length === 0 || !incexpdata ? '' : (
                                     <div className='bg-white max-w-sm rounded-br-2xl rounded-tl-2xl shadow-lg text-center border-orange-400'>
                                         <Bar
@@ -550,7 +550,7 @@ const DashboardScreen = () => {
                                                 <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
                                                     Total Spending
                                                 </p>
-                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">{annualExpense}</p>
                                                 <div className='absolute mr-2 pb-2 bottom-0 right-0'>
                                                     <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
                                                     <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
@@ -573,7 +573,7 @@ const DashboardScreen = () => {
                                                 <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
                                                     Total Income
                                                 </p>
-                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">{annualIncome}</p>
                                                 <div className='absolute mr-2 pb-2 bottom-0 right-0'>
                                                     <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
                                                     <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
@@ -597,7 +597,7 @@ const DashboardScreen = () => {
                                                 <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
                                                     Last Income
                                                 </p>
-                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">{lastmonthIncome}</p>
                                                 <div className='absolute mr-2 pb-2 bottom-0 right-0'>
                                                     <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
                                                     <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
@@ -620,7 +620,7 @@ const DashboardScreen = () => {
                                                 <p className="text-sm text-right justify-end items-center ml-6 md:ml-6 sm:ml-6 xm:ml-6 font-medium uppercase tracking-widest text-pink-500">
                                                     Last Spending
                                                 </p>
-                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">2500</p>
+                                                <p className="text-xl text-center font-bold text-white sm:text-2xl">{lastmonthexp}</p>
                                                 <div className='absolute mr-2 pb-2 bottom-0 right-0'>
                                                     <FiArrowDown className="rotate-180 absolute bottom-8 right-0 text-right" color="red" fontSize={14} />
                                                     <p className='relative text-white text-right mr-3 pr-1'><span className='bgcustomcolor6 text-sm inline-block rounded-sm'>30%</span></p>
