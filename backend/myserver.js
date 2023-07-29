@@ -453,7 +453,7 @@ app.post("/api/getLastMonthExp", async (req, res) => {
 //For getting last month income
 app.post("/api/getLastMonthIncome", async (req, res) => {
     try {
-        const { frequency } = req.body;
+        const { frequency, freqSixty, freqThirty } = req.body;
         console.log("Frequency from req body", frequency);
         const singleExpense = await Income.find({
             dateselect: {
@@ -466,6 +466,34 @@ app.post("/api/getLastMonthIncome", async (req, res) => {
             return b.amount - a.amount
         });
 
+        const sixtyDaysIncome = await Income.find({
+            dateselect: {
+                $gt: moment().subtract(Number(freqSixty), 'd').toDate()
+            },
+            userid: req.body.userid
+        });
+
+        const thirtyDaysIncome = await Income.find({
+            dateselect: {
+                $gt: moment().subtract(Number(freqThirty), 'd').toDate()
+            },
+            userid: req.body.userid
+        })
+
+          //--------------------**************________--------------------
+        //For Finding last month income reccurence
+       
+        // Calculate the start date of the last month using Moment.js
+        const lastMonthStartDate = moment().subtract(1, 'months').startOf('month').toDate();
+
+        const recurringInc = await Income.aggregate([
+            { $match: { userid: req.body.userid, dateselect: { $gte: lastMonthStartDate } } }, // Filter by userid and dateofexp within the last month
+            { $group: { _id: "$incomefrom", timesBought: { $sum: 1 }, totalAmount: { $sum: "$amount" } } }, // Group by categories and count occurrences
+            { $match: { timesBought: { $gt: 1 } } }, // Filter by products that were bought more than once (here category is checked how many times it was repeated in purchase)
+            { $sort: { timesBought: -1 } } // Sort by timesBought in descending order
+        ]);
+
+
         //For sorting the amount and items
         var arrayAmount = [];
         var arrayItems = [];
@@ -476,12 +504,15 @@ app.post("/api/getLastMonthIncome", async (req, res) => {
 
         const sortedAmountLastMonth = arrayAmount[0]
         const sortedIncomeLastMonth = arrayItems[0];
+        const lastNinetyDays = singleExpense.reduce((accumulator, value) => accumulator = accumulator + value.amount, 0)
+        const lastThirtyDays = thirtyDaysIncome.reduce((accumulator, value) => accumulator = accumulator + value.amount, 0)
+        const lastSixtyDays = sixtyDaysIncome.reduce((accumulator, value) => accumulator = accumulator + value.amount, 0)
 
 
         if (result.length !== 0 || result[0] !== undefined) {
             //console.log("sortedAmountLastMonth", result);
             //console.log("sortedIncomeLastMonth", sortedIncomeLastMonth);
-            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedIncomeLastMonth });
+            res.status(200).json({ sortAmount: sortedAmountLastMonth, sortItems: sortedIncomeLastMonth, lastNinety: lastNinetyDays, lastSixty: lastSixtyDays, lastThirty: lastThirtyDays, incomeReccurence: recurringInc[0]  });
         } else {
             console.log("Found no such income");
             return res.status(500).json({ statusCode: 0, message: "Found no such income" });
