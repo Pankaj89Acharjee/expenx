@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon myserver.js"
+    "start": "nodemon myserver.js",
+    "build": "npm i"
   },
   "author": "",
   "license": "ISC",
