@@ -73,8 +73,6 @@ const Incomesheet = () => {
                 setSortAmount({
                     labels: []
                 })
-
-
             } else {
                 message.error(getIncomeData.data.message);
             }
